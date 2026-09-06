@@ -180,8 +180,16 @@
     gap: 14px;
     align-items: start;
   }
-  /* The definition reads under the plate on every screen, so the figure can
-     take the full width of the card. */
+  /* On a wide plate the definition floats as a card in the emptiest corner
+     of the figure; on a narrow one it reads under the plate. */
+  .atlas-card.floating .detail { display: none; }
+  .stage .pop.floating {
+    position: absolute; z-index: 6; pointer-events: none;
+    width: min(300px, 34%);
+    background: rgba(255,255,255,.96); border: 1px solid var(--rule-strong); border-radius: 10px;
+    padding: 10px 12px 11px; box-shadow: 0 6px 22px rgba(20,20,30,.16);
+    font-size: .9rem; line-height: 1.45; color: var(--ink-soft);
+  }
   .detail {
     background: var(--bg, #f4f6f9); border: 1px solid var(--rule); border-radius: 12px;
     padding: 12px 14px 13px; min-height: 96px;
@@ -490,14 +498,98 @@ const srList = document.getElementById('srList');
 
 const pop = document.getElementById('pop');
 const popEmpty = document.getElementById('popEmpty');
-function showPop(m) {
+const FLOAT_MIN = 640;   // px of plate width; narrower than this the definition docks under the plate
+let popM = null, popPill = null;
+function floating() { return atlasImg.clientWidth >= FLOAT_MIN; }
+function syncFloat() { document.querySelector('.atlas-card').classList.toggle('floating', floating()); }
+function showPop(m, pill) {
   document.getElementById('popName').textContent = m.text;
   const chip = document.getElementById('popChip');
   chip.textContent = m.matter || ''; chip.hidden = !m.matter;
   document.getElementById('popAbout').textContent = m.about || '';
+  popM = m; popPill = pill || null;
+  const card = document.querySelector('.atlas-card');
   pop.hidden = false; popEmpty.hidden = true;
+  if (floating()) {
+    // try the plate first; if no spot is clean enough, read under the plate instead
+    if (pop.parentElement !== stage) stage.appendChild(pop);
+    pop.classList.add('floating');
+    const best = placePop();
+    if (best.labels <= FLOAT_MAX_LABELS && best.tissue <= FLOAT_MAX_TISSUE) { card.classList.add('floating'); return; }
+  }
+  const dock = document.getElementById('detail');
+  if (pop.parentElement !== dock) dock.appendChild(pop);
+  pop.classList.remove('floating');
+  card.classList.remove('floating');
 }
-function hidePop() { pop.hidden = true; popEmpty.hidden = false; }
+function hidePop() { pop.hidden = true; popEmpty.hidden = false; popM = null; popPill = null; syncFloat(); }
+const FLOAT_MAX_LABELS = 0.6;   // label-equivalents the card may cover and still float (a brush, not a burial)
+const FLOAT_MAX_TISSUE = 0.35;  // fraction of the card that may sit on tissue
+/* Where the card goes: the spot along the plate's edge that covers the
+   least. Candidates are the four corners and the four edge midpoints, top
+   right first. Each is scored by the labels and dots it would sit on (the
+   structure just picked counts ten times, so the card never lands on it)
+   plus how much tissue it would cover, read from the plate's own pixels. */
+let tissueMap = null;
+function tissueSampler() {
+  if (tissueMap && tissueMap.src === atlasImg.src) return tissueMap;
+  if (!atlasImg.naturalWidth) return null;
+  const W = 160, H = Math.max(1, Math.round(W * atlasImg.naturalHeight / atlasImg.naturalWidth));
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  let data;
+  try { ctx.drawImage(atlasImg, 0, 0, W, H); data = ctx.getImageData(0, 0, W, H).data; }
+  catch (_) { return null; }                          // a cross-origin plate cannot be read; skip the tissue term
+  tissueMap = { src: atlasImg.src, W, H, data };
+  return tissueMap;
+}
+function tissueFraction(x0, y0, x1, y1, S) {
+  const s = tissueSampler();
+  if (!s) return 0;
+  let n = 0, hit = 0;
+  for (let i = 0; i < 8; i++) for (let j = 0; j < 5; j++) {
+    const fx = (x0 + (x1 - x0) * (i + .5) / 8) / S.width, fy = (y0 + (y1 - y0) * (j + .5) / 5) / S.height;
+    const px = Math.max(0, Math.min(s.W - 1, Math.floor(fx * s.W))), py = Math.max(0, Math.min(s.H - 1, Math.floor(fy * s.H)));
+    const k = (py * s.W + px) * 4;
+    n++;
+    if (s.data[k] < 235 || s.data[k + 1] < 235 || s.data[k + 2] < 235) hit++;
+  }
+  return n ? hit / n : 0;
+}
+function placePop() {
+  const S = stage.getBoundingClientRect();
+  const w = pop.offsetWidth, h = pop.offsetHeight, pad = 8;
+  const R = S.width - w - pad, B = S.height - h - pad, CX = (S.width - w) / 2, CY = (S.height - h) / 2;
+  const spots = [
+    { x: R, y: pad }, { x: pad, y: pad }, { x: R, y: B }, { x: pad, y: B },      // corners, top right first
+    { x: CX, y: pad }, { x: CX, y: B }, { x: R, y: CY }, { x: pad, y: CY }        // edge midpoints
+  ];
+  const flag = popPill && popPill.dataset.flag;
+  const mode = stage.classList.contains('mode-hide') ? 'hide' : stage.classList.contains('mode-hover') ? 'hover' : 'show';
+  const boxes = [];
+  if (mode !== 'hide') stage.querySelectorAll('.marker, .label-pill').forEach(el => {
+    // in reveal mode only the revealed pill is on screen; the mode decides, not a mid-fade opacity
+    if (el.classList.contains('label-pill') && mode === 'hover' && !el.classList.contains('hovered') && el.dataset.flag !== flag) return;
+    const r = el.getBoundingClientRect();
+    boxes.push({ l: r.left - S.left, t: r.top - S.top, r: r.right - S.left, b: r.bottom - S.top,
+                 weight: flag && el.dataset.flag === flag ? 10 : 1 });
+  });
+  let best = null, bestScore = Infinity;
+  spots.forEach((c, i) => {
+    let labels = 0;
+    boxes.forEach(b => {                               // by how much of each label the card would cover
+      const ix = Math.min(b.r, c.x + w) - Math.max(b.l, c.x), iy = Math.min(b.b, c.y + h) - Math.max(b.t, c.y);
+      if (ix > 0 && iy > 0) labels += b.weight * (ix * iy) / Math.max(1, (b.r - b.l) * (b.b - b.t));
+    });
+    const tissue = tissueFraction(c.x, c.y, c.x + w, c.y + h, S);
+    const score = labels + 4 * tissue + i * 0.01;      // a card fully on tissue costs about four labels; ties go to the earlier spot
+    if (score < bestScore) { bestScore = score; best = { x: c.x, y: c.y, labels, tissue }; }
+  });
+  pop.style.left = Math.max(0, best.x) + 'px';
+  pop.style.top = Math.max(0, best.y) + 'px';
+  return best;
+}
+window.addEventListener('resize', () => { syncFloat(); if (!pop.hidden && popM) showPop(popM, popPill); });
 
 
 /* Does this device have a real hover-capable pointer? A phone or tablet
@@ -603,7 +695,7 @@ function buildFigure(container, visible) {
     const entry = {};
     const highlight = () => { dot.classList.add('hovered'); pill.classList.add('hovered'); line.classList.add('hovered'); };
     const unhighlight = () => { dot.classList.remove('hovered'); pill.classList.remove('hovered'); line.classList.remove('hovered'); };
-    const enter = () => { showPop(m); highlight(); };
+    const enter = () => { showPop(m, pill); highlight(); };
     entry.enter = enter; entry.leave = unhighlight; entry.m = m; entry.pill = pill;
     entries.push(entry);
 
@@ -835,7 +927,7 @@ fetch('data/' + view + '.json')
     document.getElementById('foot').textContent = 'Open Ovis \u00b7 ' + data.label + ' atlas';
     atlasImg.alt = data.label + ' section of a preserved sheep brain. '
       + 'A list of labeled structures follows the image.';
-    atlasImg.addEventListener('load', function () { render(); updateIW(); });
+    atlasImg.addEventListener('load', function () { render(); updateIW(); syncFloat(); });
     atlasImg.src = data.image;
   })
   .catch(function (err) {
