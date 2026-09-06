@@ -420,15 +420,6 @@
         </select>
         <small>Turn it off if you would rather not race.</small>
       </div>
-      <div class="field">
-        <label for="countSel">How many</label>
-        <select id="countSel">
-          <option value="0">All of them</option>
-          <option value="25">25 at random</option>
-          <option value="10">10 at random</option>
-        </select>
-        <small>A short random set makes a quick drill.</small>
-      </div>
       <fieldset class="field seg">
         <legend>Marker</legend>
         <div class="segs">
@@ -1033,42 +1024,30 @@
   }
 
   /* The pool for a run: every allowed structure, except that Describe it
-     needs a definition to show and skips any structure without one. "How
-     many" takes a random sample of that. */
+     needs a definition to show and skips any structure without one. */
   function basePool(mode) {
     var all = state.allowed || [];
     return mode === 'describe' ? all.filter(function (s) { return s.about; }) : all.slice();
   }
-  function poolFor(mode) {
-    var pool = basePool(mode);
-    var n = +el('countSel').value || 0;
-    if (n && n < pool.length) pool = shuffle(pool.length).slice(0, n).map(function (i) { return pool[i]; });
-    return pool;
-  }
+  function poolFor(mode) { return basePool(mode); }
   function paintCount() {
-    var base = basePool(state.mode), n = +el('countSel').value || 0;
-    var sampled = n && n < base.length;
+    var base = basePool(state.mode);
     var views = (state.views || []).length;
-    el('startCount').textContent = sampled ? n : base.length;
-    el('countNote').textContent = (sampled ? ' of ' + base.length + ' structures, at random' : ' structures')
-      + (views > 1 ? ' across ' + views + ' views' : views === 1 ? ' in this view' : '');
+    el('startCount').textContent = base.length;
+    el('countNote').textContent = ' structures' + (views > 1 ? ' across ' + views + ' views' : views === 1 ? ' in this view' : '');
     el('btnBegin').disabled = base.length === 0;
     paintSummary();
   }
   /* One line above Begin that says what is about to happen. */
   function paintSummary() {
-    var base = basePool(state.mode), n = +el('countSel').value || 0;
-    var count = (n && n < base.length) ? n + ' at random' : 'all ' + base.length;
+    var base = basePool(state.mode);
+    var count = 'all ' + base.length;
     var time = state.limit ? (state.limit >= 60 ? (state.limit / 60) + ' min' : state.limit + ' s') + ' each' : 'no time limit';
     var modeName = { name: 'Name it', find: 'Find it', describe: 'Describe it' }[state.mode] || state.mode;
     var parts = [modeName, count, time];
     if ((state.views || []).length > 1) parts.push(isMixed() ? 'shuffled across views' : 'one view at a time');
     el('summary').textContent = parts.join(' \u00b7 ');
   }
-  var countSel = el('countSel');
-  var savedCount = store.get('oo.quiz.count');
-  if (savedCount !== null) { countSel.value = savedCount; if (countSel.value !== savedCount) countSel.value = '0'; }
-  countSel.addEventListener('change', function () { store.set('oo.quiz.count', countSel.value); paintCount(); });
   setRadio('order', store.get('oo.quiz.mix') === '1' ? 'mixed' : 'blocked');
   document.querySelectorAll('input[name="order"]').forEach(function (r) {
     r.addEventListener('change', function () { store.set('oo.quiz.mix', isMixed() ? '1' : '0'); paintSummary(); });
