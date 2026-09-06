@@ -304,6 +304,19 @@
   .options .check span { color: var(--muted); }
   .still .xmark::before { animation: none; }
 
+  /* thumbnail tabs: this run and its siblings */
+  .view-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0 auto 14px; max-width: 760px; }
+  .view-tabs a {
+    display: inline-flex; align-items: center; gap: 8px;
+    text-decoration: none; color: var(--ink-soft); font-weight: 600; font-size: .86rem; padding: 4px 12px 4px 4px;
+    border-radius: 999px; border: 1.5px solid var(--rule-strong); background: var(--panel);
+  }
+  .view-tabs img { width: 44px; height: 32px; object-fit: cover; border-radius: 999px; background: #fff; flex: none; }
+  .view-tabs a:hover { border-color: var(--accent); color: var(--accent); }
+  .view-tabs a[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .view-tabs a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  @media (max-width: 720px) { .view-tabs img { width: 38px; height: 27px; } }
+
   /* choose a set */
   .sets { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; max-width: 900px; margin: 14px auto 0; text-align: left; }
   .set { display: block; text-decoration: none; color: var(--ink); padding: 14px; border: 1.5px solid var(--rule-strong); border-radius: 12px; background: var(--panel); }
@@ -359,6 +372,7 @@
   <!-- ============ START ============ -->
   <section class="card start" id="screenStart">
     <h1 id="startTitle">Midsagittal Practicum</h1>
+    <nav class="view-tabs" id="viewTabs" aria-label="Other sets and views" hidden></nav>
     <p id="startBlurb">Choose how you want to be tested. Order is randomized each time.</p>
     <div class="modes" role="radiogroup" aria-label="Quiz mode">
       <button type="button" class="mode active" data-mode="name" role="radio" aria-checked="true" tabindex="0">
@@ -1017,7 +1031,36 @@
     }));
   }
 
+  /* Thumbnail tabs on the start screen: this run and its siblings. A group
+     run lists the group and each of its views as single-view quizzes; a
+     single view lists its group and the other views; Everything lists the
+     three groups. */
+  function renderTabs() {
+    var tabs = el('viewTabs'), items = [];
+    var pill = function (href, thumb, label, current) {
+      var a = document.createElement('a');
+      a.href = href;
+      var img = document.createElement('img'); img.src = thumb; img.alt = ''; img.loading = 'lazy';
+      var span = document.createElement('span'); span.textContent = label;
+      a.appendChild(img); a.appendChild(span);
+      if (current) a.setAttribute('aria-current', 'page');
+      return a;
+    };
+    if (SET === 'all') {
+      items.push(pill(V.link('quiz.html', { set: 'all' }), V.thumb('midsagittal'), 'Everything', true));
+      V.groups.forEach(function (g) { items.push(pill(V.link('quiz.html', { set: g.id }), V.thumb(g.views[0]), g.label, false)); });
+    } else {
+      var g = SET ? V.group(SET) : V.groupOf(VIEW);
+      if (!g || g.views.length < 2) { tabs.hidden = true; return; }
+      items.push(pill(V.link('quiz.html', { set: g.id }), V.thumb(g.views[0]), 'All ' + g.label.toLowerCase(), !VIEW));
+      g.views.forEach(function (v) { items.push(pill(V.link('quiz.html', { view: v }), V.thumb(v), V.label(v), v === VIEW)); });
+    }
+    items.forEach(function (a) { tabs.appendChild(a); });
+    tabs.hidden = false;
+  }
+
   var ids = VIEW ? [VIEW] : SET ? (SET === 'all' ? V.all.slice() : V.group(SET).views.slice()) : null;
+  if (ids) renderTabs();
   if (!ids) {
     // No set asked for: the chooser, with counts that honor the instructor's link.
     el('screenStart').hidden = true;
