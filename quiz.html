@@ -333,16 +333,25 @@
   @media (max-width: 720px) { .view-tabs img { width: 26px; height: 19px; } }
 
   /* choose a set */
-  .sets { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; max-width: 900px; margin: 14px auto 0; text-align: left; }
+  .sets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 0; text-align: left; }
   .set { display: block; text-decoration: none; color: var(--ink); padding: 14px; border: 1.5px solid var(--rule-strong); border-radius: 12px; background: var(--panel); }
   .set:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .set:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .set-thumb { display: block; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #fff; margin-bottom: 10px; border: 1px solid var(--rule); }
   .set-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .set-thumb.grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; }
-  .set strong { display: block; font-size: 1.05rem; }
-  .set span { display: block; font-size: .85rem; color: var(--muted); line-height: 1.35; margin: 2px 0 8px; }
-  .set em { font-style: normal; font-size: .75rem; color: var(--accent); font-weight: 600; letter-spacing: .04em; }
+  .set-title { display: block; font-size: 1.05rem; font-weight: 600; }
+  .set-blurb { display: block; font-size: .85rem; color: var(--muted); line-height: 1.35; margin: 2px 0 8px; }
+  .set-meta { display: block; font-style: normal; font-size: .75rem; color: var(--accent); font-weight: 600; letter-spacing: .04em; }
+  /* Everything: a banner under the three groups, with every plate in it */
+  .set.wide { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(200px, 1fr); gap: 16px; align-items: center; }
+  .set.wide .set-thumb { margin: 0; aspect-ratio: auto; border: 0; background: transparent; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; overflow: visible; }
+  .set.wide .set-thumb img { aspect-ratio: 4 / 3; height: auto; border-radius: 6px; border: 1px solid var(--rule); background: #fff; }
+  @media (max-width: 640px) {
+    .sets { grid-template-columns: 1fr; }
+    .set.wide { grid-template-columns: 1fr; }
+    .set.wide .set-thumb { grid-template-columns: repeat(4, 1fr); }
+  }
 
   /* describe-it: the definition stands in for the marked photo */
   .describe { margin: 6px 0 10px; padding: 12px 16px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; color: var(--ink); line-height: 1.5; font-size: 1.02rem; }
@@ -1118,17 +1127,17 @@
       datas.forEach(function (d) { count[d.view] = d.structures.filter(function (s) { return !ex[s.flag]; }).length; });
       var sum = function (vs) { return vs.reduce(function (a, v) { return a + (count[v] || 0); }, 0); };
       var sets = V.groups.map(function (g) { return { id: g.id, label: g.label, blurb: g.blurb, n: sum(g.views), views: g.views.length, thumbs: [g.rep] }; });
-      sets.push({ id: 'all', label: 'Everything', blurb: 'All twelve views in one run.', n: sum(V.all), views: V.all.length, thumbs: V.everything });
+      sets.push({ id: 'all', label: 'Everything', blurb: 'All twelve views in one run.', n: sum(V.all), views: V.all.length, thumbs: V.all, wide: true });
       var host = el('setCards');
       sets.forEach(function (s) {
         var a = document.createElement('a');
-        a.className = 'set';
+        a.className = 'set' + (s.wide ? ' wide' : '');
         a.href = V.link('quiz.html', { set: s.id });
-        // one representative plate, or a two-by-two for Everything
-        var thumb = '<span class="set-thumb' + (s.thumbs.length > 1 ? ' grid' : '') + '">'
+        // one representative plate per group; every plate for Everything
+        var thumb = '<span class="set-thumb' + (!s.wide && s.thumbs.length > 1 ? ' grid' : '') + '">'
           + s.thumbs.map(function (v) { return '<img src="' + V.thumb(v) + '" alt="" loading="lazy">'; }).join('') + '</span>';
-        a.innerHTML = thumb + '<strong>' + s.label + '</strong><span>' + s.blurb + '</span><em>' + s.n + ' structures \u00b7 '
-          + (s.views === 1 ? '1 view' : s.views + ' views') + '</em>';
+        a.innerHTML = thumb + '<span class="set-body"><span class="set-title">' + s.label + '</span><span class="set-blurb">' + s.blurb
+          + '</span><span class="set-meta">' + s.n + ' structures \u00b7 ' + (s.views === 1 ? '1 view' : s.views + ' views') + '</span></span>';
         host.appendChild(a);
       });
     }).catch(function (err) {
