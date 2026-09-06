@@ -86,19 +86,16 @@
   }
 
   /* ---------- start screen ---------- */
-  .start { padding: 44px 40px; margin-top: 26px; text-align: center; }
-  .start h1 {
-    font-family: 'Fraunces', Georgia, serif; font-weight: 500;
-    font-size: clamp(1.7rem, 3vw + 1rem, 2.4rem); margin: 0 0 10px;
-    letter-spacing: -.015em;
+  /* start screen: a form in a narrow column, read top to bottom */
+  .start { max-width: 760px; margin: 26px auto 0; padding: 32px 36px 34px; text-align: left; }
+  .start-head { margin: 0 0 22px; }
+  .start h1, .results h1 {
+    font-family: 'Fraunces', Georgia, serif; font-weight: 500; font-size: 2rem; line-height: 1.15; margin: 0 0 4px;
   }
-  .start p { color: var(--ink-soft); max-width: 46ch; margin: 0 auto 8px; }
-  .start .count {
-    display: inline-block; margin: 18px 0 26px; padding: 7px 16px;
-    background: var(--chip); border-radius: 999px; font-size: .9rem;
-    color: var(--ink); font-variant-numeric: tabular-nums;
-  }
-  .start .count strong { font-weight: 600; }
+  .start-sub { margin: 0; color: var(--ink-soft); font-size: 1.02rem; }
+  .start-sub strong { font-weight: 600; color: var(--ink); }
+  .sec { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 600; margin: 22px 0 8px; }
+  .start p.error { color: var(--wrong); }
 
   /* ---------- buttons ---------- */
   button {
@@ -227,18 +224,17 @@
   .about { color: var(--ink-soft); font-size: .95rem; margin: 0 0 16px; max-width: 68ch; }
 
   /* ---------- results ---------- */
-  .results { padding: 40px; margin-top: 26px; text-align: center; }
-  .results h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 500; font-size: 2rem; margin: 0 0 6px; }
-  .score { font-family: 'Fraunces', Georgia, serif; font-size: 3.4rem; line-height: 1; margin: 18px 0 4px; font-variant-numeric: tabular-nums; }
-  .score small { font-size: 1.3rem; color: var(--muted); }
-  .pct { color: var(--muted); margin: 0 0 26px; }
-  .missed { text-align: left; max-width: 560px; margin: 0 auto 24px; }
-  .missed h2 { font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
+  .results { max-width: 760px; margin: 26px auto 0; padding: 32px 36px 34px; text-align: left; }
+  .score-line { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .score { font-family: 'Fraunces', Georgia, serif; font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .score small { font-size: 1.1rem; color: var(--muted); }
+  .pct { color: var(--muted); }
+  .missed { text-align: left; margin: 0 0 24px; }
   .missed ul { list-style: none; margin: 0; padding: 0; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
   .missed li { padding: 9px 14px; border-bottom: 1px solid var(--rule); display: flex; justify-content: space-between; gap: 12px; font-size: .94rem; }
   .missed li:last-child { border-bottom: none; }
   .missed li span.gave { color: var(--muted); font-style: italic; }
-  .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .actions { display: flex; gap: 10px; justify-content: flex-start; flex-wrap: wrap; }
 
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
   [hidden] { display: none !important; }
@@ -248,7 +244,9 @@
   @media (max-width: 640px) {
     header.top { padding: 22px 16px 0; }
     .wrap { padding: 0 16px 40px; }
-    .start, .results { padding: 30px 22px; }
+    .start, .results { padding: 22px 18px 26px; }
+    .start-foot { flex-direction: column; align-items: stretch; }
+    .start-foot button { width: 100%; }
     .stage-card { padding: 10px; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -285,37 +283,54 @@
   @media (hover: hover) and (pointer: fine) { .zoom-hint { display: none; } }
 
   /* ---------- quiz mode chooser ---------- */
-  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 760px; margin: 14px auto 14px; text-align: left; }
+  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; text-align: left; }
   .mode {
-    font: inherit; text-align: left; padding: 12px 14px; border-radius: 12px; cursor: pointer;
+    font: inherit; text-align: left; padding: 0; border-radius: 12px; cursor: pointer; overflow: hidden;
     border: 1.5px solid var(--rule-strong); background: var(--panel); color: var(--ink);
   }
-  .mode strong { display: block; font-size: 1rem; margin-bottom: 2px; }
-  .mode span { display: block; font-size: .85rem; color: var(--muted); line-height: 1.35; }
-  .mode.active { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .mode strong { display: block; font-size: .98rem; padding: 9px 12px; background: var(--chip); }
+  .mode span { display: block; font-size: .85rem; color: var(--muted); line-height: 1.35; padding: 8px 12px 10px; }
+  .mode.active { border-color: var(--accent); }
+  .mode.active strong { background: var(--accent); color: #fff; }
+  .mode.active strong::after { content: "\2713"; float: right; }
   .mode:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   @media (max-width: 640px) { .modes { grid-template-columns: 1fr; } }
 
-  /* start-screen options: time limit and a still marker */
-  .options { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 18px; margin: 0 auto 16px; font-size: .92rem; color: var(--ink-soft); }
-  .options select { font: inherit; padding: 6px 10px; border: 1.5px solid var(--rule-strong); border-radius: 8px; background: var(--panel); color: var(--ink); }
-  .options select:focus-visible, .options input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  .options .check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
-  .options .check span { color: var(--muted); }
+  /* settings: labeled fields in two columns */
+  .settings { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; }
+  .field { margin: 0; padding: 0; border: 0; min-width: 0; }
+  .field label, .field legend { display: block; font-weight: 600; font-size: .92rem; margin: 0 0 6px; padding: 0; }
+  .field select { font: inherit; width: 100%; padding: 8px 10px; border: 1.5px solid var(--rule-strong); border-radius: 8px; background: var(--panel); color: var(--ink); }
+  .field small { display: block; margin-top: 5px; font-size: .8rem; color: var(--muted); }
+  .field select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .segs { display: flex; border: 1.5px solid var(--rule-strong); border-radius: 8px; overflow: hidden; }
+  .segs label { flex: 1; position: relative; cursor: pointer; }
+  .segs label + label { border-left: 1.5px solid var(--rule-strong); }
+  .segs input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .segs span { display: block; text-align: center; padding: 8px 6px; font-size: .9rem; color: var(--ink-soft); }
+  .segs input:checked + span { background: var(--accent); color: #fff; font-weight: 600; }
+  .segs input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: -3px; }
+  @media (max-width: 560px) { .settings { grid-template-columns: 1fr; } }
+
+  .start-foot { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--rule); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .summary { margin: 0; color: var(--ink-soft); font-size: .94rem; }
+  button.big { padding: 12px 28px; font-size: 1.02rem; }
   .still .xmark::before { animation: none; }
 
   /* thumbnail tabs: this run and its siblings */
-  .view-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0 auto 14px; max-width: 760px; }
+  /* change-set strip: navigation to sibling runs, kept small */
+  .view-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 20px; }
+  .tabs-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin-right: 4px; }
   .view-tabs a {
-    display: inline-flex; align-items: center; gap: 8px;
-    text-decoration: none; color: var(--ink-soft); font-weight: 600; font-size: .86rem; padding: 4px 12px 4px 4px;
+    display: inline-flex; align-items: center; gap: 6px;
+    text-decoration: none; color: var(--ink-soft); font-weight: 600; font-size: .78rem; padding: 3px 10px 3px 3px;
     border-radius: 999px; border: 1.5px solid var(--rule-strong); background: var(--panel);
   }
-  .view-tabs img { width: 44px; height: 32px; object-fit: cover; border-radius: 999px; background: #fff; flex: none; }
+  .view-tabs img { width: 30px; height: 22px; object-fit: cover; border-radius: 999px; background: #fff; flex: none; }
   .view-tabs a:hover { border-color: var(--accent); color: var(--accent); }
   .view-tabs a[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: #fff; }
   .view-tabs a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  @media (max-width: 720px) { .view-tabs img { width: 38px; height: 27px; } }
+  @media (max-width: 720px) { .view-tabs img { width: 26px; height: 19px; } }
 
   /* choose a set */
   .sets { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; max-width: 900px; margin: 14px auto 0; text-align: left; }
@@ -374,9 +389,13 @@
 
   <!-- ============ START ============ -->
   <section class="card start" id="screenStart">
-    <h1 id="startTitle">Midsagittal Practicum</h1>
-    <nav class="view-tabs" id="viewTabs" aria-label="Other sets and views" hidden></nav>
-    <p id="startBlurb">Choose how you want to be tested. Order is randomized each time.</p>
+    <nav class="view-tabs" id="viewTabs" aria-label="Change set" hidden><span class="tabs-label">Change set</span></nav>
+    <header class="start-head">
+      <h1 id="startTitle">Midsagittal Practicum</h1>
+      <p class="start-sub"><strong id="startCount">0</strong><span id="countNote"> structures in this set</span></p>
+    </header>
+
+    <h2 class="sec">Mode</h2>
     <div class="modes" role="radiogroup" aria-label="Quiz mode">
       <button type="button" class="mode active" data-mode="name" role="radio" aria-checked="true" tabindex="0">
         <strong>Name it</strong><span>A pulsing dot marks a structure on the photo. You type its name.</span>
@@ -388,26 +407,49 @@
         <strong>Describe it</strong><span>You read the definition. You type its name. No image needed.</span>
       </button>
     </div>
-    <div class="options">
-      <label for="timerSel">Time per question</label>
-      <select id="timerSel">
-        <option value="60">1 minute</option>
-        <option value="180">3 minutes</option>
-        <option value="600">10 minutes</option>
-        <option value="0">No limit</option>
-      </select>
-      <label class="check"><input type="checkbox" id="stillX"> Still marker <span>(no pulsing)</span></label>
-      <label for="countSel">How many</label>
-      <select id="countSel">
-        <option value="0">All of them</option>
-        <option value="25">25 at random</option>
-        <option value="10">10 at random</option>
-      </select>
-      <label class="check" id="mixWrap" hidden><input type="checkbox" id="mixViews"> Shuffle across views <span>(otherwise one view at a time)</span></label>
+
+    <h2 class="sec">Settings</h2>
+    <div class="settings">
+      <div class="field">
+        <label for="timerSel">Time per question</label>
+        <select id="timerSel">
+          <option value="60">1 minute</option>
+          <option value="180">3 minutes</option>
+          <option value="600">10 minutes</option>
+          <option value="0">No limit</option>
+        </select>
+        <small>Turn it off if you would rather not race.</small>
+      </div>
+      <div class="field">
+        <label for="countSel">How many</label>
+        <select id="countSel">
+          <option value="0">All of them</option>
+          <option value="25">25 at random</option>
+          <option value="10">10 at random</option>
+        </select>
+        <small>A short random set makes a quick drill.</small>
+      </div>
+      <fieldset class="field seg">
+        <legend>Marker</legend>
+        <div class="segs">
+          <label><input type="radio" name="marker" value="pulse" checked><span>Pulsing</span></label>
+          <label><input type="radio" name="marker" value="still"><span>Still</span></label>
+        </div>
+        <small>Still keeps the dot from moving.</small>
+      </fieldset>
+      <fieldset class="field seg" id="mixWrap" hidden>
+        <legend>Order</legend>
+        <div class="segs">
+          <label><input type="radio" name="order" value="blocked" checked><span>One view at a time</span></label>
+          <label><input type="radio" name="order" value="mixed"><span>Shuffled</span></label>
+        </div>
+        <small>Shuffled feels like the practical exam.</small>
+      </fieldset>
     </div>
-    <div class="count"><strong id="startCount">0</strong><span id="countNote"> structures in this set</span></div>
-    <div class="actions">
-      <button class="primary" id="btnBegin" type="button">Begin</button>
+
+    <div class="start-foot">
+      <p class="summary" id="summary" aria-live="polite"></p>
+      <button class="primary big" id="btnBegin" type="button">Begin</button>
     </div>
   </section>
 
@@ -466,12 +508,13 @@
 
   <!-- ============ RESULTS ============ -->
   <section class="card results" id="screenResults" hidden>
-    <h1>Set complete</h1>
-    <div class="score"><span id="finalScore">0</span><small> / <span id="finalTotal">0</span></small></div>
-    <p class="pct" id="finalPct">—</p>
+    <header class="start-head">
+      <h1>Set complete</h1>
+      <p class="start-sub score-line"><span class="score"><span id="finalScore">0</span><small> / <span id="finalTotal">0</span></small></span><span class="pct" id="finalPct">—</span></p>
+    </header>
 
     <div class="missed" id="missedWrap" hidden>
-      <h2>Structures to review</h2>
+      <h2 class="sec">Structures to review</h2>
       <ul id="missedList"></ul>
     </div>
 
@@ -861,7 +904,7 @@
   /* Question order. One view at a time by default (views in random order,
      structures shuffled within each), or fully shuffled across views. */
   function orderFor(pool) {
-    var mix = el('mixViews').checked || state.views.length < 2;
+    var mix = isMixed() || state.views.length < 2;
     if (mix) return shuffle(pool.length);
     var byView = {}, ids = [];
     pool.forEach(function (s, i) { if (!byView[s._view]) { byView[s._view] = []; ids.push(s._view); } byView[s._view].push(i); });
@@ -950,16 +993,22 @@
     get: function (k) { try { return localStorage.getItem(k); } catch (_) { return null; } },
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (_) {} }
   };
-  var timerSel = el('timerSel'), stillX = el('stillX');
+  var timerSel = el('timerSel');
+  var radioValue = function (name) { var r = document.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ''; };
+  var setRadio = function (name, value) { var r = document.querySelector('input[name="' + name + '"][value="' + value + '"]'); if (r) r.checked = true; };
+  var isStill = function () { return radioValue('marker') === 'still'; };
+  var isMixed = function () { return radioValue('order') === 'mixed'; };
   var savedLimit = store.get('oo.quiz.limit');
   if (savedLimit !== null && !isNaN(+savedLimit)) state.limit = +savedLimit;
   timerSel.value = String(state.limit);
   if (timerSel.value !== String(state.limit)) { timerSel.value = '60'; state.limit = 60; }
-  timerSel.addEventListener('change', function () { state.limit = +timerSel.value; store.set('oo.quiz.limit', timerSel.value); });
+  timerSel.addEventListener('change', function () { state.limit = +timerSel.value; store.set('oo.quiz.limit', timerSel.value); paintSummary(); });
   var still = store.get('oo.quiz.still') === '1';
-  stillX.checked = still;
+  setRadio('marker', still ? 'still' : 'pulse');
   document.body.classList.toggle('still', still);
-  stillX.addEventListener('change', function () { document.body.classList.toggle('still', stillX.checked); store.set('oo.quiz.still', stillX.checked ? '1' : '0'); });
+  document.querySelectorAll('input[name="marker"]').forEach(function (r) {
+    r.addEventListener('change', function () { document.body.classList.toggle('still', isStill()); store.set('oo.quiz.still', isStill() ? '1' : '0'); paintSummary(); });
+  });
 
   /* Describe it shows a definition, and many definitions name the structure
      they describe. Mask the name, its accepted synonyms, and word forms built
@@ -999,16 +1048,31 @@
   function paintCount() {
     var base = basePool(state.mode), n = +el('countSel').value || 0;
     var sampled = n && n < base.length;
+    var views = (state.views || []).length;
     el('startCount').textContent = sampled ? n : base.length;
-    el('countNote').textContent = sampled ? ' of ' + base.length + ' structures, at random' : ' structures in this set';
+    el('countNote').textContent = (sampled ? ' of ' + base.length + ' structures, at random' : ' structures')
+      + (views > 1 ? ' across ' + views + ' views' : views === 1 ? ' in this view' : '');
     el('btnBegin').disabled = base.length === 0;
+    paintSummary();
   }
-  var countSel = el('countSel'), mixViews = el('mixViews');
+  /* One line above Begin that says what is about to happen. */
+  function paintSummary() {
+    var base = basePool(state.mode), n = +el('countSel').value || 0;
+    var count = (n && n < base.length) ? n + ' at random' : 'all ' + base.length;
+    var time = state.limit ? (state.limit >= 60 ? (state.limit / 60) + ' min' : state.limit + ' s') + ' each' : 'no time limit';
+    var modeName = { name: 'Name it', find: 'Find it', describe: 'Describe it' }[state.mode] || state.mode;
+    var parts = [modeName, count, time];
+    if ((state.views || []).length > 1) parts.push(isMixed() ? 'shuffled across views' : 'one view at a time');
+    el('summary').textContent = parts.join(' \u00b7 ');
+  }
+  var countSel = el('countSel');
   var savedCount = store.get('oo.quiz.count');
   if (savedCount !== null) { countSel.value = savedCount; if (countSel.value !== savedCount) countSel.value = '0'; }
   countSel.addEventListener('change', function () { store.set('oo.quiz.count', countSel.value); paintCount(); });
-  mixViews.checked = store.get('oo.quiz.mix') === '1';
-  mixViews.addEventListener('change', function () { store.set('oo.quiz.mix', mixViews.checked ? '1' : '0'); });
+  setRadio('order', store.get('oo.quiz.mix') === '1' ? 'mixed' : 'blocked');
+  document.querySelectorAll('input[name="order"]').forEach(function (r) {
+    r.addEventListener('change', function () { store.set('oo.quiz.mix', isMixed() ? '1' : '0'); paintSummary(); });
+  });
   paintMode();
 
   /* ---------- which structures: a set of views, one view, or the chooser ---------- */
@@ -1115,7 +1179,7 @@
       paintCount();
     }).catch(function (err) {
       el('startTitle').textContent = 'Could not load the structure set';
-      el('screenStart').querySelector('p').textContent =
+      el('screenStart').querySelector('.start-sub').textContent =
         'A data file failed to load (' + err.message + '). '
         + 'If you opened this file directly from disk, run a local server instead \u2014 '
         + 'browsers block fetch() on file:// URLs.';
