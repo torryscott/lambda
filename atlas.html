@@ -180,12 +180,8 @@
     gap: 14px;
     align-items: start;
   }
-  /* Wide screens: the definition reads in a column beside the plate, so it
-     never covers tissue. Narrow screens: it sits under the plate. */
-  @media (min-width: 1000px) {
-    .atlas-card { grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); }
-    .detail { position: sticky; top: 12px; }
-  }
+  /* The definition reads under the plate on every screen, so the figure can
+     take the full width of the card. */
   .detail {
     background: var(--bg, #f4f6f9); border: 1px solid var(--rule); border-radius: 12px;
     padding: 12px 14px 13px; min-height: 96px;
@@ -402,9 +398,12 @@
   /* ---------- tab strip: the other views in this group ---------- */
   .view-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
   .view-tabs a {
-    text-decoration: none; color: var(--ink-soft); font-weight: 600; font-size: .88rem; padding: 6px 12px;
+    display: inline-flex; align-items: center; gap: 8px;
+    text-decoration: none; color: var(--ink-soft); font-weight: 600; font-size: .88rem; padding: 4px 12px 4px 4px;
     border-radius: 999px; border: 1.5px solid var(--rule-strong); background: var(--panel);
   }
+  .view-tabs img { width: 48px; height: 34px; object-fit: cover; border-radius: 999px; background: #fff; flex: none; }
+  @media (max-width: 720px) { .view-tabs img { width: 40px; height: 28px; } }
   .view-tabs a:hover { border-color: var(--accent); color: var(--accent); }
   .view-tabs a[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: #fff; }
   .view-tabs a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -686,7 +685,7 @@ function clearPinned() {
 
 // Mode toggle: a radio group, so one tab stop and arrow keys move the choice.
 const modeBtns = Array.from(document.querySelectorAll('.mode-group button'));
-function setStudyMode(btn, focus) {
+function setStudyMode(btn, focus, persist) {
   modeBtns.forEach(b => {
     const on = b === btn;
     b.classList.toggle('active', on);
@@ -696,14 +695,16 @@ function setStudyMode(btn, focus) {
   stage.classList.remove('mode-show', 'mode-hover', 'mode-hide');
   stage.classList.add('mode-' + btn.dataset.mode);
   if (focus) btn.focus();
+  // a mode the student chose follows them from view to view
+  if (persist) { try { localStorage.setItem('oo.atlas.mode', btn.dataset.mode); } catch (_) {} }
 }
-modeBtns.forEach(btn => btn.addEventListener('click', () => setStudyMode(btn, false)));
+modeBtns.forEach(btn => btn.addEventListener('click', () => setStudyMode(btn, false, true)));
 document.querySelector('.mode-group').addEventListener('keydown', e => {
   const i = modeBtns.findIndex(b => b.classList.contains('active')), n = modeBtns.length;
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setStudyMode(modeBtns[(i + 1) % n], true); }
-  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setStudyMode(modeBtns[(i - 1 + n) % n], true); }
-  else if (e.key === 'Home') { e.preventDefault(); setStudyMode(modeBtns[0], true); }
-  else if (e.key === 'End') { e.preventDefault(); setStudyMode(modeBtns[n - 1], true); }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); setStudyMode(modeBtns[(i + 1) % n], true, true); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); setStudyMode(modeBtns[(i - 1 + n) % n], true, true); }
+  else if (e.key === 'Home') { e.preventDefault(); setStudyMode(modeBtns[0], true, true); }
+  else if (e.key === 'End') { e.preventDefault(); setStudyMode(modeBtns[n - 1], true, true); }
 });
 
 // Expose the image's rendered inline size as a CSS variable so label/dot
@@ -725,12 +726,20 @@ if (!CAN_HOVER) {
   const revealBtn = document.querySelector('.mode-group button[data-mode="hover"]');
   if (revealBtn) {
     revealBtn.textContent = 'Tap to reveal';
-    revealBtn.click();
+    setStudyMode(revealBtn, false, false);   // the touch default, not a choice
   }
   document.getElementById('viewBlurb').textContent =
     "Tap a marker to name the structure. Your instructor's selection determines "
     + 'which structures are shown.';
 }
+
+// A mode chosen earlier wins over the defaults above.
+(function () {
+  let saved = null;
+  try { saved = localStorage.getItem('oo.atlas.mode'); } catch (_) {}
+  const b = saved && modeBtns.find(x => x.dataset.mode === saved);
+  if (b) setStudyMode(b, false, false);
+})();
 
 /* ---------- load the view ---------- */
 
@@ -789,7 +798,11 @@ function renderTabs(id) {
   g.views.forEach(v => {
     const a = document.createElement('a');
     a.href = V.link('atlas.html', { view: v });
-    a.textContent = V.label(v);
+    const img = document.createElement('img');
+    img.src = V.thumb(v); img.alt = ''; img.loading = 'lazy';
+    const span = document.createElement('span');
+    span.textContent = V.label(v);
+    a.appendChild(img); a.appendChild(span);
     if (v === id) a.setAttribute('aria-current', 'page');
     tabs.appendChild(a);
   });
