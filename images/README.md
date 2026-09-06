@@ -75,4 +75,4 @@ for what each view is supposed to show, and as a fallback if clean versions neve
 ## Attribution
 
   Sheep brain specimen photographs by FlowingMind, licensed CC BY 4.0.
-  Source: https://github.com/torryscott/open-ovis
+  Source: https://github.com/torryscott/lambda

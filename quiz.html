@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Open Ovis — Quiz</title>
+<title>Lambda — Quiz</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="description" content="Self-quiz on sheep brain neuroanatomy: identify the marked structure, get feedback, and review what you missed.">
-<link rel="canonical" href="https://torryscott.github.io/open-ovis/quiz.html">
+<link rel="canonical" href="https://torryscott.github.io/lambda/quiz.html">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Open Ovis">
-<meta property="og:title" content="Open Ovis — Quiz">
+<meta property="og:site_name" content="Lambda">
+<meta property="og:title" content="Lambda — Quiz">
 <meta property="og:description" content="Self-quiz on sheep brain neuroanatomy: identify the marked structure, get feedback, and review what you missed.">
-<meta property="og:url" content="https://torryscott.github.io/open-ovis/quiz.html">
-<meta property="og:image" content="https://torryscott.github.io/open-ovis/images/hero/midsagittal.jpg">
+<meta property="og:url" content="https://torryscott.github.io/lambda/quiz.html">
+<meta property="og:image" content="https://torryscott.github.io/lambda/images/hero/midsagittal.jpg">
 <meta property="og:image:alt" content="Midsagittal section of a preserved sheep brain">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -380,7 +380,7 @@
 <a class="skip" href="#main">Skip to content</a>
 
 <header class="top">
-  <div class="brand">Open Ovis<span>.</span></div>
+  <div class="brand">Lambda<span>.</span></div>
   <div class="viewname" id="viewName">—</div>
   <span class="spacer"></span>
   <button class="ghost" id="atlasLink" type="button">Open atlas</button>
@@ -528,7 +528,7 @@
   <p class="sr-only" role="status" aria-live="polite" id="srStatus"></p>
 </main>
 
-<footer class="foot">Open Ovis · sheep brain study guide</footer>
+<footer class="foot">Lambda · sheep brain study guide</footer>
 
 <div class="zoom" id="zoom" role="dialog" aria-modal="true" aria-label="Enlarged view of the plate" hidden>
   <div class="zoom-scroller" id="zoomScroller">
@@ -1120,7 +1120,7 @@
     // No set asked for: the chooser, with counts that honor the instructor's link.
     el('screenStart').hidden = true;
     el('screenChoose').hidden = false;
-    document.title = 'Open Ovis \u2014 Quiz';
+    document.title = 'Lambda \u2014 Quiz';
     el('viewName').textContent = 'Choose a set';
     loadViews(V.all).then(function (datas) {
       var ex = excludedFlags(), count = {};
@@ -1157,7 +1157,7 @@
       state.allowed = [].concat.apply([], state.views.map(function (v) { return v.allowed; }));
 
       var label = VIEW ? datas[0].label : SET === 'all' ? 'Full' : V.group(SET).short;
-      document.title = 'Open Ovis \u2014 ' + label + ' Quiz';
+      document.title = 'Lambda \u2014 ' + label + ' Quiz';
       el('viewName').textContent = label;
       el('startTitle').textContent = label + ' Practicum';
       el('mixWrap').hidden = state.views.length < 2;

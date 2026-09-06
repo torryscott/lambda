@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Open Ovis — Atlas</title>
+<title>Lambda — Atlas</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta name="description" content="Interactive labeled atlas of a dissected sheep brain. Show labels, hover to reveal, or hide markers to test yourself.">
-<link rel="canonical" href="https://torryscott.github.io/open-ovis/atlas.html">
+<link rel="canonical" href="https://torryscott.github.io/lambda/atlas.html">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Open Ovis">
-<meta property="og:title" content="Open Ovis — Atlas">
+<meta property="og:site_name" content="Lambda">
+<meta property="og:title" content="Lambda — Atlas">
 <meta property="og:description" content="Interactive labeled atlas of a dissected sheep brain. Show labels, hover to reveal, or hide markers to test yourself.">
-<meta property="og:url" content="https://torryscott.github.io/open-ovis/atlas.html">
-<meta property="og:image" content="https://torryscott.github.io/open-ovis/images/hero/midsagittal.jpg">
+<meta property="og:url" content="https://torryscott.github.io/lambda/atlas.html">
+<meta property="og:image" content="https://torryscott.github.io/lambda/images/hero/midsagittal.jpg">
 <meta property="og:image:alt" content="Midsagittal section of a preserved sheep brain">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -424,7 +424,7 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="hero">
-  <nav class="hero-eyebrow" aria-label="Site"><a id="homeLink" href="index.html">Open Ovis</a> · <a id="atlasHome" href="atlas.html">Atlas</a><span id="crumb"></span></nav>
+  <nav class="hero-eyebrow" aria-label="Site"><a id="homeLink" href="index.html">Lambda</a> · <a id="atlasHome" href="atlas.html">Atlas</a><span id="crumb"></span></nav>
   <h1 id="viewTitle">Atlas</h1>
   <p id="viewBlurb">Switch between study modes below. Your instructor's selection determines which structures are shown.</p>
 </header>
@@ -478,7 +478,7 @@
   </section>
 </main>
 
-<footer id="foot">Open Ovis · sheep brain study guide</footer>
+<footer id="foot">Lambda · sheep brain study guide</footer>
 
 <script>
 
@@ -854,7 +854,7 @@ document.getElementById('atlasHome').href = V.link('atlas.html', {});
 
 /* No view asked for: offer the groups, then every view. */
 function showChooser() {
-  document.title = 'Open Ovis \u2014 Atlas';
+  document.title = 'Lambda \u2014 Atlas';
   document.getElementById('viewTitle').textContent = 'Atlas';
   document.getElementById('viewBlurb').textContent =
     "Choose a group of views, or a single view below. Your instructor's selection determines which structures are shown.";
@@ -922,9 +922,9 @@ fetch('data/' + view + '.json')
       return { matter: s.matter, about: s.about, flag: s.flag, text: s.name, target: s.target, label: s.label };
     });
 
-    document.title = 'Open Ovis \u2014 ' + data.label + ' Atlas';
+    document.title = 'Lambda \u2014 ' + data.label + ' Atlas';
     document.getElementById('viewTitle').textContent = data.label + ' View';
-    document.getElementById('foot').textContent = 'Open Ovis \u00b7 ' + data.label + ' atlas';
+    document.getElementById('foot').textContent = 'Lambda \u00b7 ' + data.label + ' atlas';
     atlasImg.alt = data.label + ' section of a preserved sheep brain. '
       + 'A list of labeled structures follows the image.';
     atlasImg.addEventListener('load', function () { render(); updateIW(); syncFloat(); });

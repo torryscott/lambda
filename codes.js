@@ -1,4 +1,4 @@
-/* Open Ovis — structure codes and URL flag resolution.
+/* Lambda — structure codes and URL flag resolution.
 
    Every structure has a permanent short code: a view letter and a number.
    A student link hides structures by listing their codes:

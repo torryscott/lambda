@@ -9,7 +9,7 @@
     "Leave qualtrics_im null for plates you haven't uploaded.",
     ""
   ],
-  "pages_base": "https://torryscott.github.io/open-ovis",
+  "pages_base": "https://torryscott.github.io/lambda",
   "qualtrics_base": "https://smcm.pdx1.qualtrics.com/CP/Graphic.php?IM=",
   "plates": {
     "midsagittal": {

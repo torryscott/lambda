@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Straighten a plate — Open Ovis</title>
+<title>Straighten a plate — Lambda</title>
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -127,7 +127,7 @@
   fetch('../data/' + view + '.json')
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (d) {
-      document.title = 'Straighten ' + d.label + ' — Open Ovis';
+      document.title = 'Straighten ' + d.label + ' — Lambda';
       el('title').textContent = 'Straighten ' + d.label;
       img.onload = function () {
         loaded = true;

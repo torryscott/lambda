@@ -1,4 +1,4 @@
-/* Open Ovis — the views and how they group.
+/* Lambda — the views and how they group.
    Shared by the home page, the atlas, and the quiz. A view's label and
    structures live in data/<id>.json; this file only says which views exist
    and which group each belongs to, so the choosers and tab strips agree. */

@@ -1,4 +1,4 @@
-# Open Ovis
+# Lambda
 
 An open sheep brain study guide.
 
