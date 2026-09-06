@@ -322,6 +322,9 @@
   .set { display: block; text-decoration: none; color: var(--ink); padding: 14px; border: 1.5px solid var(--rule-strong); border-radius: 12px; background: var(--panel); }
   .set:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   .set:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .set-thumb { display: block; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; background: #fff; margin-bottom: 10px; border: 1px solid var(--rule); }
+  .set-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .set-thumb.grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; }
   .set strong { display: block; font-size: 1.05rem; }
   .set span { display: block; font-size: .85rem; color: var(--muted); line-height: 1.35; margin: 2px 0 8px; }
   .set em { font-style: normal; font-size: .75rem; color: var(--accent); font-weight: 600; letter-spacing: .04em; }
@@ -1048,11 +1051,11 @@
     };
     if (SET === 'all') {
       items.push(pill(V.link('quiz.html', { set: 'all' }), V.thumb('midsagittal'), 'Everything', true));
-      V.groups.forEach(function (g) { items.push(pill(V.link('quiz.html', { set: g.id }), V.thumb(g.views[0]), g.label, false)); });
+      V.groups.forEach(function (g) { items.push(pill(V.link('quiz.html', { set: g.id }), V.thumb(g.rep), g.label, false)); });
     } else {
       var g = SET ? V.group(SET) : V.groupOf(VIEW);
       if (!g || g.views.length < 2) { tabs.hidden = true; return; }
-      items.push(pill(V.link('quiz.html', { set: g.id }), V.thumb(g.views[0]), 'All ' + g.label.toLowerCase(), !VIEW));
+      items.push(pill(V.link('quiz.html', { set: g.id }), V.thumb(g.rep), 'All ' + g.label.toLowerCase(), !VIEW));
       g.views.forEach(function (v) { items.push(pill(V.link('quiz.html', { view: v }), V.thumb(v), V.label(v), v === VIEW)); });
     }
     items.forEach(function (a) { tabs.appendChild(a); });
@@ -1071,14 +1074,17 @@
       var ex = excludedFlags(), count = {};
       datas.forEach(function (d) { count[d.view] = d.structures.filter(function (s) { return !ex[s.flag]; }).length; });
       var sum = function (vs) { return vs.reduce(function (a, v) { return a + (count[v] || 0); }, 0); };
-      var sets = V.groups.map(function (g) { return { id: g.id, label: g.label, blurb: g.blurb, n: sum(g.views), views: g.views.length }; });
-      sets.push({ id: 'all', label: 'Everything', blurb: 'All twelve views in one run.', n: sum(V.all), views: V.all.length });
+      var sets = V.groups.map(function (g) { return { id: g.id, label: g.label, blurb: g.blurb, n: sum(g.views), views: g.views.length, thumbs: [g.rep] }; });
+      sets.push({ id: 'all', label: 'Everything', blurb: 'All twelve views in one run.', n: sum(V.all), views: V.all.length, thumbs: V.everything });
       var host = el('setCards');
       sets.forEach(function (s) {
         var a = document.createElement('a');
         a.className = 'set';
         a.href = V.link('quiz.html', { set: s.id });
-        a.innerHTML = '<strong>' + s.label + '</strong><span>' + s.blurb + '</span><em>' + s.n + ' structures \u00b7 '
+        // one representative plate, or a two-by-two for Everything
+        var thumb = '<span class="set-thumb' + (s.thumbs.length > 1 ? ' grid' : '') + '">'
+          + s.thumbs.map(function (v) { return '<img src="' + V.thumb(v) + '" alt="" loading="lazy">'; }).join('') + '</span>';
+        a.innerHTML = thumb + '<strong>' + s.label + '</strong><span>' + s.blurb + '</span><em>' + s.n + ' structures \u00b7 '
           + (s.views === 1 ? '1 view' : s.views + ' views') + '</em>';
         host.appendChild(a);
       });

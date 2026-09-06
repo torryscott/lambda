@@ -4,13 +4,13 @@
    and which group each belongs to, so the choosers and tab strips agree. */
 (function () {
   var GROUPS = [
-    { id: 'surface', label: 'Surface views', short: 'Surface',
+    { id: 'surface', label: 'Surface views', short: 'Surface', rep: 'dorsal',
       blurb: 'The intact brain from outside: dorsal, lateral, ventral, posterior, and the lateral view with the cerebellum pulled back.',
       views: ['dorsal', 'lateral', 'ventral', 'posterior-internal', 'pulled-back-lateral'] },
-    { id: 'midsagittal', label: 'Midsagittal', short: 'Midsagittal',
+    { id: 'midsagittal', label: 'Midsagittal', short: 'Midsagittal', rep: 'midsagittal',
       blurb: 'The brain cut down the midline, with the deep structures in profile.',
       views: ['midsagittal'] },
-    { id: 'coronal', label: 'Coronal sections', short: 'Coronal',
+    { id: 'coronal', label: 'Coronal sections', short: 'Coronal', rep: 'coronal-b',
       blurb: 'Six slices from front to back, A through F.',
       views: ['coronal-a', 'coronal-b', 'coronal-c', 'coronal-d', 'coronal-e', 'coronal-f'] }
   ];
@@ -27,6 +27,7 @@
   window.OPENOVIS_VIEWS = {
     groups: GROUPS,
     all: ALL,
+    everything: ['dorsal', 'ventral', 'midsagittal', 'coronal-b'],   // the four that stand for the whole set
     label: function (id) { return LABELS[id] || id; },
     group: function (id) { for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].id === id) return GROUPS[i]; return null; },
     groupOf: function (viewId) { for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].views.indexOf(viewId) > -1) return GROUPS[i]; return null; },

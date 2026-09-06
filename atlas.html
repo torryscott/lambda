@@ -775,7 +775,7 @@ function showChooser() {
     const a = document.createElement('a');
     a.className = 'group-card';
     a.href = V.link('atlas.html', { group: g.id });
-    a.innerHTML = '<img src="' + V.thumb(g.views[0]) + '" alt="" loading="lazy"><span class="gc-body"><strong>' + g.label
+    a.innerHTML = '<img src="' + V.thumb(g.rep) + '" alt="" loading="lazy"><span class="gc-body"><strong>' + g.label
       + '</strong><span>' + g.blurb + '</span><em>' + (g.views.length === 1 ? '1 view' : g.views.length + ' views') + '</em></span>';
     cards.appendChild(a);
   });
