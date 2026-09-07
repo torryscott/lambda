@@ -207,9 +207,10 @@ Everything here, the code, the definitions, and the photographs, is licensed und
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
 (CC BY-NC-SA 4.0). See [`LICENSE`](LICENSE).
 
-In short: use it, adapt it, and share it for teaching or any other non-commercial purpose;
-credit Torry Dennis; and release what you build from it under the same license. Selling it,
-or anything derived from it, is not permitted.
+In short: it's free with attribution. Use it, adapt it, and share it for teaching or any
+other non-commercial purpose; credit Torry Dennis; and release what you build from it under
+the same license. Selling it, or anything derived from it, is not permitted. Commercial use
+requires a separate license from the author; ask by opening an issue here or through GitHub.
 
 The site icon is from Lucide under the ISC license; see [THIRD-PARTY.md](THIRD-PARTY.md).
 
