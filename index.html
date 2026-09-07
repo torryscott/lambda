@@ -281,6 +281,7 @@
     <nav aria-label="Site">
       <a href="atlas.html" id="navAtlas">Atlas</a>
       <a href="quiz.html" id="navQuiz">Quiz</a>
+      <a href="glossary.html" id="navGlossary">Glossary</a>
       <a href="https://github.com/torryscott/lambda">Source</a>
     </nav>
   </header>
@@ -338,8 +339,8 @@
       </div>
       <div>
         <h2>Accessibility</h2>
-        <p>Built to WCAG 2.1 AA. Keyboard, screen reader, adjustable timer, and a text view of every
-           figure. <a href="accessibility.html">Read the statement.</a></p>
+        <p>Built to WCAG 2.1 AA. Keyboard, screen reader, adjustable timer, and a glossary of every
+           structure. <a href="accessibility.html">Read the statement.</a></p>
       </div>
       <div>
         <h2>Open source</h2>
@@ -362,6 +363,7 @@
   var qs = p.toString() ? '?' + p.toString() : '';
   ['ctaAtlas', 'navAtlas'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'atlas.html' + qs; });
   ['ctaQuiz', 'navQuiz'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'quiz.html' + qs; });
+  var g = document.getElementById('navGlossary'); if (g) g.href = 'glossary.html' + qs;
 
   var excludedCount = Object.keys(OPENOVIS.excludedMap()).length;   // honors ?off= and the long form
   if (excludedCount) {

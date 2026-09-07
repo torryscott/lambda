@@ -264,7 +264,7 @@
       "flag": "inc_mid_anterior_commissure",
       "name": "Anterior Commissure",
       "matter": "White Matter",
-      "about": "The anterior commissure is a small bundle of fibers that crosses the midline, connecting the amygdalae, olfactory areas, and parts of the temporal lobe across hemispheres. From a midsagittal view, it appears as a small while dot below the anterior portion of the fornix and anterior to the thalamus.",
+      "about": "The anterior commissure is a small bundle of fibers that crosses the midline, connecting the amygdalae, olfactory areas, and parts of the temporal lobe across hemispheres. From a midsagittal view, it appears as a small white dot below the anterior portion of the fornix and anterior to the thalamus.",
       "target": {
         "x": 0.3005,
         "y": 0.5638

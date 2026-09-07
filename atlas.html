@@ -142,21 +142,7 @@
     border: 1.5px solid var(--rule-strong); background: var(--panel); color: var(--ink); cursor: pointer;
   }
   .list-btn:hover { border-color: var(--accent); }
-  .list-btn[aria-pressed="true"] { background: var(--accent); color: #fff; border-color: var(--accent); }
   .list-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  .list-card {
-    margin-top: 14px; background: var(--panel); border: 1px solid var(--rule);
-    border-radius: var(--radius-lg); padding: 18px 22px; box-shadow: var(--shadow-md);
-  }
-  .list-card:focus { outline: none; }
-  .list-card h2 { font-family: 'Libre Caslon Text', 'Iowan Old Style', Georgia, serif; font-weight: 400; font-size: 1.25rem; margin: 0 0 10px; }
-  .list-card dl { margin: 0; }
-  .list-card dt { font-weight: 600; margin-top: 12px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-  .list-card dt small {
-    font-size: .66rem; letter-spacing: .06em; text-transform: uppercase; font-weight: 600;
-    color: var(--accent); background: var(--accent-soft, #e8eef6); padding: 2px 8px; border-radius: 999px;
-  }
-  .list-card dd { margin: 3px 0 0; color: var(--ink-soft); line-height: 1.5; }
   .skip { position: absolute; left: -999px; top: 8px; z-index: 100; padding: 8px 12px; background: var(--accent); color: #fff; border-radius: 8px; font-weight: 600; text-decoration: none; }
   .skip:focus { left: 8px; outline: 3px solid #fff; outline-offset: 2px; }
   .count-chip {
@@ -448,6 +434,7 @@
     <nav aria-label="Site">
       <a href="atlas.html" id="navAtlas" aria-current="page">Atlas</a>
       <a href="quiz.html" id="navQuiz">Quiz</a>
+      <a href="glossary.html" id="navGlossary">Glossary</a>
       <a href="https://github.com/torryscott/lambda">Source</a>
     </nav>
   </div>
@@ -471,7 +458,6 @@
       <button data-mode="hover"                role="radio" aria-checked="false" type="button" tabindex="-1">Hover to reveal</button>
       <button data-mode="hide"                 role="radio" aria-checked="false" type="button" tabindex="-1">Hide markers</button>
     </div>
-    <button class="list-btn" id="listBtn" type="button" aria-pressed="false" aria-controls="listView">List view</button>
     <a class="list-btn quiz-link" id="quizLink" href="quiz.html">Quiz this view</a>
     <span class="spacer"></span>
     <span class="count-chip" aria-live="polite" aria-atomic="true">
@@ -496,13 +482,6 @@
     <ul id="srList" class="sr-only" aria-live="polite"></ul>
   </div>
 
-  <!-- The figure as text: every shown structure with its tissue type and
-       definition. A text alternative for the labeled photo, and simply easier
-       to read on a small screen. -->
-  <section class="list-card" id="listView" hidden aria-labelledby="listTitle" tabindex="-1">
-    <h2 id="listTitle">Structures in this view</h2>
-    <dl id="listBody"></dl>
-  </section>
 </main>
 
 <footer id="foot">Lambda · sheep brain study guide</footer>
@@ -640,32 +619,7 @@ function render() {
 
   buildFigure(stage, visible);
 
-  // list view: the same structures as text
-  const body = document.getElementById('listBody');
-  body.innerHTML = '';
-  visible.forEach(m => {
-    const dt = document.createElement('dt');
-    dt.textContent = m.text;
-    if (m.matter) { const chip = document.createElement('small'); chip.textContent = m.matter; dt.appendChild(chip); }
-    const dd = document.createElement('dd');
-    dd.textContent = m.about || 'No description yet.';
-    body.appendChild(dt); body.appendChild(dd);
-  });
 }
-
-/* List view toggle, remembered on this device. */
-(function () {
-  const btn = document.getElementById('listBtn'), panel = document.getElementById('listView');
-  let on = false;
-  try { on = localStorage.getItem('oo.atlas.list') === '1'; } catch (_) {}
-  function paint() { panel.hidden = !on; btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
-  btn.addEventListener('click', () => {
-    on = !on; paint();
-    try { localStorage.setItem('oo.atlas.list', on ? '1' : '0'); } catch (_) {}
-    if (on) panel.focus();
-  });
-  paint();
-})();
 
 /* Escape dismisses a hover or pinned definition. */
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { clearPinned(); hidePop(); } });
@@ -880,6 +834,7 @@ document.getElementById('homeLink').href = V.link('index.html', {});
 document.getElementById('atlasHome').href = V.link('atlas.html', {});
 document.getElementById('navAtlas').href = V.link('atlas.html', {});
 document.getElementById('navQuiz').href = V.link('quiz.html', {});
+document.getElementById('navGlossary').href = V.link('glossary.html', {});
 
 /* No view asked for: offer the groups, then every view. */
 function showChooser() {
@@ -889,7 +844,6 @@ function showChooser() {
     "Choose a group of views, or a single view below. Your instructor's selection determines which structures are shown.";
   document.querySelector('.controls-card').hidden = true;
   document.querySelector('.atlas-card').hidden = true;
-  document.getElementById('listView').hidden = true;
   document.getElementById('chooser').hidden = false;
   const cards = document.getElementById('groupCards');
   V.groups.forEach(g => {

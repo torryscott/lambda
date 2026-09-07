@@ -411,6 +411,7 @@
     <nav aria-label="Site">
       <a href="atlas.html" id="navAtlas">Atlas</a>
       <a href="quiz.html" id="navQuiz" aria-current="page">Quiz</a>
+      <a href="glossary.html" id="navGlossary">Glossary</a>
       <a href="https://github.com/torryscott/lambda">Source</a>
     </nav>
   </div>
@@ -1101,6 +1102,7 @@
   el('homeLink').href = V.link('index.html', {});   // keeps the instructor's selection
   el('navAtlas').href = V.link('atlas.html', {});
   el('navQuiz').href = V.link('quiz.html', {});
+  el('navGlossary').href = V.link('glossary.html', {});
 
   function openAtlas() {
     window.location.href = VIEW ? V.link('atlas.html', { view: VIEW })
