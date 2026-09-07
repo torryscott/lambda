@@ -68,7 +68,7 @@
     {
       "flag": "inc_lat_cerebellum",
       "name": "Cerebellum",
-      "matter": "Gray Matter",
+      "matter": "Gray and White Matter",
       "about": "The folded mass caudal and ventral to the occipital lobe. It coordinates posture, balance, and the timing of movement.",
       "accept": [
         "cerebellar cortex"
@@ -156,7 +156,7 @@
     {
       "flag": "inc_lat_pons",
       "name": "Pons",
-      "matter": "Gray Matter",
+      "matter": "Gray and White Matter",
       "about": "The bulge on the ventral brainstem between the midbrain and the medulla. Its transverse fibers carry cortical information to the cerebellum.",
       "accept": [
         "pons varolii"
@@ -173,7 +173,7 @@
     {
       "flag": "inc_lat_medulla",
       "name": "Medulla",
-      "matter": "White Matter",
+      "matter": "Gray and White Matter",
       "about": "The most caudal part of the brainstem, continuous with the spinal cord. It houses centers for breathing, heart rate, and other vital reflexes.",
       "accept": [
         "medulla oblongata",

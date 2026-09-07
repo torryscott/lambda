@@ -45,7 +45,7 @@
     {
       "flag": "inc_vent_trapezoid_body",
       "name": "Trapezoid Body",
-      "matter": "Gray Matter",
+      "matter": "White Matter",
       "about": "The transverse band of auditory fibers crossing the ventral brainstem just caudal to the pons.",
       "accept": [
         "corpus trapezoideum"
@@ -168,7 +168,7 @@
     {
       "flag": "inc_vent_medulla",
       "name": "Medulla",
-      "matter": "White Matter",
+      "matter": "Gray and White Matter",
       "about": "The most caudal part of the brainstem, continuous with the spinal cord. It houses centers for breathing, heart rate, and other vital reflexes.",
       "accept": [
         "medulla oblongata",
@@ -186,7 +186,7 @@
     {
       "flag": "inc_vent_pons",
       "name": "Pons",
-      "matter": "Gray Matter",
+      "matter": "Gray and White Matter",
       "about": "The bulge on the ventral brainstem between the midbrain and the medulla. Its transverse fibers carry cortical information to the cerebellum.",
       "accept": [
         "pons varolii"

@@ -355,7 +355,7 @@
     {
       "flag": "inc_mid_pons",
       "name": "Pons",
-      "matter": "Gray Matter",
+      "matter": "Gray and White Matter",
       "about": "The pons is a brainstem structure that relays signals between the cerebrum and cerebellum.",
       "target": {
         "x": 0.6008,
@@ -386,7 +386,7 @@
     {
       "flag": "inc_mid_cerebellum",
       "name": "Cerebellum",
-      "matter": "White Matter",
+      "matter": "Gray and White Matter",
       "about": "The cerebellum is a hindbrain structure that coordinates voluntary movement, balance, and motor learning.",
       "target": {
         "x": 0.9046,
@@ -418,7 +418,7 @@
     {
       "flag": "inc_mid_medulla",
       "name": "Medulla",
-      "matter": "White Matter",
+      "matter": "Gray and White Matter",
       "about": "The medulla oblongata is the caudal-most region of the brainstem, regulating autonomic functions such as breathing, heart rate, and blood pressure.",
       "target": {
         "x": 0.7403,
