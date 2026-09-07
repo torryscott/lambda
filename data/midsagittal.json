@@ -77,7 +77,7 @@
       "flag": "inc_mid_cerebral_aqueduct",
       "name": "Cerebral Aqueduct",
       "matter": "a Cavity",
-      "about": "The cerebral aqueduct is a narrow canal that runs through the midbrain (mesencephalon), connecting the third and forth ventricles.",
+      "about": "The cerebral aqueduct is a narrow canal that runs through the midbrain (mesencephalon), connecting the third and fourth ventricles.",
       "target": {
         "x": 0.5658,
         "y": 0.5515
@@ -97,7 +97,7 @@
       "flag": "inc_mid_third_ventricle",
       "name": "Third Ventricle",
       "matter": "a Cavity",
-      "about": "The third ventricle is a more narrow cavity spanning the midline in the area around the thalamus",
+      "about": "The third ventricle is the narrow midline cavity between the two halves of the thalamus.",
       "target": {
         "x": 0.3265,
         "y": 0.4867
