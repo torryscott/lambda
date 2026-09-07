@@ -203,11 +203,15 @@ is still to be done.
 
 ## License
 
-- **Code:** MIT. See [`LICENSE`](LICENSE).
-- **Images:** CC BY 4.0. See [`images/LICENSE`](images/LICENSE). Reuse and adapt freely
-  with attribution.
+Everything here, the code, the definitions, and the photographs, is licensed under
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+(CC BY-NC-SA 4.0). See [`LICENSE`](LICENSE).
 
-The site icon is from Lucide; see [THIRD-PARTY.md](THIRD-PARTY.md).
+In short: use it, adapt it, and share it for teaching or any other non-commercial purpose;
+credit Torry Dennis; and release what you build from it under the same license. Selling it,
+or anything derived from it, is not permitted.
+
+The site icon is from Lucide under the ISC license; see [THIRD-PARTY.md](THIRD-PARTY.md).
 
 ## Citation
 

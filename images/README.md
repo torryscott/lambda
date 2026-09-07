@@ -2,7 +2,7 @@
 
 Photographs of a preserved sheep brain, dissected for the lab practicum.
 
-Photographed by Torry Dennis. Licensed CC BY 4.0 — see [`LICENSE`](LICENSE).
+Photographed by Torry Dennis. Licensed CC BY-NC-SA 4.0, like the rest of the repository — see [`LICENSE`](LICENSE).
 
 ---
 
@@ -74,5 +74,5 @@ for what each view is supposed to show, and as a fallback if clean versions neve
 
 ## Attribution
 
-  Sheep brain specimen photographs by Torry Dennis, licensed CC BY 4.0.
+  Sheep brain specimen photographs by Torry Dennis, licensed CC BY-NC-SA 4.0.
   Source: https://github.com/torryscott/lambda
