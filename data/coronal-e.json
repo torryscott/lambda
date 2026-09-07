@@ -41,13 +41,14 @@
     },
     {
       "flag": "inc_cor_lateral_geniculate",
-      "name": "Lateral Geniculate",
+      "name": "Lateral Geniculate Nucleus",
       "matter": "Gray Matter",
       "about": "The thalamic relay for vision, receiving the optic tract and projecting to the visual cortex.",
       "accept": [
         "lateral geniculate nucleus",
         "lateral geniculate body",
-        "lgn"
+        "lgn",
+        "lateral geniculate"
       ],
       "target": {
         "x": 0.6582,
@@ -78,13 +79,14 @@
     },
     {
       "flag": "inc_cor_medial_geniculate",
-      "name": "Medial Geniculate",
+      "name": "Medial Geniculate Nucleus",
       "matter": "Gray Matter",
       "about": "The thalamic relay for hearing, receiving from the inferior colliculus and projecting to the auditory cortex.",
       "accept": [
         "medial geniculate nucleus",
         "medial geniculate body",
-        "mgn"
+        "mgn",
+        "medial geniculate"
       ],
       "target": {
         "x": 0.3396,
