@@ -86,7 +86,7 @@
       "flag": "inc_lat_insula",
       "name": "Insula",
       "matter": "Gray Matter",
-      "about": "Cortex buried in the depth of the lateral sulcus, overlapped by the surrounding lobes. It contributes to visceral sensation and autonomic control.",
+      "about": "Cortex buried in the depth of the lateral sulcus, which in the sheep is called the sylvian (or pseudosylvian) sulcus, overlapped by the surrounding lobes. It contributes to visceral sensation and autonomic control.",
       "accept": [
         "insular cortex",
         "island of reil"
@@ -104,7 +104,7 @@
       "flag": "inc_lat_temporal_lobe",
       "name": "Temporal Lobe",
       "matter": "a Lobe",
-      "about": "The ventrolateral lobe of the cerebrum, below the lateral sulcus. It carries auditory cortex and, deeper, the hippocampus.",
+      "about": "The ventrolateral lobe of the cerebrum, below the lateral sulcus, called the sylvian (or pseudosylvian) sulcus in the sheep. It carries auditory cortex and, deeper, the hippocampus.",
       "accept": [],
       "target": {
         "x": 0.4272,

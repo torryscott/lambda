@@ -281,7 +281,7 @@
       "flag": "inc_mid_central_sulcus",
       "name": "Central Sulcus",
       "matter": "a Groove",
-      "about": "The central sulcus is a major sulcus separating the frontal lobe from the parietal lobe.",
+      "about": "The central sulcus is a major sulcus separating the frontal lobe from the parietal lobe. The name is borrowed from the primate brain; the sheep has no central sulcus in the human sense, and its closest equivalent is the cruciate sulcus.",
       "target": {
         "x": 0.1443,
         "y": 0.2781
@@ -300,7 +300,7 @@
       "flag": "inc_mid_precentral_gyrus",
       "name": "Precentral Gyrus",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The precentral gyrus is the location of the primary motor cortex.",
+      "about": "The precentral gyrus is the location of the primary motor cortex. The name is a primate convention: on the sheep brain the motor cortex lies around the cruciate sulcus, and here it is the medial continuation of that region.",
       "target": {
         "x": 0.1188,
         "y": 0.2947
@@ -319,7 +319,7 @@
       "flag": "inc_mid_postcentral_gyrus",
       "name": "Postcentral Gyrus",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The postcentral gyrus is the location of the primary somatosensory cortex.",
+      "about": "The postcentral gyrus is the location of the primary somatosensory cortex. The name is a primate convention: on the sheep brain the somatosensory cortex lies just caudal to the cruciate sulcus, and here it is the medial continuation of that region.",
       "target": {
         "x": 0.1644,
         "y": 0.244

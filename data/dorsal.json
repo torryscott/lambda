@@ -39,7 +39,7 @@
       "flag": "inc_dorsal_precentral_gyrus",
       "name": "Precentral Gyrus",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The gyrus immediately rostral to the central sulcus. It is the primary motor cortex, the origin of descending motor commands to the body.",
+      "about": "The gyrus immediately rostral to the central sulcus. It is the primary motor cortex, the origin of descending motor commands to the body. The name is a primate convention; in the sheep the motor cortex lies around the cruciate sulcus rather than on a distinct gyrus.",
       "target": {
         "x": 0.785,
         "y": 0.41
@@ -78,7 +78,7 @@
       "flag": "inc_dorsal_postcentral_gyrus",
       "name": "Postcentral Gyrus",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The gyrus immediately caudal to the central sulcus. It is the primary somatosensory cortex, where touch, pressure, and proprioceptive information from the body is first processed.",
+      "about": "The gyrus immediately caudal to the central sulcus. It is the primary somatosensory cortex, where touch, pressure, and proprioceptive information from the body is first processed. The name is a primate convention; in the sheep the somatosensory cortex lies just caudal to the cruciate sulcus rather than on a distinct gyrus.",
       "target": {
         "x": 0.7556,
         "y": 0.4072
