@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: Open Ovis: An Open Sheep Brain Study Guide
+title: "Lambda: An Open Sheep Brain Study Guide"
 message: >-
   If you use this module in your teaching or reference it in
   scholarship, please cite it as below.
@@ -9,22 +9,20 @@ authors:
     # Add a personal author alongside the org if you'd prefer to be cited by name:
     # - given-names: ""
     #   family-names: ""
-    #   affiliation: "St. Mary's College of Maryland"
     #   orcid: "https://orcid.org/0000-0000-0000-0000"
-repository-code: "https://github.com/torryscott/open-ovis"
+repository-code: "https://github.com/torryscott/lambda"
 abstract: >-
-  A customizable neuroanatomy practicum for Qualtrics. Students
-  identify structures on photographs of a preserved sheep brain
-  across three anatomical views. Instructors select which
-  structures are included via URL parameters, without editing or
-  duplicating the survey. Includes an interactive labeled atlas
-  with keyboard- and screen-reader-accessible study modes.
+  An open sheep brain study guide: an interactive labeled atlas of a
+  preserved sheep brain across twelve views, a self-quiz on the same
+  structures, and a glossary of every structure with its definition.
+  Instructors choose which structures are included through a link,
+  without editing anything. Built to WCAG 2.1 AA, with keyboard- and
+  screen-reader-accessible study modes.
 keywords:
   - neuroanatomy
   - anatomy education
-  - Qualtrics
   - sheep brain
   - interactive atlas
   - open educational resources
 license: MIT
-license-url: "https://github.com/torryscott/open-ovis/blob/main/LICENSE"
+license-url: "https://github.com/torryscott/lambda/blob/main/LICENSE"
