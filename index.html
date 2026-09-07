@@ -236,7 +236,9 @@
     margin-top: 32px; border-top: 1px solid var(--rule); padding: 36px 0 44px;
     color: var(--ink-2); font-size: .92rem;
   }
-  footer .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
+  footer .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+  @media (max-width: 1000px) { footer .cols { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { footer .cols { grid-template-columns: 1fr; } }
   footer h2 {
     font-family: var(--mono); font-size: .72rem; letter-spacing: .13em; text-transform: uppercase;
     color: var(--muted); font-weight: 500; margin: 0 0 8px;
@@ -342,6 +344,11 @@
         <p>Free with attribution for teaching, code and photographs alike, under
            CC BY-NC-SA 4.0.
            <a href="https://github.com/torryscott/lambda">github.com/torryscott/lambda</a></p>
+      </div>
+      <div>
+        <h2>Corrections and ideas</h2>
+        <p>Spotted a mislabeled structure, a definition to fix, or a feature you'd want?
+           <a href="https://github.com/torryscott/lambda/issues/new/choose">Open an issue on GitHub.</a></p>
       </div>
     </div>
   </footer>

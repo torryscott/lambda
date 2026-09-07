@@ -1,0 +1,43 @@
+name: Something is wrong
+description: A mislabeled structure, a definition to fix, a marker in the wrong place, or anything else that is incorrect.
+title: "Correction: "
+labels: [correction]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks. A specific report is easy to act on, so say exactly where you saw it and what it should be.
+  - type: dropdown
+    id: page
+    attributes:
+      label: Where
+      options:
+        - Atlas
+        - Quiz
+        - Glossary
+        - Link builder
+        - Home page
+        - Somewhere else
+    validations:
+      required: true
+  - type: input
+    id: view
+    attributes:
+      label: View
+      description: If it is on a plate, which one (Dorsal, Midsagittal, Coronal C, ...).
+  - type: input
+    id: structure
+    attributes:
+      label: Structure
+      description: The structure as it is currently labeled.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong
+      placeholder: The dot sits on the ... rather than the ...; the definition says ... but ...
+    validations:
+      required: true
+  - type: textarea
+    id: correct
+    attributes:
+      label: What it should say or show
+      description: If you can, cite a source (atlas, textbook, page).

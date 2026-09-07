@@ -1,0 +1,24 @@
+name: Feature request
+description: Something you would want Lambda to do, or do differently.
+title: "Request: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What you would like
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it would help
+      description: What you or your students are trying to do that this would make easier.
+  - type: dropdown
+    id: role
+    attributes:
+      label: You are
+      options:
+        - An instructor
+        - A student
+        - Someone else

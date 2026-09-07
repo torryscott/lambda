@@ -221,6 +221,7 @@ see [`CITATION.cff`](CITATION.cff).
 
 ## Contributing
 
-Adaptations to other specimens, additional views, better definitions, and accessibility fixes
-are all welcome. If you build an atlas for a species this doesn't cover, a pull request would
+Corrections and feature requests go in [Issues](https://github.com/torryscott/lambda/issues/new/choose);
+there is a template for each. Adaptations to other specimens, additional views, better
+definitions, and accessibility fixes are all welcome. If you build an atlas for a species this doesn't cover, a pull request would
 be useful to other instructors.

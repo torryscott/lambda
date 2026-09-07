@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Accessibility problem
+    url: https://torryscott.github.io/lambda/accessibility.html
+    about: The accessibility statement says what is covered and how to describe a problem. Report one with "Something is wrong" below.
