@@ -9,7 +9,7 @@ Students identify structures on photographs of a preserved sheep brain across th
 anatomical views. Instructors decide which structures are included **without editing
 or duplicating the survey**.
 
-Built for the Neurobiology lab practicum at St. Mary's College of Maryland, and released
+Built for an undergraduate neurobiology lab practicum, and released
 so other instructors can run it, adapt it, or extend it to their own specimens.
 
 
