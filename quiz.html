@@ -283,7 +283,7 @@
   @media (hover: hover) and (pointer: fine) { .zoom-hint { display: none; } }
 
   /* ---------- quiz mode chooser ---------- */
-  .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; text-align: left; }
+  .modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0; text-align: left; }
   .mode {
     font: inherit; text-align: left; padding: 0; border-radius: 12px; cursor: pointer; overflow: hidden;
     border: 1.5px solid var(--rule-strong); background: var(--panel); color: var(--ink);
@@ -439,11 +439,8 @@
       <button type="button" class="mode active" data-mode="name" role="radio" aria-checked="true" tabindex="0">
         <strong>Name it</strong><span>A pulsing dot marks a structure on the photo. You type its name.</span>
       </button>
-      <button type="button" class="mode" data-mode="find" role="radio" aria-checked="false" tabindex="-1">
-        <strong>Find it</strong><span>You are given a name. You tap where it is on the photo.</span>
-      </button>
       <button type="button" class="mode" data-mode="describe" role="radio" aria-checked="false" tabindex="-1">
-        <strong>Describe it</strong><span>You read the definition. You type its name. No image needed.</span>
+        <strong>By definition</strong><span>You read the definition. You type the structure's name. No image needed.</span>
       </button>
     </div>
 
@@ -990,7 +987,9 @@
   });
 
   // Mode: chosen on the start screen; ?mode=find preselects it for a shared link.
-  var MODES = ['name', 'find', 'describe'];
+  // Find it is built but not offered yet: it is left out of the chooser and
+  // a ?mode=find link falls back to Name it.
+  var MODES = ['name', 'describe'];
   var urlMode = new URLSearchParams(window.location.search).get('mode');
   state.mode = MODES.indexOf(urlMode) > -1 ? urlMode : 'name';
   function paintMode() {
@@ -1083,7 +1082,7 @@
     var base = basePool(state.mode);
     var count = 'all ' + base.length;
     var time = state.limit ? (state.limit >= 60 ? (state.limit / 60) + ' min' : state.limit + ' s') + ' each' : 'no time limit';
-    var modeName = { name: 'Name it', find: 'Find it', describe: 'Describe it' }[state.mode] || state.mode;
+    var modeName = { name: 'Name it', find: 'Find it', describe: 'By definition' }[state.mode] || state.mode;
     var parts = [modeName, count, time];
     if ((state.views || []).length > 1) parts.push(isMixed() ? 'shuffled across views' : 'one view at a time');
     el('summary').textContent = parts.join(' \u00b7 ');
