@@ -163,7 +163,7 @@
         if (!e.matter && s.matter) e.matter = s.matter;
         if ((s.about || '').length > e.about.length) e.about = s.about || '';
         (s.accept || []).forEach(a => { if (a && a.trim().toLowerCase() !== key) e.accept.add(a.trim()); });
-        if (!e.views.some(v => v.id === d.view)) e.views.push({ id: d.view, label: d.label });
+        if (!e.views.some(v => v.id === d.view)) e.views.push({ id: d.view, label: d.label, flag: s.flag });
         if (g) e.groups.add(g.id);
       });
     });
@@ -199,7 +199,7 @@
         }
         const art = document.createElement('article'); art.className = 'entry';
         const also = e.accept.size ? '<p class="also">Also called ' + esc(Array.from(e.accept).join(', ')) + '.</p>' : '';
-        const views = e.views.map(v => '<a href="' + V.link('atlas.html', { view: v.id }) + '"><img src="' + V.thumb(v.id) + '" alt="" loading="lazy">' + esc(v.label) + '</a>').join('');
+        const views = e.views.map(v => '<a href="' + V.link('atlas.html', { view: v.id, pin: v.flag }) + '" title="Open the ' + esc(v.label) + ' view with ' + esc(e.name) + ' shown"><img src="' + V.thumb(v.id) + '" alt="" loading="lazy">' + esc(v.label) + '</a>').join('');
         art.innerHTML = '<div class="entry-head"><h3>' + hi(e.name, term) + '</h3>' + (e.matter ? '<span class="chip">' + esc(e.matter) + '</span>' : '') + '</div>'
           + '<p>' + (e.about ? hi(e.about, term) : 'No definition yet.') + '</p>' + also
           + '<div class="views" aria-label="Appears in">' + views + '</div>';

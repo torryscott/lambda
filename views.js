@@ -36,7 +36,7 @@
        replaces the view / group / set part with what is asked for. */
     link: function (page, set) {
       var p = new URLSearchParams(window.location.search);
-      ['view', 'group', 'set'].forEach(function (k) { p.delete(k); });
+      ['view', 'group', 'set', 'pin'].forEach(function (k) { p.delete(k); });
       Object.keys(set || {}).forEach(function (k) { if (set[k]) p.set(k, set[k]); });
       var qs = p.toString();
       return page + (qs ? '?' + qs : '');

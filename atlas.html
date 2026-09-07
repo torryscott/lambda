@@ -910,7 +910,18 @@ fetch('data/' + view + '.json')
     document.getElementById('foot').textContent = 'Lambda \u00b7 ' + data.label + ' atlas';
     atlasImg.alt = data.label + ' section of a preserved sheep brain. '
       + 'A list of labeled structures follows the image.';
-    atlasImg.addEventListener('load', function () { render(); updateIW(); syncFloat(); });
+    atlasImg.addEventListener('load', function () {
+      render(); updateIW(); syncFloat();
+      // Arriving from the glossary: reveal mode for this visit (the saved
+      // choice is left alone) with the named structure already picked.
+      const pin = params.get('pin');
+      if (pin) {
+        const hoverBtn = modeBtns.find(b => b.dataset.mode === 'hover');
+        if (hoverBtn) setStudyMode(hoverBtn, false, false);
+        const entry = (stage._entries || []).find(e => e.m.flag === pin);
+        if (entry) togglePinned(entry);
+      }
+    });
     atlasImg.src = data.image;
   })
   .catch(function (err) {
