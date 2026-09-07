@@ -24,7 +24,7 @@ run it, adapt it, or extend it to their own specimens.
 | **Accessibility statement** (`accessibility.html`) | What works, known limitations, and how to report a problem. |
 
 The twelve views fall into three groups, defined once in `views.js`: **Surface views**
-(dorsal, lateral, ventral, posterior, and lateral with the cerebellum pulled back),
+(dorsal, lateral, ventral, posterior, and a retracted lateral view),
 **Midsagittal**, and **Coronal sections** A through F.
 
 ---

@@ -5,7 +5,7 @@
 (function () {
   var GROUPS = [
     { id: 'surface', label: 'Surface views', short: 'Surface', rep: 'dorsal',
-      blurb: 'The intact brain from outside: dorsal, lateral, ventral, posterior, and the lateral view with the cerebellum pulled back.',
+      blurb: 'The intact brain from outside: dorsal, lateral, ventral, posterior, and a retracted lateral view.',
       views: ['dorsal', 'lateral', 'ventral', 'posterior-internal', 'pulled-back-lateral'] },
     { id: 'midsagittal', label: 'Midsagittal', short: 'Midsagittal', rep: 'midsagittal',
       blurb: 'The brain cut down the midline, with the deep structures in profile.',
