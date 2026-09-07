@@ -1,0 +1,12 @@
+{
+  "name": "Lambda — Sheep Brain Study Guide",
+  "short_name": "Lambda",
+  "description": "An open sheep brain atlas, quiz, and glossary.",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "background_color": "#FBFAF7",
+  "theme_color": "#FBFAF7",
+  "display": "browser"
+}

@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Lambda — Quiz</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Lambda">
+<meta name="theme-color" content="#FBFAF7">
 <meta name="description" content="Self-quiz on sheep brain neuroanatomy: identify the marked structure, get feedback, and review what you missed.">
 <link rel="canonical" href="https://torryscott.github.io/lambda/quiz.html">
 <meta property="og:type" content="website">
@@ -580,6 +584,7 @@
   var QUESTION_SECONDS = 60;      // default; the start screen can change it or turn it off
 
   var el = function (id) { return document.getElementById(id); };
+  var TOUCH = window.matchMedia('(hover: none) and (pointer: coarse)').matches;   // phones and tablets
   var state = {
     data: null,
     pool: [],        // structures in play this run
@@ -774,7 +779,10 @@
     el('answerInput').value = '';
     el('answerInput').disabled = false;
     el('btnSubmit').disabled = false;
-    if (!find) el('answerInput').focus();
+    // On a phone, focusing the box would raise the keyboard over the plate
+    // before the student has seen it, so only keyboard-and-mouse setups get
+    // the cursor placed for them. A tap in the box brings the keyboard up.
+    if (!find && !TOUCH) el('answerInput').focus();
 
     el('plate').alt = 'Sheep brain ' + viewLabel(s).toLowerCase()
       + (describe ? ' section, unmarked.' : find ? ' section. Tap the location of the named structure.' : ' section with one structure marked by a pulsing dot');

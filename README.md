@@ -87,6 +87,8 @@ glossary.html              Every structure with its definition
 accessibility.html         Accessibility statement
 codes.js                   Short codes <-> flags; parses ?off=
 views.js                   The twelve views and their three groups
+favicon.svg, icon-*.png    Site icon; the PNGs are what a phone's home screen uses
+manifest.webmanifest       Name and icons for "Add to Home Screen"
 
 data/<view>.json           One file per view: structures, coordinates, definitions
 images/clean/              Unlabeled plates the atlas draws on
