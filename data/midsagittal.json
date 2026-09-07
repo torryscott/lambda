@@ -197,7 +197,7 @@
       "flag": "inc_mid_inferior_colliculus",
       "name": "Inferior Colliculus",
       "matter": "Gray Matter",
-      "about": "The inferior colliculus is a structure in the tectum of the midbrain, the caudal pair of swellings. It is the main relay in the ascending auditory pathway, sending auditory information on to the medial geniculate nucleus of the thalamus and, from there, to the auditory cortex.",
+      "about": "The inferior colliculus is one of the paired swellings forming the caudal part of the midbrain tectum. It is the principal midbrain relay in the ascending auditory pathway, integrating auditory information and transmitting it to the medial geniculate nucleus of the thalamus, which in turn projects to the auditory cortex.",
       "target": {
         "x": 0.5625,
         "y": 0.5053
