@@ -5,11 +5,9 @@ message: >-
   scholarship, please cite it as below.
 type: software
 authors:
-  - name: "FlowingMind"
-    # Add a personal author alongside the org if you'd prefer to be cited by name:
-    # - given-names: ""
-    #   family-names: ""
-    #   orcid: "https://orcid.org/0000-0000-0000-0000"
+  - given-names: "Torry"
+    family-names: "Dennis"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"
 repository-code: "https://github.com/torryscott/lambda"
 abstract: >-
   An open sheep brain study guide: an interactive labeled atlas of a
