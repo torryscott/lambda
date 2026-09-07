@@ -142,7 +142,7 @@
       "flag": "inc_mid_optic_chiasm",
       "name": "Optic Chiasm",
       "matter": "White Matter",
-      "about": "The optic chiasm is the point at which some of the fibers traveling down the optic nerve cross to the contralateral side of the body on their way to the lateral geniculate nucleus of the thalamus.",
+      "about": "The optic chiasm is the point at which fibers from the nasal half of each retina cross to the opposite side of the brain on their way to the lateral geniculate nucleus of the thalamus. Fibers from the temporal half of each retina stay on their own side.",
       "target": {
         "x": 0.2999,
         "y": 0.6699
@@ -197,7 +197,7 @@
       "flag": "inc_mid_inferior_colliculus",
       "name": "Inferior Colliculus",
       "matter": "Gray Matter",
-      "about": "The inferior colliculus is a structure in the tectum of the midbrain. It relays auditory information to the auditory cortex, and is also involved in generating startle responses as well as basic discrimination of pitch and rhythm.",
+      "about": "The inferior colliculus is a structure in the tectum of the midbrain, the caudal pair of swellings. It is the main relay in the ascending auditory pathway, sending auditory information on to the medial geniculate nucleus of the thalamus and, from there, to the auditory cortex.",
       "target": {
         "x": 0.5625,
         "y": 0.5053
@@ -246,7 +246,7 @@
       "flag": "inc_mid_posterior_commissure",
       "name": "Posterior Commissure",
       "matter": "White Matter",
-      "about": "The posterior commissure is a bundle of fibers connecting the hemispheres, and is found just ventral to the pineal body and habenula.",
+      "about": "The posterior commissure is a bundle of crossing fibers at the back of the third ventricle, connecting the pretectal nuclei and related midbrain structures on the two sides. It lies just ventral to the pineal body and habenula.",
       "target": {
         "x": 0.4559,
         "y": 0.4923
@@ -338,7 +338,7 @@
       "flag": "inc_mid_mammillary_bodies",
       "name": "Mammillary Bodies",
       "matter": "Gray Matter",
-      "about": "The mammillary bodies are paired nuclei in the hypothalamus involved in memory circuits.",
+      "about": "The mammillary bodies are paired nuclei in the caudal hypothalamus, part of the memory circuit that links the hippocampus, through the fornix, to the thalamus. In the sheep they form a single midline swelling on the ventral surface.",
       "target": {
         "x": 0.4137,
         "y": 0.6786

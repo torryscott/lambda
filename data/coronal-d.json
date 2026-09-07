@@ -162,7 +162,7 @@
       "flag": "inc_cor_mammillary_bodies",
       "name": "Mammillary Bodies",
       "matter": "Gray Matter",
-      "about": "The paired rounded nuclei on the ventral hypothalamus that receive hippocampal output through the fornix.",
+      "about": "The paired nuclei on the ventral hypothalamus that receive hippocampal output through the fornix. On the surface of the sheep brain they form a single midline swelling.",
       "accept": [
         "mammillary body",
         "mamillary bodies"
