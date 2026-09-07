@@ -304,10 +304,13 @@
   .field small { display: block; margin-top: 5px; font-size: .8rem; color: var(--muted); }
   .field select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .segs { display: flex; border: 1.5px solid var(--rule-strong); border-radius: 8px; overflow: hidden; }
-  .segs label { flex: 1; position: relative; cursor: pointer; }
+  .segs label { flex: 1; display: flex; position: relative; cursor: pointer; margin: 0; font-weight: 400; }   /* undo the .field label margin, which left a gap under the fill */
   .segs label + label { border-left: 1.5px solid var(--rule-strong); }
   .segs input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  .segs span { display: block; text-align: center; padding: 8px 6px; font-size: .9rem; color: var(--ink-soft); }
+  .segs span { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px 6px; font-size: .9rem; color: var(--ink-soft); }
+  /* The fill goes on the label as well as the span, so the chosen half is painted
+     edge to edge even when the 1.5px border leaves a fractional pixel below the text. */
+  .segs label:has(input:checked) { background: var(--accent); }
   .segs input:checked + span { background: var(--accent); color: #fff; font-weight: 600; }
   .segs input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: -3px; }
   @media (max-width: 560px) { .settings { grid-template-columns: 1fr; } }
