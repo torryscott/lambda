@@ -596,7 +596,7 @@
   function viewLabel(s) { var v = state.viewsById[s._view]; return v ? v.data.label : ''; }
 
   /* ---------- flag filtering, same convention as the atlas ---------- */
-  function excludedFlags() { return OPENOVIS.excludedMap(); }   // ?off= or the long form
+  function excludedFlags() { return LAMBDA.excludedMap(); }   // ?off= or the long form
 
   /* ---------- answer matching ----------
      Two layers. Mechanical variants (ordinals, articles, plurals, punctuation)
@@ -1028,16 +1028,16 @@
   var setRadio = function (name, value) { var r = document.querySelector('input[name="' + name + '"][value="' + value + '"]'); if (r) r.checked = true; };
   var isStill = function () { return radioValue('marker') === 'still'; };
   var isMixed = function () { return radioValue('order') === 'mixed'; };
-  var savedLimit = store.get('oo.quiz.limit');
+  var savedLimit = store.get('lambda.quiz.limit');
   if (savedLimit !== null && !isNaN(+savedLimit)) state.limit = +savedLimit;
   timerSel.value = String(state.limit);
   if (timerSel.value !== String(state.limit)) { timerSel.value = '60'; state.limit = 60; }
-  timerSel.addEventListener('change', function () { state.limit = +timerSel.value; store.set('oo.quiz.limit', timerSel.value); paintSummary(); });
-  var still = store.get('oo.quiz.still') === '1';
+  timerSel.addEventListener('change', function () { state.limit = +timerSel.value; store.set('lambda.quiz.limit', timerSel.value); paintSummary(); });
+  var still = store.get('lambda.quiz.still') === '1';
   setRadio('marker', still ? 'still' : 'pulse');
   document.body.classList.toggle('still', still);
   document.querySelectorAll('input[name="marker"]').forEach(function (r) {
-    r.addEventListener('change', function () { document.body.classList.toggle('still', isStill()); store.set('oo.quiz.still', isStill() ? '1' : '0'); paintSummary(); });
+    r.addEventListener('change', function () { document.body.classList.toggle('still', isStill()); store.set('lambda.quiz.still', isStill() ? '1' : '0'); paintSummary(); });
   });
 
   /* Describe it shows a definition, and many definitions name the structure
@@ -1087,14 +1087,14 @@
     if ((state.views || []).length > 1) parts.push(isMixed() ? 'shuffled across views' : 'one view at a time');
     el('summary').textContent = parts.join(' \u00b7 ');
   }
-  setRadio('order', store.get('oo.quiz.mix') === '1' ? 'mixed' : 'blocked');
+  setRadio('order', store.get('lambda.quiz.mix') === '1' ? 'mixed' : 'blocked');
   document.querySelectorAll('input[name="order"]').forEach(function (r) {
-    r.addEventListener('change', function () { store.set('oo.quiz.mix', isMixed() ? '1' : '0'); paintSummary(); });
+    r.addEventListener('change', function () { store.set('lambda.quiz.mix', isMixed() ? '1' : '0'); paintSummary(); });
   });
   paintMode();
 
   /* ---------- which structures: a set of views, one view, or the chooser ---------- */
-  var V = window.OPENOVIS_VIEWS;
+  var V = window.LAMBDA_VIEWS;
   var params = new URLSearchParams(window.location.search);
   var VIEW = params.get('view'), SET = params.get('set');
   if (SET && SET !== 'all' && !V.group(SET)) SET = null;

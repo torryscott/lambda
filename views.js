@@ -24,7 +24,7 @@
   var ALL = [];
   GROUPS.forEach(function (g) { g.views.forEach(function (v) { ALL.push(v); }); });
 
-  window.OPENOVIS_VIEWS = {
+  window.LAMBDA_VIEWS = {
     groups: GROUPS,
     all: ALL,
     everything: ['dorsal', 'ventral', 'midsagittal', 'coronal-b'],   // the four that stand for the whole set

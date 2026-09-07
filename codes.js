@@ -15,7 +15,7 @@
 
    A retired structure keeps its code (marked below) so that no old link can
    ever silently point at a different structure. */
-window.OPENOVIS = (function () {
+window.LAMBDA = (function () {
   'use strict';
   var CODES = {
     D1:   'inc_dorsal_central_sulcus',

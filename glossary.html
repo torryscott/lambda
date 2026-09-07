@@ -138,8 +138,8 @@
 
 <script>
 (function () {
-  const V = window.OPENOVIS_VIEWS;
-  const excluded = OPENOVIS.excludedMap();               // honors ?off= and the long form
+  const V = window.LAMBDA_VIEWS;
+  const excluded = LAMBDA.excludedMap();               // honors ?off= and the long form
   document.getElementById('homeLink').href = V.link('index.html', {});
   document.getElementById('navAtlas').href = V.link('atlas.html', {});
   document.getElementById('navQuiz').href = V.link('quiz.html', {});

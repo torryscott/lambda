@@ -365,7 +365,7 @@
   ['ctaQuiz', 'navQuiz'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'quiz.html' + qs; });
   var g = document.getElementById('navGlossary'); if (g) g.href = 'glossary.html' + qs;
 
-  var excludedCount = Object.keys(OPENOVIS.excludedMap()).length;   // honors ?off= and the long form
+  var excludedCount = Object.keys(LAMBDA.excludedMap()).length;   // honors ?off= and the long form
   if (excludedCount) {
     document.getElementById('filterText').innerHTML =
       '<b>This link is customized.</b> Your instructor has narrowed the set: '

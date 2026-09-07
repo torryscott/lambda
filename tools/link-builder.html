@@ -632,7 +632,7 @@ function update() {
   }
   // Short codes from codes.js. A flag with no code (shouldn't happen — see
   // scripts/check-codes.py) falls back to the long form.
-  const code = f => OPENOVIS.FLAGS[f];
+  const code = f => LAMBDA.FLAGS[f];
   const offCodes = excluded.map(code).filter(Boolean);
   const longForm = excluded.filter(f => !code(f)).map(f => `${encodeURIComponent(f)}=0`);
   const params = [offCodes.length ? `off=${offCodes.join('.')}` : '', ...longForm].filter(Boolean).join('&');

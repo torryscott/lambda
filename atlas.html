@@ -497,7 +497,7 @@ const cntTotal = document.getElementById('cntTotal');
 
 // Which flags does the URL hide? codes.js resolves ?off= and the long form.
 function readFlags() {
-  return new Set(Object.keys(OPENOVIS.excludedMap()));
+  return new Set(Object.keys(LAMBDA.excludedMap()));
 }
 
 const srList = document.getElementById('srList');
@@ -769,7 +769,7 @@ function setStudyMode(btn, focus, persist) {
   stage.classList.add('mode-' + btn.dataset.mode);
   if (focus) btn.focus();
   // a mode the student chose follows them from view to view
-  if (persist) { try { localStorage.setItem('oo.atlas.mode', btn.dataset.mode); } catch (_) {} }
+  if (persist) { try { localStorage.setItem('lambda.atlas.mode', btn.dataset.mode); } catch (_) {} }
 }
 modeBtns.forEach(btn => btn.addEventListener('click', () => setStudyMode(btn, false, true)));
 document.querySelector('.mode-group').addEventListener('keydown', e => {
@@ -809,7 +809,7 @@ if (!CAN_HOVER) {
 // A mode chosen earlier wins over the defaults above.
 (function () {
   let saved = null;
-  try { saved = localStorage.getItem('oo.atlas.mode'); } catch (_) {}
+  try { saved = localStorage.getItem('lambda.atlas.mode'); } catch (_) {}
   const b = saved && modeBtns.find(x => x.dataset.mode === saved);
   if (b) setStudyMode(b, false, false);
 })();
@@ -823,7 +823,7 @@ function failed(message, detail) {
   document.querySelector('.atlas-card').hidden = true;
 }
 
-const V = window.OPENOVIS_VIEWS;
+const V = window.LAMBDA_VIEWS;
 const params = new URLSearchParams(window.location.search);
 let view = params.get('view');
 const groupParam = params.get('group');
