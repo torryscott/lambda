@@ -272,6 +272,7 @@
 </style>
 <script src="codes.js"></script>
 <!-- Usage counting: GoatCounter, no cookies, no personal data. -->
+<script>window.goatcounter = { path: function () { return location.pathname; } };</script>   <!-- count the page, never the query string (instructor links carry a class name) -->
 <script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -380,24 +381,28 @@
 </script>
 <script>
 (function () {
-  /* Usage line: totals from GoatCounter's public counter. Hidden if the
-     request fails or the count is still zero, so it never shows a broken
-     widget. */
+  /* Usage line from GoatCounter's public counters. The site-wide total is
+     summed from the per-page counters, which update promptly; the TOTAL
+     counter lags by an hour or more. Hidden if nothing comes back or the
+     count is still zero, so it never shows a broken widget. */
   var line = document.getElementById('usage');
   if (!line || !window.fetch) return;
+  var PAGES = ['/lambda/', '/lambda/index.html', '/lambda/atlas.html', '/lambda/quiz.html',
+               '/lambda/glossary.html', '/lambda/accessibility.html', '/lambda/tools/link-builder.html'];
   var num = function (v) { return parseInt(String(v == null ? '' : v).replace(/\D/g, ''), 10) || 0; };
   var get = function (path) {
     return fetch('https://tsdennis.goatcounter.com/counter/' + path + '.json')
       .then(function (r) { return r.ok ? r.json() : null; })
-      .catch(function () { return null; });
+      .then(function (j) { return j ? num(j.count) : 0; })
+      .catch(function () { return 0; });
   };
-  Promise.all([get('TOTAL'), get('quiz-run')]).then(function (res) {
-    var views = res[0] ? num(res[0].count) : 0;
-    var runs = res[1] ? num(res[1].count) : 0;
+  Promise.all(PAGES.map(get).concat([get('quiz-run')])).then(function (counts) {   // page paths start with '/', so the URL gets its double slash
+    var runs = counts.pop();
+    var views = counts.reduce(function (a, b) { return a + b; }, 0);
     if (views < 1) return;
     var fmt = function (n) { return n.toLocaleString('en-US'); };
     var text = 'Opened ' + fmt(views) + ' times since September 2026';
-    if (runs >= 1) text += ' \u00b7 ' + fmt(runs) + ' quizzes taken';
+    if (runs >= 1) text += ' \u00b7 ' + fmt(runs) + (runs === 1 ? ' quiz taken' : ' quizzes taken');
     line.textContent = text;
     line.hidden = false;
   });
