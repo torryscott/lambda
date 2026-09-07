@@ -271,6 +271,8 @@
   }
 </style>
 <script src="codes.js"></script>
+<!-- Usage counting: GoatCounter, no cookies, no personal data. -->
+<script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -351,6 +353,7 @@
            <a href="https://forms.gle/AnVmtPEgDGjZ5taN7">Send it through the form.</a></p>
       </div>
     </div>
+    <p class="fine" id="usage" hidden></p>
   </footer>
 
 </div>
@@ -373,6 +376,31 @@
   var cls = (p.get('class') || '').trim().slice(0, 60);   // an instructor's class name, shown above the title
   if (cls) { var line = document.getElementById('classLine'); line.textContent = cls; line.hidden = false; }
 
+})();
+</script>
+<script>
+(function () {
+  /* Usage line: totals from GoatCounter's public counter. Hidden until the
+     site has been opened a thousand times, and hidden if the request fails,
+     so it never shows a small number or a broken widget. */
+  var line = document.getElementById('usage');
+  if (!line || !window.fetch) return;
+  var num = function (v) { return parseInt(String(v == null ? '' : v).replace(/\D/g, ''), 10) || 0; };
+  var get = function (path) {
+    return fetch('https://tsdennis.goatcounter.com/counter/' + path + '.json')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; });
+  };
+  Promise.all([get('TOTAL'), get('quiz-run')]).then(function (res) {
+    var views = res[0] ? num(res[0].count) : 0;
+    var runs = res[1] ? num(res[1].count) : 0;
+    if (views < 1000) return;
+    var fmt = function (n) { return n.toLocaleString('en-US'); };
+    var text = 'Opened ' + fmt(views) + ' times since September 2026';
+    if (runs >= 100) text += ' \u00b7 ' + fmt(runs) + ' quizzes taken';
+    line.textContent = text;
+    line.hidden = false;
+  });
 })();
 </script>
 </body>

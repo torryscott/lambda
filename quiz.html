@@ -410,6 +410,8 @@
 </style>
 <script src="codes.js"></script>
 <script src="views.js"></script>
+<!-- Usage counting: GoatCounter, no cookies, no personal data. -->
+<script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -988,7 +990,11 @@
     state.missed.forEach(function (m) { names[m.name] = true; });
     run(state.pool.filter(function (s) { return names[s.name]; }));
   });
-  el('btnBegin').addEventListener('click', function () { run(poolFor(state.mode)); });
+  el('btnBegin').addEventListener('click', function () {
+    // One anonymous event per run, so the home page can say how many quizzes have been taken.
+    if (window.goatcounter && goatcounter.count) { try { goatcounter.count({ path: 'quiz-run', title: 'Quiz run', event: true }); } catch (e) {} }
+    run(poolFor(state.mode));
+  });
 
   // Find it: a tap on the plate is the answer.
   el('plate').addEventListener('click', function (e) {
