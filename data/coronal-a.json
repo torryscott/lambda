@@ -8,9 +8,7 @@
       "name": "Corona Radiata",
       "matter": "White Matter",
       "about": "The fan of projection fibers radiating from the internal capsule up into the cerebral cortex.",
-      "accept": [
-        "coronal radiata"
-      ],
+      "accept": [],
       "target": {
         "x": 0.3934,
         "y": 0.301

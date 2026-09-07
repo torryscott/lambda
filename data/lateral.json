@@ -70,9 +70,7 @@
       "name": "Cerebellum",
       "matter": "Gray and White Matter",
       "about": "The folded mass caudal and ventral to the occipital lobe. It coordinates posture, balance, and the timing of movement.",
-      "accept": [
-        "cerebellar cortex"
-      ],
+      "accept": [],
       "target": {
         "x": 0.781,
         "y": 0.422

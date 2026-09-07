@@ -110,11 +110,12 @@
     },
     {
       "flag": "inc_cor_optic_tracts",
-      "name": "Optic Tracts",
+      "name": "Optic Tract",
       "matter": "White Matter",
       "about": "The bands of visual fibers running back from the optic chiasm toward the lateral geniculate nucleus.",
       "accept": [
-        "optic tract"
+        "optic tract",
+        "optic tracts"
       ],
       "target": {
         "x": 0.2998,
