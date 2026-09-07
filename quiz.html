@@ -319,7 +319,7 @@
 
   /* thumbnail tabs: this run and its siblings */
   /* change-set strip: navigation to sibling runs, kept small */
-  .view-tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 20px; }
+  .view-tabs { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin: 22px 0 -4px; }
   .tabs-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin-right: 4px; }
   .view-tabs a {
     display: inline-flex; align-items: center; gap: 6px;
@@ -330,7 +330,13 @@
   .view-tabs a:hover { border-color: var(--accent); color: var(--accent); }
   .view-tabs a[aria-current="page"] { background: var(--accent); border-color: var(--accent); color: #fff; }
   .view-tabs a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  @media (max-width: 720px) { .view-tabs img { width: 26px; height: 19px; } }
+  @media (max-width: 720px) {
+    .view-tabs img { width: 26px; height: 19px; }
+    /* narrow screens: equal columns so the pills wrap into balanced rows, never five and one */
+    .view-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); justify-items: stretch; }
+    .tabs-label { grid-column: 1 / -1; margin: 0 0 2px; }
+    .view-tabs a span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
 
   /* choose a set */
   .sets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0 0; text-align: left; }
@@ -411,6 +417,7 @@
 </header>
 
 <main class="wrap" id="main">
+  <nav class="view-tabs" id="viewTabs" aria-label="Change set" hidden><span class="tabs-label">Change set</span></nav>
 
   <!-- ============ CHOOSE A SET ============ -->
   <section class="card start" id="screenChoose" hidden>
@@ -421,7 +428,6 @@
 
   <!-- ============ START ============ -->
   <section class="card start" id="screenStart">
-    <nav class="view-tabs" id="viewTabs" aria-label="Change set" hidden><span class="tabs-label">Change set</span></nav>
     <header class="start-head">
       <h1 id="startTitle">Midsagittal Practicum</h1>
       <p class="start-sub"><strong id="startCount">0</strong><span id="countNote"> structures in this set</span></p>
@@ -673,6 +679,7 @@
     el('screenStart').hidden   = which !== 'start';
     el('screenQuiz').hidden    = which !== 'quiz';
     el('screenResults').hidden = which !== 'results';
+    el('viewTabs').hidden      = which !== 'start' || !state.tabsReady;
   }
 
   /* ---------- timer ---------- */
@@ -1135,6 +1142,7 @@
       g.views.forEach(function (v) { items.push(pill(V.link('quiz.html', { view: v }), V.thumb(v), V.label(v), v === VIEW)); });
     }
     items.forEach(function (a) { tabs.appendChild(a); });
+    state.tabsReady = true;
     tabs.hidden = false;
   }
 
