@@ -81,8 +81,8 @@
       return c ? c.trim().slice(0, 60) : '';
     },
     /* A link to a page that keeps the instructor's selection (?on=, ?views=,
-       ?off=, ?class=) and replaces the view / group / set part with what is
-       asked for. */
+       ?class=) and replaces the view / group / set part with what is asked
+       for. */
     link: function (page, set) {
       var p = new URLSearchParams(window.location.search);
       ['view', 'group', 'set', 'pin'].forEach(function (k) { p.delete(k); });

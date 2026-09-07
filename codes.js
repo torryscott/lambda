@@ -6,15 +6,10 @@
 
      ?on=5777777777x7777773776py
 
-   Older links hide structures by listing their codes instead, and both
-   forms stay honored:
-
-     ?off=D1.M3
-
-   The long form ?inc_<flag>=0 is honored too. Codes are case-insensitive
-   in the URL. They never change and are never reused: when a structure is
-   added, give it the next number in its view's run and append it to BITS.
-   scripts/check-codes.py verifies this file against the data files.
+   A link with no mask shows everything. Codes never change and are never
+   reused: when a structure is added, give it the next number in its view's
+   run and append it to BITS. scripts/check-codes.py verifies this file
+   against the data files.
 
    Letters: D dorsal · L lateral · V ventral · P posterior · C coronal · M midsagittal
 
@@ -209,15 +204,10 @@ window.LAMBDA = (function () {
 
   var q = new URLSearchParams(window.location.search);
   var hidden = {};                                 // flag -> true
-  (q.get('off') || '').split(/[.,\s]+/).forEach(function (c) {
-    c = c.toUpperCase();
-    if (CODES[c]) hidden[CODES[c]] = true;
-  });
-  q.forEach(function (v, k) { if (k.indexOf('inc_') === 0 && v === '0') hidden[k] = true; });
 
   /* An inclusion link (?on=) lists what is in. Anything else, including
      every code added after the link was made, is hidden. A value that is
-     not a mask is ignored, like an unknown code in ?off=. */
+     not a mask is ignored, and the page shows everything. */
   var onMask = q.has('on') ? maskDecode(q.get('on')) : null;
   if (onMask) {
     for (var flag in FLAGS) { if (!onMask(BITS.indexOf(FLAGS[flag]))) hidden[flag] = true; }
@@ -229,7 +219,7 @@ window.LAMBDA = (function () {
     for (var f in hidden) out[f] = true;
     return out;
   }
-  function linkKind() { return onMask ? 'on' : Object.keys(hidden).length ? 'off' : 'none'; }
+  function linkKind() { return onMask ? 'on' : 'none'; }
   return { CODES: CODES, FLAGS: FLAGS, BITS: BITS, shown: shown, excludedMap: excludedMap,
            encodeOn: encodeOn, mask: { encode: maskEncode, decode: maskDecode }, linkKind: linkKind };
 })();

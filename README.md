@@ -66,15 +66,8 @@ view at the end of `VIEW_BITS` in `views.js`. Nothing is ever inserted, removed,
 `scripts/check-codes.py` checks that every code and view has a position.
 
 Every structure also has a permanent short code, a view letter and a number, listed in
-`codes.js`. Older links used them to say what to **hide**, and that form is still honored:
-
-```
-https://torryscott.github.io/lambda/?off=D1.M3
-```
-
-Codes are case-insensitive and are never reused, even if a structure is retired. The long
-form, `inc_<view>_<structure>=0`, is still honored too. With no parameters, everything is
-shown.
+`codes.js`. The codes name the bit positions and label the rows in the builder; they are
+never reused, even if a structure is retired. With no parameters, everything is shown.
 
 The same structure gets a separate code in each view it appears in: the pons is one code on
 the ventral surface, another laterally, another in midsagittal section. They are different
@@ -91,7 +84,6 @@ Other parameters, all optional:
 | `pin=<flag>` | atlas | Open with one structure already picked (the glossary uses this) |
 | `on=<mask>` | all | Inclusion mask over structure bit positions; the builder writes this |
 | `views=<mask>` | all | Inclusion mask over view bit positions; the builder writes this |
-| `off=<codes>` | all | Older form: hide these structures |
 | `class=<name>` | all | A class name, shown above the title on the home page and beside the wordmark elsewhere; up to 60 characters |
 
 ---
@@ -104,7 +96,7 @@ atlas.html                 Atlas, and its chooser when no view is given
 quiz.html                  Quiz, and its chooser when no set or view is given
 glossary.html              Every structure with its definition
 accessibility.html         Accessibility statement
-codes.js                   Short codes <-> flags, bit positions; parses ?on= and ?off=
+codes.js                   Short codes <-> flags, bit positions; parses ?on=
 views.js                   The twelve views and their three groups
 favicon.svg, icon-*.png    Site icon; the PNGs are what a phone's home screen uses
 manifest.webmanifest       Name and icons for "Add to Home Screen"

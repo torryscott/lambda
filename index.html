@@ -351,8 +351,8 @@
 
 <script>
 (function () {
-  /* The hero buttons and the nav carry the instructor's ?off= selection to
-     the atlas and quiz choosers. */
+  /* The hero buttons and the nav carry the instructor's link (its masks and
+     class name) to the atlas and quiz choosers. */
   var p = new URLSearchParams(window.location.search);
   p.delete('view'); p.delete('group'); p.delete('set');
   var qs = p.toString() ? '?' + p.toString() : '';

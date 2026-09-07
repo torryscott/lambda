@@ -501,7 +501,7 @@ const atlasImg = document.getElementById('atlasImg');
 const cntShown = document.getElementById('cntShown');
 const cntTotal = document.getElementById('cntTotal');
 
-// Which flags does the URL hide? codes.js resolves ?off= and the long form.
+// Which flags does the URL hide? codes.js resolves the ?on= mask.
 function readFlags() {
   return new Set(Object.keys(LAMBDA.excludedMap()));
 }

@@ -20,8 +20,8 @@ inc_<view>_<structure>
 ### Short codes
 
 Each flag has a permanent short code in `codes.js`: view letter plus number (`D1`, `L4`,
-`C12`). Student links use codes, `?off=D1.M3` hides those structures, and the pages still
-honor the long form `inc_<flag>=0`. Rules:
+`C12`). Codes name the bit positions that student links are built from and label the rows
+in the builder. Rules:
 
 - A code is assigned once and never changed or reused, even if the structure is retired.
   Retired codes are kept in `codes.js` with a comment.
@@ -69,8 +69,6 @@ new view is added there once.
 |---|---|---|
 | `on=<mask>` | all | Show exactly these structures (base32 over `BITS`); written by the builder |
 | `views=<mask>` | all | Show exactly these views (base32 over `VIEW_BITS`); written by the builder |
-| `off=<codes>` | all | Older form: hide these structures; codes separated by `.` |
-| `inc_<flag>=0` | all | Long form of `off` |
 | `view=<id>` | atlas, quiz | One view |
 | `group=<id>` | atlas | Open a group at its first view |
 | `set=<id>` | quiz | Quiz a group, or `all` |
@@ -78,7 +76,7 @@ new view is added there once.
 | `pin=<flag>` | atlas | Arrive in reveal mode with that structure picked |
 | `class=<name>` | all | Class name shown in the header; trimmed to 60 characters by `LAMBDA_VIEWS.className()` |
 
-Links out of any page keep `on`, `views`, `off`, and `class` and drop `view`, `group`, `set`, and `pin`. Use
+Links out of any page keep `on`, `views`, and `class` and drop `view`, `group`, `set`, and `pin`. Use
 `LAMBDA_VIEWS.link(page, { view: id })` to build one.
 
 ---

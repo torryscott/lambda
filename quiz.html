@@ -606,7 +606,7 @@
   function viewLabel(s) { var v = state.viewsById[s._view]; return v ? v.data.label : ''; }
 
   /* ---------- flag filtering, same convention as the atlas ---------- */
-  function excludedFlags() { return LAMBDA.excludedMap(); }   // ?off= or the long form
+  function excludedFlags() { return LAMBDA.excludedMap(); }   // whatever the ?on= mask leaves out
 
   /* ---------- answer matching ----------
      Two layers. Mechanical variants (ordinals, articles, plurals, punctuation)

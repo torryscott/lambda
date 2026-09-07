@@ -145,7 +145,7 @@
 <script>
 (function () {
   const V = window.LAMBDA_VIEWS;
-  const excluded = LAMBDA.excludedMap();               // honors ?off= and the long form
+  const excluded = LAMBDA.excludedMap();               // whatever the ?on= mask leaves out
   document.getElementById('homeLink').href = V.link('index.html', {});
   document.getElementById('navAtlas').href = V.link('atlas.html', {});
   document.getElementById('navQuiz').href = V.link('quiz.html', {});
