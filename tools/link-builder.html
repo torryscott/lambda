@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="../codes.js"></script>
+<script src="../views.js"></script>
 <style>
   :root {
     --ground: #FBFAF7; --panel: #FFFFFF; --panel-soft: #F7F4EE; --ink: #1F1C18; --ink-soft: #4E4841; --muted: #797167;
@@ -62,8 +63,8 @@
 
   .setup { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 22px; align-items: end; }
   .field label { display: block; font-weight: 600; font-size: .92rem; margin: 0 0 6px; }
+  .field label .opt { font-weight: 400; color: var(--muted); }
   .field input[type="text"] { width: 100%; font: inherit; padding: 9px 12px; border: 1.5px solid var(--rule-strong); border-radius: 8px; background: var(--panel); color: var(--ink); }
-  .field input[type="text"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .field small { display: block; margin-top: 5px; font-size: .82rem; color: var(--muted); }
   .field input.mono { font-family: var(--mono); font-size: .84rem; }
   .setup details { grid-column: 1 / -1; margin: 0; }
@@ -75,7 +76,7 @@
   details p { margin: 10px 0 0; font-size: .88rem; color: var(--muted); max-width: 70ch; }
   details code { font-family: var(--mono); font-size: .82rem; background: var(--chip); padding: 1px 5px; border-radius: 3px; }
 
-  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 26px 0 10px; }
+  .toolbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 30px 0 4px; }
   .toolbar .sec { margin: 0; }
   .toolbar-actions { display: flex; gap: 6px; }
 
@@ -85,16 +86,39 @@
   button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
   button.ghost { border-color: transparent; background: transparent; color: var(--muted); }
   button.ghost:hover { background: var(--chip); color: var(--ink); border-color: transparent; }
-  button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
-  /* ---------- views ---------- */
-  .views { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
-  .view h2 { font-family: var(--display); font-weight: 400; font-size: 1.3rem; margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-  .count { font: 600 .76rem var(--sans); color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
-  .view-actions { display: flex; gap: 4px; margin: 10px 0 6px; }
+  /* ---------- the structures, one color per group ----------
+     Three tones from the same warm family as the rest of the site: navy for
+     the surface views, clay for the midsagittal cut, moss for the coronal
+     sections. Each group's heading, card edge, count, and checkboxes share
+     the tone, so a glance tells which kind of view a card belongs to. */
+  .group { --g: var(--accent); --g-tint: var(--accent-soft); --g-line: #C3D0E0; margin-top: 18px; }
+  .group[data-kind="surface"]     { --g: #1e3a5f; --g-tint: #E8EEF5; --g-line: #C3D0E0; }
+  .group[data-kind="midsagittal"] { --g: #8F5230; --g-tint: #F6ECE3; --g-line: #E2C7B2; }
+  .group[data-kind="coronal"]     { --g: #56633A; --g-tint: #EDF0E3; --g-line: #CBD1B4; }
+  .group-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--g-line); }
+  .group-head h3 { font-family: var(--display); font-weight: 400; font-size: 1.28rem; margin: 0; display: inline-flex; align-items: center; gap: 10px; color: var(--ink); }
+  .swatch { width: 13px; height: 13px; border-radius: 50%; background: var(--g); flex: none; box-shadow: 0 0 0 3px var(--g-tint); }
+  .group-head .gcount { font-family: var(--mono); font-size: .78rem; color: var(--muted); }
+  .group-head .gblurb { flex: 1 1 100%; margin: -4px 0 0; font-size: .88rem; color: var(--muted); }
+  .group-head .gactions { margin-left: auto; display: flex; gap: 6px; }
+  .group-head .gactions button { padding: 4px 12px; font-size: .8rem; color: var(--g); border-color: var(--g-line); background: var(--g-tint); }
+  .group-head .gactions button:hover { border-color: var(--g); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px; align-items: start; }
+  @media (max-width: 760px) { .pair { grid-template-columns: 1fr; } }
+  @media (max-width: 460px) { .cards { grid-template-columns: 1fr; } }
+
+  .view.card { border-top: 4px solid var(--g); padding-top: 16px; }
+  .view-head { display: flex; align-items: center; gap: 12px; }
+  .view-head img { width: 58px; height: 44px; object-fit: cover; border-radius: 7px; background: var(--g-tint); border: 1px solid var(--g-line); flex: none; }
+  .view-head h4 { font-family: var(--display); font-weight: 400; font-size: 1.22rem; margin: 0; flex: 1; min-width: 0; line-height: 1.15; }
+  .count { font: 600 .76rem var(--sans); color: var(--g); background: var(--g-tint); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .view-actions { display: flex; gap: 4px; margin: 12px 0 6px; }
   .view-actions button { padding: 3px 10px; font-size: .78rem; color: var(--muted); border-color: var(--rule); background: transparent; }
-  .view-actions button:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
-  .subgroup h3 { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 10px 0 2px; font-weight: 600; }
+  .view-actions button:hover { color: var(--g); border-color: var(--g); background: var(--g-tint); }
+  .note { font-size: .8rem; color: var(--muted); margin: 6px 0 4px; }
   .area { display: flex; align-items: center; gap: 11px; padding: 6px 8px; border-radius: var(--radius-sm); }
   .area:hover { background: var(--chip); }
   .area label { flex: 1; cursor: pointer; font-size: .94rem; color: var(--ink); user-select: none; }
@@ -104,10 +128,10 @@
     appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1.5px solid var(--rule-strong); border-radius: 4px;
     cursor: pointer; position: relative; background: #fff; flex-shrink: 0;
   }
-  .area input[type="checkbox"]:hover { border-color: var(--accent); }
-  .area input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+  .area input[type="checkbox"]:hover { border-color: var(--g); }
+  .area input[type="checkbox"]:checked { background: var(--g); border-color: var(--g); }
   .area input[type="checkbox"]:checked::after { content: ""; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
-  .views-error { grid-column: 1 / -1; color: var(--muted); padding: 18px 0; }
+  .views-error { color: var(--muted); padding: 18px 0; }
 
   /* ---------- the link, pinned to the bottom ---------- */
   .linkbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); box-shadow: var(--shadow-up); }
@@ -153,7 +177,7 @@
     <h2 class="sec">Your class</h2>
     <section class="card setup">
       <div class="field">
-        <label for="className">Class name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+        <label for="className">Class name <span class="opt">(optional)</span></label>
         <input type="text" id="className" placeholder="Dr. Dennis' class" maxlength="60" autocomplete="off">
         <small>Shown above the title on the home page and beside the logo on every other page, so students know whose link they're on.</small>
       </div>
@@ -171,6 +195,7 @@
         <p>Every structure has a permanent short code, a view letter and a number. Unchecking a structure adds its code to
            <code>?off=</code>; everything not listed stays visible. Codes are never reused, so a link keeps working as
            structures are added later. The same structure has a separate code in each view it appears in.</p>
+        <p>Open this page from one of your own links and it starts with that link's selection and class name filled in.</p>
       </details>
     </section>
 
@@ -178,7 +203,7 @@
       <h2 class="sec">Structures</h2>
       <span id="topCount" class="example" style="margin:0"></span>
     </div>
-    <section id="views" class="views" aria-label="Structures by view"></section>
+    <div id="views" aria-label="Structures by view"></div>
   </main>
 </div>
 
@@ -197,36 +222,38 @@
 <script>
 // The structure list is read from the same data files the site uses, so the
 // builder can never offer a structure a student cannot be asked about.
-// Views follow the site's order. The six coronal slices share one set of
-// structures, so they appear once, marked with the slices they sit on.
-const VIEWS = [
-  { id: 'dorsal',              card: 'Dorsal',             kind: 'surface' },
-  { id: 'lateral',             card: 'Lateral',            kind: 'surface' },
-  { id: 'ventral',             card: 'Ventral',            kind: 'surface' },
-  { id: 'posterior-internal',  card: 'Posterior',          kind: 'surface' },
-  { id: 'pulled-back-lateral', card: 'Lateral, retracted', kind: 'surface' },
-  { id: 'midsagittal',         card: 'Midsagittal',        kind: 'mid' },
-  { id: 'coronal-a', card: 'Coronal sections', kind: 'cor', slice: 'A' },
-  { id: 'coronal-b', card: 'Coronal sections', kind: 'cor', slice: 'B' },
-  { id: 'coronal-c', card: 'Coronal sections', kind: 'cor', slice: 'C' },
-  { id: 'coronal-d', card: 'Coronal sections', kind: 'cor', slice: 'D' },
-  { id: 'coronal-e', card: 'Coronal sections', kind: 'cor', slice: 'E' },
-  { id: 'coronal-f', card: 'Coronal sections', kind: 'cor', slice: 'F' },
-];
-let DATA = {};          // card name -> [{area, flag, slices}]
-const KIND = {};
+// Groups, labels, and thumbnails come from views.js, so the builder matches
+// the atlas and quiz choosers. The six coronal slices share one set of
+// structures, so they appear as one card marked with the slices each sits on.
+const V = window.LAMBDA_VIEWS;
+[['homeLink', 'index.html'], ['navAtlas', 'atlas.html'], ['navQuiz', 'quiz.html'], ['navGlossary', 'glossary.html']]
+  .forEach(([id, page]) => { document.getElementById(id).href = '../' + V.link(page, {}); });
+const CARDS = [];        // {key, title, group, thumb, rows:[{area, flag, slices}]}
+
+function cardFor(viewId, group) {
+  const key = group.id === 'coronal' ? 'coronal' : viewId;
+  let card = CARDS.find(c => c.key === key);
+  if (!card) {
+    card = { key, group: group.id, rows: [],
+             title: group.id === 'coronal' ? group.label : V.label(viewId),
+             thumb: group.id === 'coronal' ? group.rep : viewId };
+    CARDS.push(card);
+  }
+  return card;
+}
 
 async function loadData() {
-  const files = await Promise.all(VIEWS.map(v =>
-    fetch('../data/' + v.id + '.json').then(r => { if (!r.ok) throw new Error(v.id + ': ' + r.status); return r.json(); })));
+  const files = await Promise.all(V.all.map(id =>
+    fetch('../data/' + id + '.json').then(r => { if (!r.ok) throw new Error(id + ': ' + r.status); return r.json(); })));
   files.forEach((d, i) => {
-    const v = VIEWS[i];
-    KIND[v.card] = v.kind;
-    const rows = (DATA[v.card] ||= []);
+    const id = V.all[i];
+    const group = V.groupOf(id);
+    const card = cardFor(id, group);
+    const slice = group.id === 'coronal' ? V.label(id).replace(/^Coronal /, '') : '';
     d.structures.forEach(s => {
-      let row = rows.find(r => r.flag === s.flag);
-      if (!row) { row = { area: s.name, flag: s.flag, slices: [] }; rows.push(row); }
-      if (v.slice) row.slices.push(v.slice);
+      let row = card.rows.find(r => r.flag === s.flag);
+      if (!row) { row = { area: s.name, flag: s.flag, slices: [] }; card.rows.push(row); }
+      if (slice) row.slices.push(slice);
     });
   });
 }
@@ -239,48 +266,81 @@ const summaryEl = document.getElementById('summary');
 const topCount = document.getElementById('topCount');
 const copiedMsg = document.getElementById('copiedMsg');
 
-function buildUI() {
-  for (const view of Object.keys(DATA)) {
-    const rows = DATA[view];
-    const section = document.createElement('div');
-    section.className = 'view card';
-    section.dataset.view = view;
-    const h = document.createElement('h2');
-    h.innerHTML = `${view} <span class="count" data-count="${view}">0 of 0</span>`;
-    section.appendChild(h);
-    const actions = document.createElement('div');
-    actions.className = 'view-actions';
-    actions.innerHTML = `<button type="button" data-action="all" data-view="${view}">All</button><button type="button" data-action="none" data-view="${view}">None</button>`;
-    section.appendChild(actions);
-    const sg = document.createElement('div');
-    sg.className = 'subgroup';
-    if (KIND[view] === 'cor') { const h3 = document.createElement('h3'); h3.textContent = 'Shared across slices A to F'; sg.appendChild(h3); }
-    for (const r of rows) {
-      const row = document.createElement('div');
-      row.className = 'area';
-      const id = `cb_${r.flag}`;
-      const where = r.slices.length ? `<small>${r.slices.join(' · ')}</small>` : '';
-      const code = LAMBDA.FLAGS[r.flag] ? `<span class="code" aria-hidden="true">${LAMBDA.FLAGS[r.flag]}</span>` : '';
-      row.innerHTML = `<input type="checkbox" id="${id}" data-flag="${r.flag}" checked><label for="${id}">${r.area}${where}</label>${code}`;
-      sg.appendChild(row);
-    }
-    section.appendChild(sg);
-    viewsEl.appendChild(section);
+function buildCard(c) {
+  const el = document.createElement('div');
+  el.className = 'view card';
+  el.dataset.card = c.key;
+  el.innerHTML =
+    `<div class="view-head"><img src="../${V.thumb(c.thumb)}" alt=""><h4>${c.title}</h4><span class="count" data-count="${c.key}">0 of 0</span></div>` +
+    `<div class="view-actions"><button type="button" data-action="all" data-card="${c.key}">All</button><button type="button" data-action="none" data-card="${c.key}">None</button></div>`;
+  const list = document.createElement('div');
+  if (c.group === 'coronal') { const p = document.createElement('p'); p.className = 'note'; p.textContent = 'One list for slices A to F. The letters show which slices each structure sits on.'; list.appendChild(p); }
+  for (const r of c.rows) {
+    const row = document.createElement('div');
+    row.className = 'area';
+    const id = `cb_${r.flag}`;
+    const where = r.slices.length ? `<small>${r.slices.join(' · ')}</small>` : '';
+    const code = LAMBDA.FLAGS[r.flag] ? `<span class="code" aria-hidden="true">${LAMBDA.FLAGS[r.flag]}</span>` : '';
+    row.innerHTML = `<input type="checkbox" id="${id}" data-flag="${r.flag}" checked><label for="${id}">${r.area}${where}</label>${code}`;
+    list.appendChild(row);
   }
+  el.appendChild(list);
+  return el;
+}
+
+function buildGroup(g) {
+  const sec = document.createElement('section');
+  sec.className = 'group';
+  sec.dataset.kind = g.id;
+  sec.setAttribute('aria-label', g.label);
+  sec.innerHTML =
+    `<div class="group-head"><h3><span class="swatch" aria-hidden="true"></span>${g.label}</h3>` +
+    `<span class="gcount" data-gcount="${g.id}"></span>` +
+    `<div class="gactions"><button type="button" data-action="all" data-group="${g.id}">All</button><button type="button" data-action="none" data-group="${g.id}">None</button></div>` +
+    `<p class="gblurb">${g.blurb}</p></div>`;
+  const cards = document.createElement('div');
+  cards.className = 'cards';
+  CARDS.filter(c => c.group === g.id).forEach(c => cards.appendChild(buildCard(c)));
+  sec.appendChild(cards);
+  return sec;
+}
+
+function buildUI() {
+  viewsEl.appendChild(buildGroup(V.group('surface')));
+  const pair = document.createElement('div');
+  pair.className = 'pair';
+  pair.appendChild(buildGroup(V.group('midsagittal')));
+  pair.appendChild(buildGroup(V.group('coronal')));
+  viewsEl.appendChild(pair);
+}
+
+// If the page was opened from an existing link, start from that link.
+function prefill() {
+  const ex = LAMBDA.excludedMap();
+  document.querySelectorAll('input[data-flag]').forEach(cb => { if (ex[cb.dataset.flag]) cb.checked = false; });
+  const c = V.className();
+  if (c) classEl.value = c;
 }
 
 function update() {
   const base = baseUrlEl.value.trim();
   const excluded = [];
   let total = 0, selected = 0;
-  for (const view of Object.keys(DATA)) {
+  const byGroup = {};
+  for (const c of CARDS) {
     let sel = 0;
-    for (const r of DATA[view]) {
+    for (const r of c.rows) {
       total++;
       const cb = document.querySelector(`input[data-flag="${r.flag}"]`);
       if (cb.checked) { selected++; sel++; } else { excluded.push(r.flag); }
     }
-    document.querySelector(`[data-count="${view}"]`).textContent = `${sel} of ${DATA[view].length}`;
+    document.querySelector(`[data-count="${c.key}"]`).textContent = `${sel} of ${c.rows.length}`;
+    const g = (byGroup[c.group] ||= { sel: 0, n: 0 });
+    g.sel += sel; g.n += c.rows.length;
+  }
+  for (const id in byGroup) {
+    const el = document.querySelector(`[data-gcount="${id}"]`);
+    if (el) el.textContent = `${byGroup[id].sel} of ${byGroup[id].n}`;
   }
   // Short codes from codes.js; a flag with no code falls back to the long form.
   const code = f => LAMBDA.FLAGS[f];
@@ -294,23 +354,29 @@ function update() {
   const dot = document.getElementById('statusDot');
   dot.className = 'dot' + (selected === 0 ? ' none' : off ? ' partial' : '');
   const named = cls ? ` for ${cls}` : '';
-  if (selected === 0) summaryEl.textContent = 'Nothing selected. Students would see no structures at all.';
+  if (total === 0) summaryEl.textContent = 'Loading the structure lists…';
+  else if (selected === 0) summaryEl.textContent = 'Nothing selected. Students would see no structures at all.';
   else if (off === 0) summaryEl.textContent = `All ${total} structures${named}. This is the plain site; the link carries ${cls ? 'only the class name' : 'nothing extra'}.`;
   else summaryEl.textContent = `${selected} of ${total} structures${named}, ${off} left out.`;
-  topCount.textContent = off ? `${selected} of ${total} checked` : `All ${total} checked`;
+  topCount.textContent = total === 0 ? '' : off ? `${selected} of ${total} checked` : `All ${total} checked`;
 }
 
+function setAll(scope, on) {
+  scope.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = on; });
+  update();
+}
 document.addEventListener('change', e => { if (e.target.matches('input[type="checkbox"]')) update(); });
 document.addEventListener('click', e => {
-  const act = e.target.dataset.action;
-  if (!act) return;
-  document.querySelector(`.view[data-view="${e.target.dataset.view}"]`).querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = (act === 'all'); });
-  update();
+  const b = e.target.closest('button[data-action]');
+  if (!b) return;
+  const on = b.dataset.action === 'all';
+  if (b.dataset.card) setAll(document.querySelector(`.view[data-card="${b.dataset.card}"]`), on);
+  else if (b.dataset.group) setAll(document.querySelector(`.group[data-kind="${b.dataset.group}"]`), on);
 });
 baseUrlEl.addEventListener('input', update);
 classEl.addEventListener('input', update);
-document.getElementById('resetBtn').addEventListener('click', () => { document.querySelectorAll('.views input[type="checkbox"]').forEach(cb => cb.checked = true); update(); });
-document.getElementById('clearBtn').addEventListener('click', () => { document.querySelectorAll('.views input[type="checkbox"]').forEach(cb => cb.checked = false); update(); });
+document.getElementById('resetBtn').addEventListener('click', () => setAll(viewsEl, true));
+document.getElementById('clearBtn').addEventListener('click', () => setAll(viewsEl, false));
 
 function flashCopied() {
   copiedMsg.textContent = 'Copied';
@@ -323,7 +389,7 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
 });
 document.getElementById('openBtn').addEventListener('click', () => { window.open(finalUrlEl.value, '_blank'); });
 
-loadData().then(() => { buildUI(); update(); }).catch(err => {
+loadData().then(() => { buildUI(); prefill(); update(); }).catch(err => {
   viewsEl.innerHTML = '<p class="views-error">Could not load the structure lists (' + err.message +
     '). Open this page from the site, or run <code>python3 scripts/serve.py</code> locally.</p>';
 });

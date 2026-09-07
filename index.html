@@ -40,9 +40,6 @@
     --accent-soft: #e8eef5;
     --tissue:      #C08A62;
     --leader:      rgba(30,58,95,.7);
-    --notice-bg:   #F6EEDF;
-    --notice-ink:  #6B4A18;
-    --notice-rule: #E4D3AE;
     --display: 'Libre Caslon Text', 'Iowan Old Style', Georgia, serif;
     --sans:    'IBM Plex Sans', system-ui, -apple-system, sans-serif;
     --mono:    'IBM Plex Mono', ui-monospace, Menlo, monospace;
@@ -89,14 +86,6 @@
   }
   .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-2); }
 
-  /* ---------- instructor notice ---------- */
-  .notice {
-    margin: 22px 0 0; padding: 12px 16px; border-radius: var(--r-md);
-    background: var(--notice-bg); border: 1px solid var(--notice-rule); color: var(--notice-ink);
-    font-size: .93rem; display: flex; gap: 12px; align-items: flex-start;
-  }
-  .notice svg { flex: none; width: 18px; height: 18px; margin-top: 3px; }
-  .notice b { font-weight: 600; }
 
   /* ---------- hero ---------- */
   .hero {
@@ -108,6 +97,12 @@
     font-family: var(--mono); font-size: .74rem; letter-spacing: .14em; text-transform: uppercase;
     color: var(--accent); font-weight: 500; margin: 0 0 14px;
   }
+  .classline {
+    display: inline-flex; align-items: center; gap: 12px; margin: 0 0 16px;
+    font-family: var(--sans); font-weight: 600; font-size: 1.05rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--accent); line-height: 1.3;
+  }
+  .classline::before { content: ""; width: 26px; height: 2px; background: var(--accent); flex: none; }
   .hero h1 {
     font-family: var(--display); font-weight: 400;
     font-size: clamp(2.6rem, 2.6vw + 1.3rem, 3.8rem); line-height: 1.02; letter-spacing: -.02em;
@@ -277,7 +272,7 @@
 <div class="container">
 
   <header class="topbar">
-    <a class="wordmark" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a>
+    <a class="wordmark" id="homeLink" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a>
     <nav aria-label="Site">
       <a href="atlas.html" id="navAtlas">Atlas</a>
       <a href="quiz.html" id="navQuiz">Quiz</a>
@@ -287,14 +282,9 @@
   </header>
 
   <main id="main">
-  <div class="notice" id="filterNotice" hidden>
-    <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2a8 8 0 0 1 0 16Z" fill="currentColor"/></svg>
-    <span id="filterText"></span>
-  </div>
-
   <section class="hero">
     <div class="hero-copy">
-      <p class="eyebrow" id="classLine" hidden></p>
+      <p class="classline" id="classLine" hidden></p>
       <h1>Sheep Brain Study Guide<i>.</i></h1>
       <p class="lede">An interactive atlas of a dissected sheep brain, and a quiz that
          tests you on the same structures. Twelve views, 109 structures.</p>
@@ -335,7 +325,7 @@
     <div class="cols">
       <div>
         <h2>For instructors</h2>
-        <p>The <a href="tools/link-builder.html">link builder</a> makes a student link that
+        <p>The <a href="tools/link-builder.html" id="builderLink">link builder</a> makes a student link that
            covers exactly the structures you assign. Every page here honors it.</p>
       </div>
       <div>
@@ -362,21 +352,15 @@
   var p = new URLSearchParams(window.location.search);
   p.delete('view'); p.delete('group'); p.delete('set');
   var qs = p.toString() ? '?' + p.toString() : '';
+  (function () { var a = document.getElementById('homeLink'); if (a) a.href = 'index.html' + qs; })();   // the wordmark stays on the instructor's link
   ['ctaAtlas', 'navAtlas'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'atlas.html' + qs; });
+  (function () { var a = document.getElementById('builderLink'); if (a) a.href = 'tools/link-builder.html' + qs; })();
   ['ctaQuiz', 'navQuiz'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'quiz.html' + qs; });
   var g = document.getElementById('navGlossary'); if (g) g.href = 'glossary.html' + qs;
 
   var cls = (p.get('class') || '').trim().slice(0, 60);   // an instructor's class name, shown above the title
   if (cls) { var line = document.getElementById('classLine'); line.textContent = cls; line.hidden = false; }
 
-  var excludedCount = Object.keys(LAMBDA.excludedMap()).length;   // honors ?off= and the long form
-  if (excludedCount) {
-    document.getElementById('filterText').innerHTML =
-      '<b>This link is customized.</b> Your instructor has narrowed the set: '
-      + excludedCount + ' structure' + (excludedCount === 1 ? '' : 's')
-      + ' excluded. The atlas and quiz show what you will actually see.';
-    document.getElementById('filterNotice').hidden = false;
-  }
 })();
 </script>
 </body>
