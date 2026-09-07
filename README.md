@@ -19,7 +19,7 @@ run it, adapt it, or extend it to their own specimens.
 | **Atlas** (`atlas.html`) | Twelve photographs of a dissected sheep brain with live labels. Three study modes: show labels, hover or tap to reveal, hide markers. Picking a marker shows its definition. |
 | **Quiz** (`quiz.html`) | A timed practicum on the same structures. *Name it* marks a structure with a pulsing dot and asks for its name; *By definition* shows the definition and asks for the name, so it needs no image. Runs cover a group of views, everything, or a single view. |
 | **Glossary** (`glossary.html`) | Every structure with its tissue type, definition, synonyms, and a link to each view it appears in. Searchable, filterable by group. |
-| **Link builder** (`tools/link-builder.html`) | Instructor page: uncheck the structures you don't teach and copy a student link. Every page honors it. |
+| **Link builder** (`tools/link-builder.html`) | Instructor page: uncheck the structures you don't teach, name your class, and copy a student link. Every page honors it. |
 | **Capture tool** (`tools/atlas-coord-capture.html`) | Authoring page for placing markers and labels on a new plate. Works with a mouse or a keyboard. |
 | **Accessibility statement** (`accessibility.html`) | What works, known limitations, and how to report a problem. |
 
@@ -36,7 +36,8 @@ The twelve views fall into three groups, defined once in `views.js`: **Surface v
 **Instructors** who teach a subset of the structures:
 
 1. Open the [link builder](https://torryscott.github.io/lambda/tools/link-builder.html).
-2. Uncheck the structures you don't cover.
+2. Uncheck the structures you don't cover, and add a class name if you want students to see
+   whose link they're on.
 3. Copy the link and give it to students. The atlas, quiz, and glossary all show only what
    you left checked, and the selection follows every link inside the site.
 
@@ -72,6 +73,7 @@ Other parameters, all optional:
 | `set=<id>` | quiz | Quiz a group, or `all` for everything |
 | `mode=describe` | quiz | Start in *By definition* |
 | `pin=<flag>` | atlas | Open with one structure already picked (the glossary uses this) |
+| `class=<name>` | all | A class name, shown above the title on the home page and beside the wordmark elsewhere; up to 60 characters |
 
 ---
 

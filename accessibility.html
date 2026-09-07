@@ -30,6 +30,8 @@
   .wordmark { display: inline-flex; align-items: center; gap: .42em; font-family: var(--display); font-size: 1.28rem; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
   .wordmark .mark { width: 1.2em; height: 1.2em; flex: none; color: var(--accent); }
   .wordmark i { font-style: normal; color: var(--tissue); }
+  .brandrow { display: inline-flex; align-items: center; gap: 14px; min-width: 0; }
+  .classname { font-size: .74rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }
   .topbar nav { display: flex; gap: 22px; align-items: center; }
   .topbar nav a { font-size: .92rem; color: var(--ink-2); text-decoration: none; padding: 6px 0; border-bottom: 1px solid transparent; }
   .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-2); }
@@ -54,7 +56,8 @@
   [hidden] { display: none !important; }
   @media (max-width: 720px) {
     .topbar { flex-wrap: wrap; row-gap: 10px; }
-    .wordmark { flex: 1 0 100%; font-size: 1.18rem; }
+    .brandrow { flex: 1 0 100%; }
+    .wordmark { font-size: 1.18rem; }
     .topbar nav { gap: 18px; }
     .topbar nav a { white-space: nowrap; }
     .container { padding: 0 18px; }
@@ -68,11 +71,11 @@
 <div class="container">
 
   <header class="topbar">
-    <a class="wordmark" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a>
+    <div class="brandrow"><a class="wordmark" id="homeLink" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a><span class="classname" id="className" hidden></span></div>
     <nav aria-label="Site">
-      <a href="atlas.html">Atlas</a>
-      <a href="quiz.html">Quiz</a>
-      <a href="glossary.html">Glossary</a>
+      <a href="atlas.html" id="navAtlas">Atlas</a>
+      <a href="quiz.html" id="navQuiz">Quiz</a>
+      <a href="glossary.html" id="navGlossary">Glossary</a>
       <a href="https://github.com/torryscott/lambda">Source</a>
     </nav>
   </header>
@@ -131,5 +134,17 @@
   </footer>
 
 </div>
+<script src="views.js"></script>
+<script>
+(function () {
+  var V = window.LAMBDA_VIEWS;
+  ['homeLink', 'navAtlas', 'navQuiz', 'navGlossary'].forEach(function (id) {
+    var a = document.getElementById(id);
+    a.href = V.link(a.getAttribute('href'));
+  });
+  var c = V.className();
+  if (c) { var el = document.getElementById('className'); el.textContent = c; el.hidden = false; }
+})();
+</script>
 </body>
 </html>

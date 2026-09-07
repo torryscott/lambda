@@ -20,20 +20,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-a: #f7f9fc;
-    --bg-b: #eef2f7;
+    --bg-a: #FBFAF7;
+    --bg-b: #F6F3EE;
     --panel: #ffffff;
-    --ink: #1a1d29;
-    --ink-soft: #3c4050;
-    --muted: #666d7a;
-    --muted-soft: #656c7b;
+    --ink: #1F1C18;
+    --ink-soft: #4E4841;
+    --muted: #797167;
+    --muted-soft: #797167;
     --accent: #1e3a5f;
     --accent-hover: #2a4e7a;
     --accent-soft: #e8eef5;
-    --gold: #b48a3c;
-    --rule: #e3e7ee;
-    --rule-strong: #cfd5df;
-    --chip: #eef1f6;
+    --gold: #C08A62;
+    --rule: #E9E5DE;
+    --rule-strong: #D9D3C9;
+    --chip: #F3F0EA;
     --right: #2f6b44;
     --right-soft: #e4efe7;
     --wrong: #a33f3a;
@@ -390,6 +390,7 @@
   .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-strong, currentColor); }
   .topbar nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
   .topbar a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+  .classname { font-size: .74rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }
   @media (max-width: 720px) {
     .topbar { flex-wrap: wrap; row-gap: 8px; padding-top: 16px; }
     .brandrow { flex: 1 0 100%; }
@@ -407,7 +408,7 @@
 
 <header class="top">
   <div class="topbar">
-    <div class="brandrow"><a class="wordmark" id="homeLink" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a><span class="viewname" id="viewName">—</span></div>
+    <div class="brandrow"><a class="wordmark" id="homeLink" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a><span class="classname" id="className" hidden></span><span class="viewname" id="viewName">—</span></div>
     <nav aria-label="Site">
       <a href="atlas.html" id="navAtlas">Atlas</a>
       <a href="quiz.html" id="navQuiz" aria-current="page">Quiz</a>
@@ -1102,6 +1103,7 @@
   el('navAtlas').href = V.link('atlas.html', {});
   el('navQuiz').href = V.link('quiz.html', {});
   el('navGlossary').href = V.link('glossary.html', {});
+  (function () { var c = V.className(); if (c) { el('className').textContent = c; el('className').hidden = false; } })();
 
   function openAtlas() {
     window.location.href = VIEW ? V.link('atlas.html', { view: VIEW })

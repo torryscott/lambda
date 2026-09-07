@@ -294,6 +294,7 @@
 
   <section class="hero">
     <div class="hero-copy">
+      <p class="eyebrow" id="classLine" hidden></p>
       <h1>Sheep Brain Study Guide<i>.</i></h1>
       <p class="lede">An interactive atlas of a dissected sheep brain, and a quiz that
          tests you on the same structures. Twelve views, 109 structures.</p>
@@ -364,6 +365,9 @@
   ['ctaAtlas', 'navAtlas'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'atlas.html' + qs; });
   ['ctaQuiz', 'navQuiz'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'quiz.html' + qs; });
   var g = document.getElementById('navGlossary'); if (g) g.href = 'glossary.html' + qs;
+
+  var cls = (p.get('class') || '').trim().slice(0, 60);   // an instructor's class name, shown above the title
+  if (cls) { var line = document.getElementById('classLine'); line.textContent = cls; line.hidden = false; }
 
   var excludedCount = Object.keys(LAMBDA.excludedMap()).length;   // honors ?off= and the long form
   if (excludedCount) {

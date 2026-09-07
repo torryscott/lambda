@@ -5,457 +5,40 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Lambda — Link Builder</title>
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta name="description" content="Build a Lambda link for your class: choose which sheep brain structures your students see, name the class, and share one link.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="../codes.js"></script>
 <style>
   :root {
-    --bg: #f4f6f9;
-    --bg-grad-a: #f7f9fc;
-    --bg-grad-b: #eef2f7;
-    --panel: #ffffff;
-    --panel-soft: #f7f9fc;
-    --ink: #1a1d29;
-    --ink-soft: #3c4050;
-    --muted: #666d7a;
-    --muted-soft: #656c7b;
-    --accent: #1e3a5f;
-    --accent-hover: #2a4e7a;
-    --accent-soft: #e8eef5;
-    --gold: #b48a3c;
-    --gold-soft: #f3ead3;
-    --rule: #e3e7ee;
-    --rule-strong: #cfd5df;
-    --chip: #eef1f6;
-    --success: #2f7a3d;
-    --success-soft: #e3f2e5;
-    --warn-bg: #fdf5e2;
-    --warn-ink: #6e4a15;
-    --warn-rule: #e9d8a8;
-    --view-gross: #6b8e5a;
-    --view-gross-soft: #eef3e7;
-    --view-cor: #2b4d6d;
-    --view-cor-soft: #e9eef5;
-    --view-mid: #a0593a;
-    --view-mid-soft: #f6e9e1;
-    --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.04);
-    --shadow-md: 0 4px 18px rgba(20, 20, 30, 0.06);
-    --shadow-lg: 0 8px 30px rgba(20, 20, 30, 0.10);
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 14px;
+    --ground: #FBFAF7; --panel: #FFFFFF; --panel-soft: #F7F4EE; --ink: #1F1C18; --ink-soft: #4E4841; --muted: #797167;
+    --accent: #1e3a5f; --accent-hover: #2a4e7a; --accent-soft: #e8eef5; --rule: #E9E5DE; --rule-strong: #D9D3C9; --chip: #F3F0EA;
+    --tissue: #C08A62; --ok: #2f7a3d;
+    --display: 'Libre Caslon Text', 'Iowan Old Style', Georgia, serif;
+    --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+    --shadow-sm: 0 1px 2px rgba(31,28,24,.04); --shadow-md: 0 4px 18px rgba(31,28,24,.06); --shadow-up: 0 -6px 24px rgba(31,28,24,.08);
   }
-
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; color: var(--ink); }
-  body {
-    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-    line-height: 1.55;
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-    background:
-      radial-gradient(1100px 500px at 85% -10%, rgba(43, 77, 109, 0.06), transparent 60%),
-      radial-gradient(900px 420px at 0% 0%, rgba(30, 58, 95, 0.06), transparent 55%),
-      linear-gradient(180deg, var(--bg-grad-a), var(--bg-grad-b));
-    min-height: 100vh;
-  }
-
-  .hero {
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: 0 24px 8px;
-  }
-  .hero-eyebrow {
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--gold);
-    font-weight: 600;
-    margin-bottom: 10px;
-  }
-  .hero h1 {
-    font-family: 'Libre Caslon Text', 'Iowan Old Style', Georgia, serif;
-    font-weight: 400;
-    font-size: clamp(1.8rem, 2.6vw + 1rem, 2.6rem);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
-    margin: 0 0 8px;
-    color: var(--ink);
-  }
-  .hero p {
-    margin: 0;
-    color: var(--ink-soft);
-    font-size: 1.02rem;
-    max-width: 640px;
-  }
-
-  main { max-width: 1120px; margin: 0 auto; padding: 20px 24px 56px; }
-
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-lg);
-    padding: 20px 22px;
-    margin: 18px 0;
-    box-shadow: var(--shadow-sm);
-  }
-
-  /* URL builder card */
-  .url-card {
-    position: sticky;
-    top: 12px;
-    z-index: 10;
-    box-shadow: var(--shadow-md);
-    backdrop-filter: blur(8px);
-    background: rgba(255, 255, 255, 0.96);
-  }
-  .url-card .field-label {
-    display: block;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  input[type="text"], textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--rule);
-    border-radius: var(--radius-sm);
-    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-    font-size: 0.82rem;
-    color: var(--ink);
-    background: var(--panel-soft);
-    transition: border-color 0.15s, background 0.15s;
-  }
-  input[type="text"]:focus, textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-    background: #fff;
-  }
-  textarea {
-    min-height: 76px;
-    resize: vertical;
-    line-height: 1.5;
-  }
-  .url-card .base-row { margin-bottom: 14px; }
-
-  button {
-    padding: 9px 16px;
-    border: 1px solid var(--rule-strong);
-    background: var(--panel);
-    color: var(--ink);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.88rem;
-    font-weight: 500;
-    transition: all 0.15s;
-  }
-  button:hover { background: var(--chip); border-color: var(--muted-soft); }
-  button.primary {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
-  button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
-  button.ghost { border-color: transparent; background: transparent; color: var(--muted); }
-  button.ghost:hover { background: var(--chip); color: var(--ink); }
-
-  .actions-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
-  .copied {
-    color: var(--success);
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-left: 4px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .copied.show { opacity: 1; }
-
-  .summary-line {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-    font-size: 0.82rem;
-    color: var(--muted);
-  }
-  .summary-line .dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--success);
-    display: inline-block;
-  }
-  .summary-line .dot.partial { background: var(--gold); }
-
-  /* Warn card */
-  .warn {
-    background: var(--warn-bg);
-    color: var(--warn-ink);
-    border: 1px solid var(--warn-rule);
-    padding: 14px 18px;
-    border-radius: var(--radius-md);
-    font-size: 0.88rem;
-    margin: 18px 0;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  .warn::before {
-    content: "ⓘ";
-    font-size: 1.1rem;
-    line-height: 1;
-    margin-top: 2px;
-    flex-shrink: 0;
-  }
-  .warn code {
-    background: rgba(110, 74, 21, 0.09);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-size: 0.82em;
-  }
-
-  /* View grid */
-  .views {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 18px;
-  }
-  .view {
-    position: relative;
-    padding: 22px 22px 20px;
-    overflow: hidden;
-  }
-  .view::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: var(--view-color, var(--accent));
-  }
-  .view[data-kind="surface"] { --view-color: var(--view-gross); --view-soft: var(--view-gross-soft); }
-  .view[data-kind="cor"]     { --view-color: var(--view-cor);   --view-soft: var(--view-cor-soft); }
-  .view[data-kind="mid"]     { --view-color: var(--view-mid);   --view-soft: var(--view-mid-soft); }
-  .area label small { margin-left: 8px; font-size: .74rem; color: var(--muted); letter-spacing: .04em; }
-  .views-error { grid-column: 1 / -1; color: var(--muted); padding: 18px 0; }
-
-  .view h2 {
-    font-family: 'Libre Caslon Text', 'Iowan Old Style', Georgia, serif;
-    font-weight: 400;
-    font-size: 1.35rem;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    color: var(--ink);
-  }
-  .count {
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--view-color);
-    background: var(--view-soft);
-    padding: 4px 10px;
-    border-radius: 999px;
-    white-space: nowrap;
-    letter-spacing: 0.01em;
-  }
-
-  .view-actions {
-    display: flex;
-    gap: 4px;
-    margin: 10px 0 4px;
-  }
-  .view-actions button {
-    padding: 4px 10px;
-    font-size: 0.78rem;
-    color: var(--muted);
-    background: transparent;
-    border-color: var(--rule);
-  }
-  .view-actions button:hover { color: var(--view-color); background: var(--view-soft); border-color: var(--view-color); }
-
-  .subgroup { margin: 14px 0 2px; }
-  .subgroup h3 {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
-    margin: 10px 0 2px;
-    font-weight: 600;
-  }
-
-  .area {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 7px 8px;
-    border-radius: var(--radius-sm);
-    transition: background 0.12s;
-    cursor: pointer;
-  }
-  .area:hover { background: var(--view-soft); }
-  .area label {
-    flex: 1;
-    cursor: pointer;
-    font-size: 0.94rem;
-    color: var(--ink);
-    user-select: none;
-  }
-  .area::after {
-    content: attr(data-flag);
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%) translateX(4px);
-    background: var(--ink);
-    color: #fff;
-    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-    font-size: 0.72rem;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s, transform 0.15s;
-    box-shadow: var(--shadow-md);
-    z-index: 5;
-  }
-  .area:hover::after {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
-  }
-
-  /* Custom checkbox */
-  .area input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border: 1.5px solid var(--rule-strong);
-    border-radius: 4px;
-    cursor: pointer;
-    position: relative;
-    background: #fff;
-    transition: all 0.15s;
-    flex-shrink: 0;
-  }
-  .area input[type="checkbox"]:hover { border-color: var(--view-color); }
-  .area input[type="checkbox"]:checked {
-    background: var(--view-color);
-    border-color: var(--view-color);
-  }
-  .area input[type="checkbox"]:checked::after {
-    content: "";
-    position: absolute;
-    left: 5px;
-    top: 1px;
-    width: 5px;
-    height: 10px;
-    border: solid #fff;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-  }
-  .area input[type="checkbox"]:focus-visible {
-    outline: 3px solid var(--view-color);
-    outline-offset: 3px;
-  }
-  button:focus-visible,
-  .mode-group button:focus-visible,
-  input[type="text"]:focus-visible,
-  textarea:focus-visible {
-    outline: 3px solid var(--accent);
-    outline-offset: 2px;
-  }
-
-  /* Details / reference */
-  details { margin: 14px 0; }
-  details > summary {
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--accent);
-    font-size: 0.95rem;
-    padding: 4px 0;
-    list-style: none;
-  }
-  details > summary::-webkit-details-marker { display: none; }
-  details > summary::before {
-    content: "▸";
-    display: inline-block;
-    margin-right: 8px;
-    transition: transform 0.15s;
-    color: var(--muted);
-    font-size: 0.8em;
-  }
-  details[open] > summary::before { transform: rotate(90deg); }
-  details p { color: var(--muted); font-size: 0.9rem; margin: 8px 0 12px; }
-
-  .ref-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; margin-top: 8px; }
-  .ref-table th, .ref-table td { text-align: left; padding: 8px 10px; }
-  .ref-table th {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    font-weight: 600;
-    border-bottom: 1px solid var(--rule);
-    background: var(--panel-soft);
-  }
-  .ref-table td { border-bottom: 1px solid var(--rule); }
-  .ref-table tr:last-child td { border-bottom: none; }
-  .ref-table tr:hover td { background: var(--panel-soft); }
-  .ref-table code {
-    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-    font-size: 0.8rem;
-    color: var(--ink-soft);
-    background: var(--chip);
-    padding: 1px 6px;
-    border-radius: 3px;
-  }
-  .ref-table td.view-col { color: var(--muted); font-size: 0.8rem; }
-
-  details ul { font-size: 0.9rem; color: var(--muted); margin: 4px 0 0; padding-left: 20px; }
-  details ul li { margin: 6px 0; }
-  details ul li code {
-    background: var(--chip);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
-    font-size: 0.85em;
-  }
-
-  footer {
-    max-width: 1120px;
-    margin: 0 auto;
-    padding: 0 24px 32px;
-    text-align: center;
-    color: var(--muted-soft);
-    font-size: 0.78rem;
-  }
-
-  @media (max-width: 640px) {
-    .hero { padding: 0 20px 4px; }
-    main { padding: 16px 20px 40px; }
-    .card { padding: 16px 18px; }
-    .views { gap: 14px; }
-    .actions-row button { flex: 1 1 auto; }
-  }
+  html, body { margin: 0; background: var(--ground); color: var(--ink); }
+  body { font-family: var(--sans); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; padding-bottom: 150px; }
+  a { color: var(--accent); }
+  [hidden] { display: none !important; }
   .skip { position: absolute; left: -999px; top: 8px; z-index: 100; padding: 8px 12px; background: var(--accent); color: #fff; border-radius: 8px; font-weight: 600; text-decoration: none; }
   .skip:focus { left: 8px; outline: 3px solid #fff; outline-offset: 2px; }
 
   /* ---------- site header, the same on every page ---------- */
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
   .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 0 18px; }
   .brandrow { display: inline-flex; align-items: center; gap: 14px; min-width: 0; }
-  .wordmark { display: inline-flex; align-items: center; gap: .42em; font-family: 'Libre Caslon Text', 'Iowan Old Style', Georgia, serif; font-size: 1.28rem; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+  .wordmark { display: inline-flex; align-items: center; gap: .42em; font-family: var(--display); font-size: 1.28rem; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
   .wordmark .mark { width: 1.2em; height: 1.2em; flex: none; color: var(--accent); }
-  .wordmark i { font-style: normal; color: #C08A62; }
+  .wordmark i { font-style: normal; color: var(--tissue); }
   .topbar nav { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
-  .topbar nav a { font-size: .92rem; color: var(--ink-soft, var(--ink)); text-decoration: none; padding: 6px 0; border-bottom: 1px solid transparent; }
-  .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-strong, currentColor); }
-  .topbar nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .topbar nav a { font-size: .92rem; color: var(--ink-soft); text-decoration: none; padding: 6px 0; border-bottom: 1px solid transparent; }
+  .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-strong); }
   .topbar a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
   @media (max-width: 720px) {
     .topbar { flex-wrap: wrap; row-gap: 8px; padding-top: 16px; }
@@ -464,13 +47,92 @@
     .topbar nav { gap: 16px; }
     .topbar nav a { white-space: nowrap; font-size: .88rem; }
   }
+
+  /* ---------- intro ---------- */
+  .eyebrow { font-family: var(--mono); font-size: .74rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin: 6px 0 10px; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: clamp(1.8rem, 2.6vw + 1rem, 2.6rem); line-height: 1.1; letter-spacing: -.01em; margin: 0 0 10px; }
+  .lede { margin: 0; color: var(--ink-soft); font-size: 1.05rem; max-width: 66ch; }
+  .lede strong { color: var(--ink); font-weight: 600; }
+  .example { margin: 10px 0 0; font-size: .9rem; color: var(--muted); }
+  .example code { font-family: var(--mono); font-size: .82rem; background: var(--chip); padding: 2px 6px; border-radius: 4px; color: var(--ink-soft); }
+
+  /* ---------- cards ---------- */
+  .card { background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius-lg); padding: 20px 22px; box-shadow: var(--shadow-sm); }
+  .sec { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 600; margin: 26px 0 8px; }
+
+  .setup { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 22px; align-items: end; }
+  .field label { display: block; font-weight: 600; font-size: .92rem; margin: 0 0 6px; }
+  .field input[type="text"] { width: 100%; font: inherit; padding: 9px 12px; border: 1.5px solid var(--rule-strong); border-radius: 8px; background: var(--panel); color: var(--ink); }
+  .field input[type="text"]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .field small { display: block; margin-top: 5px; font-size: .82rem; color: var(--muted); }
+  .field input.mono { font-family: var(--mono); font-size: .84rem; }
+  .setup details { grid-column: 1 / -1; margin: 0; }
+  details > summary { cursor: pointer; font-weight: 600; color: var(--accent); font-size: .9rem; list-style: none; padding: 2px 0; }
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary::before { content: "\25B8"; display: inline-block; margin-right: 8px; color: var(--muted); font-size: .8em; transition: transform .15s; }
+  details[open] > summary::before { transform: rotate(90deg); }
+  details .field { margin-top: 12px; }
+  details p { margin: 10px 0 0; font-size: .88rem; color: var(--muted); max-width: 70ch; }
+  details code { font-family: var(--mono); font-size: .82rem; background: var(--chip); padding: 1px 5px; border-radius: 3px; }
+
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 26px 0 10px; }
+  .toolbar .sec { margin: 0; }
+  .toolbar-actions { display: flex; gap: 6px; }
+
+  button { font: inherit; font-size: .88rem; font-weight: 500; padding: 8px 14px; border: 1.5px solid var(--rule-strong); border-radius: 999px; background: var(--panel); color: var(--ink); cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+  button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+  button.ghost { border-color: transparent; background: transparent; color: var(--muted); }
+  button.ghost:hover { background: var(--chip); color: var(--ink); border-color: transparent; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- views ---------- */
+  .views { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .view h2 { font-family: var(--display); font-weight: 400; font-size: 1.3rem; margin: 0; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .count { font: 600 .76rem var(--sans); color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .view-actions { display: flex; gap: 4px; margin: 10px 0 6px; }
+  .view-actions button { padding: 3px 10px; font-size: .78rem; color: var(--muted); border-color: var(--rule); background: transparent; }
+  .view-actions button:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .subgroup h3 { font-size: .7rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 10px 0 2px; font-weight: 600; }
+  .area { display: flex; align-items: center; gap: 11px; padding: 6px 8px; border-radius: var(--radius-sm); }
+  .area:hover { background: var(--chip); }
+  .area label { flex: 1; cursor: pointer; font-size: .94rem; color: var(--ink); user-select: none; }
+  .area label small { margin-left: 8px; font-size: .74rem; color: var(--muted); letter-spacing: .04em; }
+  .area .code { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
+  .area input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1.5px solid var(--rule-strong); border-radius: 4px;
+    cursor: pointer; position: relative; background: #fff; flex-shrink: 0;
+  }
+  .area input[type="checkbox"]:hover { border-color: var(--accent); }
+  .area input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+  .area input[type="checkbox"]:checked::after { content: ""; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .views-error { grid-column: 1 / -1; color: var(--muted); padding: 18px 0; }
+
+  /* ---------- the link, pinned to the bottom ---------- */
+  .linkbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); box-shadow: var(--shadow-up); }
+  .linkbar-inner { max-width: 1120px; margin: 0 auto; padding: 14px 24px 16px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; }
+  .linkbar .status { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--ink-soft); }
+  .linkbar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); flex: none; }
+  .linkbar .dot.partial { background: var(--accent); }
+  .linkbar .dot.none { background: #b2423c; }
+  .linkbar input[type="text"] { width: 100%; font-family: var(--mono); font-size: .84rem; padding: 10px 12px; border: 1.5px solid var(--rule-strong); border-radius: 8px; background: var(--panel-soft); color: var(--ink); }
+  .linkbar .actions { display: flex; gap: 8px; align-items: center; }
+  .copied { font-size: .84rem; color: var(--ok); font-weight: 500; }
+  @media (max-width: 640px) {
+    .wrap { padding: 0 16px; }
+    .setup { grid-template-columns: 1fr; }
+    .linkbar-inner { grid-template-columns: 1fr; padding: 12px 16px 14px; }
+    .linkbar .actions button { flex: 1 1 auto; }
+    body { padding-bottom: 190px; }
+  }
 </style>
-<script src="../codes.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
-<header class="hero">
-  <div class="topbar">
+
+<div class="wrap">
+  <header class="topbar">
     <div class="brandrow"><a class="wordmark" id="homeLink" href="../index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a></div>
     <nav aria-label="Site">
       <a href="../atlas.html" id="navAtlas">Atlas</a>
@@ -478,50 +140,64 @@
       <a href="../glossary.html" id="navGlossary">Glossary</a>
       <a href="https://github.com/torryscott/lambda">Source</a>
     </nav>
-  </div>
-  <div class="hero-eyebrow">For instructors</div>
-  <h1>Assignment Link Builder</h1>
-  <p>Choose which brain areas your students should be tested on. Unselected areas are skipped for that assignment; leave everything selected to use the full module.</p>
-</header>
+  </header>
 
-<main id="main">
-  <section class="card url-card">
-    <div class="base-row">
-      <label class="field-label" for="baseUrl">Base URL</label>
-      <input type="text" id="baseUrl" value="https://torryscott.github.io/lambda/">
-    </div>
-    <div>
-      <label class="field-label" for="finalUrl">Shareable student link</label>
-      <textarea id="finalUrl" readonly></textarea>
-      <div class="actions-row">
-        <button class="primary" id="copyBtn">Copy link</button>
-        <button id="openBtn">Open in new tab</button>
-        <button class="ghost" id="resetBtn">Select all</button>
-        <button class="ghost" id="clearBtn">Deselect all</button>
-        <span class="copied" id="copiedMsg" role="status" aria-live="polite"></span>
+  <main id="main">
+    <p class="eyebrow">For instructors</p>
+    <h1>Make a link for your class</h1>
+    <p class="lede">Teach a subset of the structures? <strong>Uncheck the ones you don't cover</strong>, add your class name
+       if you like, and share the link at the bottom of this page. The atlas, quiz, and glossary then show only what you
+       left checked, and your selection follows students through every page.</p>
+    <p class="example">A link looks like <code>torryscott.github.io/lambda/?off=D1.M3</code>: the codes name the structures left out. Leave everything checked and the link is just the home page.</p>
+
+    <h2 class="sec">Your class</h2>
+    <section class="card setup">
+      <div class="field">
+        <label for="className">Class name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+        <input type="text" id="className" placeholder="Dr. Dennis' class" maxlength="60" autocomplete="off">
+        <small>Shown above the title on the home page and beside the logo on every other page, so students know whose link they're on.</small>
       </div>
-      <div class="summary-line">
-        <span class="dot" id="statusDot" aria-hidden="true"></span>
-        <span id="summary" role="status" aria-live="polite"></span>
+      <div class="toolbar-actions">
+        <button type="button" class="ghost" id="resetBtn">Select all</button>
+        <button type="button" class="ghost" id="clearBtn">Deselect all</button>
       </div>
-    </div>
-  </section>
+      <details>
+        <summary>Advanced</summary>
+        <div class="field">
+          <label for="baseUrl">Site address</label>
+          <input type="text" id="baseUrl" class="mono" value="https://torryscott.github.io/lambda/">
+          <small>Only change this if you host your own copy of Lambda.</small>
+        </div>
+        <p>Every structure has a permanent short code, a view letter and a number. Unchecking a structure adds its code to
+           <code>?off=</code>; everything not listed stays visible. Codes are never reused, so a link keeps working as
+           structures are added later. The same structure has a separate code in each view it appears in.</p>
+      </details>
+    </section>
 
-  <div class="warn">
-    <div>
-      <strong>How this works.</strong> Unchecking areas adds their codes to the link, like <code>?off=D1.M3</code>; everything not listed stays visible. The homepage, every atlas, and every quiz honor it. Nothing to configure — share the link. Only views that have been mapped are live; the rest show as in progress.
+    <div class="toolbar">
+      <h2 class="sec">Structures</h2>
+      <span id="topCount" class="example" style="margin:0"></span>
+    </div>
+    <section id="views" class="views" aria-label="Structures by view"></section>
+  </main>
+</div>
+
+<div class="linkbar" role="region" aria-label="Your link">
+  <div class="linkbar-inner">
+    <div class="status"><span class="dot" id="statusDot" aria-hidden="true"></span><span id="summary" role="status" aria-live="polite"></span></div>
+    <input type="text" id="finalUrl" readonly aria-label="Shareable student link">
+    <div class="actions">
+      <button type="button" class="primary" id="copyBtn">Copy link</button>
+      <button type="button" id="openBtn">Open</button>
+      <span class="copied" id="copiedMsg" role="status" aria-live="polite"></span>
     </div>
   </div>
-
-  <section id="views" class="views"></section>
-</main>
-
-<footer>Part of Lambda — an open sheep brain study guide</footer>
+</div>
 
 <script>
 // The structure list is read from the same data files the site uses, so the
 // builder can never offer a structure a student cannot be asked about.
-// Views follow the homepage order. The six coronal slices share one set of
+// Views follow the site's order. The six coronal slices share one set of
 // structures, so they appear once, marked with the slices they sit on.
 const VIEWS = [
   { id: 'dorsal',              card: 'Dorsal',             kind: 'surface' },
@@ -530,15 +206,15 @@ const VIEWS = [
   { id: 'posterior-internal',  card: 'Posterior',          kind: 'surface' },
   { id: 'pulled-back-lateral', card: 'Lateral, retracted', kind: 'surface' },
   { id: 'midsagittal',         card: 'Midsagittal',        kind: 'mid' },
-  { id: 'coronal-a', card: 'Coronal', kind: 'cor', slice: 'A' },
-  { id: 'coronal-b', card: 'Coronal', kind: 'cor', slice: 'B' },
-  { id: 'coronal-c', card: 'Coronal', kind: 'cor', slice: 'C' },
-  { id: 'coronal-d', card: 'Coronal', kind: 'cor', slice: 'D' },
-  { id: 'coronal-e', card: 'Coronal', kind: 'cor', slice: 'E' },
-  { id: 'coronal-f', card: 'Coronal', kind: 'cor', slice: 'F' },
+  { id: 'coronal-a', card: 'Coronal sections', kind: 'cor', slice: 'A' },
+  { id: 'coronal-b', card: 'Coronal sections', kind: 'cor', slice: 'B' },
+  { id: 'coronal-c', card: 'Coronal sections', kind: 'cor', slice: 'C' },
+  { id: 'coronal-d', card: 'Coronal sections', kind: 'cor', slice: 'D' },
+  { id: 'coronal-e', card: 'Coronal sections', kind: 'cor', slice: 'E' },
+  { id: 'coronal-f', card: 'Coronal sections', kind: 'cor', slice: 'F' },
 ];
 let DATA = {};          // card name -> [{area, flag, slices}]
-const KIND = {};        // card name -> kind, for colouring
+const KIND = {};
 
 async function loadData() {
   const files = await Promise.all(VIEWS.map(v =>
@@ -555,51 +231,37 @@ async function loadData() {
   });
 }
 
-
 const viewsEl = document.getElementById('views');
 const baseUrlEl = document.getElementById('baseUrl');
+const classEl = document.getElementById('className');
 const finalUrlEl = document.getElementById('finalUrl');
 const summaryEl = document.getElementById('summary');
+const topCount = document.getElementById('topCount');
 const copiedMsg = document.getElementById('copiedMsg');
 
-// Build UI
 function buildUI() {
   for (const view of Object.keys(DATA)) {
     const rows = DATA[view];
     const section = document.createElement('div');
     section.className = 'view card';
     section.dataset.view = view;
-    section.dataset.kind = KIND[view];
-
     const h = document.createElement('h2');
     h.innerHTML = `${view} <span class="count" data-count="${view}">0 of 0</span>`;
     section.appendChild(h);
-
     const actions = document.createElement('div');
     actions.className = 'view-actions';
-    actions.innerHTML = `
-      <button data-action="all" data-view="${view}">All</button>
-      <button data-action="none" data-view="${view}">None</button>
-    `;
+    actions.innerHTML = `<button type="button" data-action="all" data-view="${view}">All</button><button type="button" data-action="none" data-view="${view}">None</button>`;
     section.appendChild(actions);
-
     const sg = document.createElement('div');
     sg.className = 'subgroup';
-    if (KIND[view] === 'cor') {
-      const h3 = document.createElement('h3');
-      h3.textContent = 'Shared across slices A–F';
-      sg.appendChild(h3);
-    }
+    if (KIND[view] === 'cor') { const h3 = document.createElement('h3'); h3.textContent = 'Shared across slices A to F'; sg.appendChild(h3); }
     for (const r of rows) {
       const row = document.createElement('div');
       row.className = 'area';
-      row.dataset.flag = r.flag;
       const id = `cb_${r.flag}`;
       const where = r.slices.length ? `<small>${r.slices.join(' · ')}</small>` : '';
-      row.innerHTML = `
-        <input type="checkbox" id="${id}" data-flag="${r.flag}" checked>
-        <label for="${id}">${r.area}${where}</label>
-      `;
+      const code = LAMBDA.FLAGS[r.flag] ? `<span class="code" aria-hidden="true">${LAMBDA.FLAGS[r.flag]}</span>` : '';
+      row.innerHTML = `<input type="checkbox" id="${id}" data-flag="${r.flag}" checked><label for="${id}">${r.area}${where}</label>${code}`;
       sg.appendChild(row);
     }
     section.appendChild(sg);
@@ -607,103 +269,64 @@ function buildUI() {
   }
 }
 
-// Update logic
 function update() {
   const base = baseUrlEl.value.trim();
   const excluded = [];
   let total = 0, selected = 0;
-  const perView = {};
   for (const view of Object.keys(DATA)) {
-    perView[view] = { sel: 0, total: DATA[view].length };
+    let sel = 0;
     for (const r of DATA[view]) {
       total++;
       const cb = document.querySelector(`input[data-flag="${r.flag}"]`);
-      if (cb.checked) {
-        selected++;
-        perView[view].sel++;
-      } else {
-        excluded.push(r.flag);
-      }
+      if (cb.checked) { selected++; sel++; } else { excluded.push(r.flag); }
     }
+    document.querySelector(`[data-count="${view}"]`).textContent = `${sel} of ${DATA[view].length}`;
   }
-  for (const view of Object.keys(perView)) {
-    const el = document.querySelector(`[data-count="${view}"]`);
-    el.textContent = `${perView[view].sel} of ${perView[view].total}`;
-  }
-  // Short codes from codes.js. A flag with no code (shouldn't happen — see
-  // scripts/check-codes.py) falls back to the long form.
+  // Short codes from codes.js; a flag with no code falls back to the long form.
   const code = f => LAMBDA.FLAGS[f];
   const offCodes = excluded.map(code).filter(Boolean);
   const longForm = excluded.filter(f => !code(f)).map(f => `${encodeURIComponent(f)}=0`);
-  const params = [offCodes.length ? `off=${offCodes.join('.')}` : '', ...longForm].filter(Boolean).join('&');
+  const cls = classEl.value.trim();
+  const params = [offCodes.length ? `off=${offCodes.join('.')}` : '', ...longForm, cls ? `class=${encodeURIComponent(cls)}` : ''].filter(Boolean).join('&');
   const url = params ? `${base}?${params}` : base;
   finalUrlEl.value = url;
   const off = total - selected;
   const dot = document.getElementById('statusDot');
-  if (off === 0) {
-    summaryEl.textContent = `All ${total} areas included — default behavior, no URL parameters.`;
-    dot.classList.remove('partial');
-  } else if (selected === 0) {
-    summaryEl.textContent = `No areas selected — students will see no questions.`;
-    dot.classList.add('partial');
-  } else {
-    summaryEl.textContent = `${selected} of ${total} areas included · ${off} excluded · URL length: ${url.length} chars`;
-    dot.classList.add('partial');
-  }
+  dot.className = 'dot' + (selected === 0 ? ' none' : off ? ' partial' : '');
+  const named = cls ? ` for ${cls}` : '';
+  if (selected === 0) summaryEl.textContent = 'Nothing selected. Students would see no structures at all.';
+  else if (off === 0) summaryEl.textContent = `All ${total} structures${named}. This is the plain site; the link carries ${cls ? 'only the class name' : 'nothing extra'}.`;
+  else summaryEl.textContent = `${selected} of ${total} structures${named}, ${off} left out.`;
+  topCount.textContent = off ? `${selected} of ${total} checked` : `All ${total} checked`;
 }
 
-// Events
-document.addEventListener('change', e => {
-  if (e.target.matches('input[type="checkbox"]')) update();
-});
+document.addEventListener('change', e => { if (e.target.matches('input[type="checkbox"]')) update(); });
 document.addEventListener('click', e => {
   const act = e.target.dataset.action;
   if (!act) return;
-  const view = e.target.dataset.view;
-  const boxes = document.querySelectorAll(`[data-view="${view}"] input[type="checkbox"], .view[data-view="${view}"] input[type="checkbox"]`);
-  // the selector above doesn't match inner checkboxes because .view wraps them; use container lookup instead:
-  const container = document.querySelector(`.view[data-view="${view}"]`);
-  container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-    cb.checked = (act === 'all');
-  });
+  document.querySelector(`.view[data-view="${e.target.dataset.view}"]`).querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = (act === 'all'); });
   update();
 });
 baseUrlEl.addEventListener('input', update);
+classEl.addEventListener('input', update);
+document.getElementById('resetBtn').addEventListener('click', () => { document.querySelectorAll('.views input[type="checkbox"]').forEach(cb => cb.checked = true); update(); });
+document.getElementById('clearBtn').addEventListener('click', () => { document.querySelectorAll('.views input[type="checkbox"]').forEach(cb => cb.checked = false); update(); });
+
+function flashCopied() {
+  copiedMsg.textContent = 'Copied';
+  setTimeout(() => { copiedMsg.textContent = ''; }, 1800);
+}
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(finalUrlEl.value); }
+  catch { finalUrlEl.select(); document.execCommand('copy'); }
+  flashCopied();
+});
+document.getElementById('openBtn').addEventListener('click', () => { window.open(finalUrlEl.value, '_blank'); });
 
 loadData().then(() => { buildUI(); update(); }).catch(err => {
   viewsEl.innerHTML = '<p class="views-error">Could not load the structure lists (' + err.message +
     '). Open this page from the site, or run <code>python3 scripts/serve.py</code> locally.</p>';
 });
-function flashCopied() {
-  copiedMsg.textContent = 'Copied to clipboard';
-  copiedMsg.classList.add('show');
-  setTimeout(() => {
-    copiedMsg.classList.remove('show');
-    // Clear text after transition so the next copy triggers a fresh announcement
-    setTimeout(() => { copiedMsg.textContent = ''; }, 300);
-  }, 1600);
-}
-document.getElementById('copyBtn').addEventListener('click', async () => {
-  try {
-    await navigator.clipboard.writeText(finalUrlEl.value);
-  } catch {
-    finalUrlEl.select();
-    document.execCommand('copy');
-  }
-  flashCopied();
-});
-document.getElementById('openBtn').addEventListener('click', () => {
-  window.open(finalUrlEl.value, '_blank');
-});
-document.getElementById('resetBtn').addEventListener('click', () => {
-  document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
-  update();
-});
-document.getElementById('clearBtn').addEventListener('click', () => {
-  document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-  update();
-});
-
 update();
 </script>
 </body>

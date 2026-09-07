@@ -32,6 +32,12 @@
     group: function (id) { for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].id === id) return GROUPS[i]; return null; },
     groupOf: function (viewId) { for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].views.indexOf(viewId) > -1) return GROUPS[i]; return null; },
     thumb: function (id) { return 'images/thumbs/' + id + '.jpg'; },
+    /* An instructor can name the class in the link (?class=...). It is shown
+       on every page so students know whose link they are on. */
+    className: function () {
+      var c = new URLSearchParams(window.location.search).get('class');
+      return c ? c.trim().slice(0, 60) : '';
+    },
     /* A link to a page that keeps the instructor's ?off= selection and
        replaces the view / group / set part with what is asked for. */
     link: function (page, set) {

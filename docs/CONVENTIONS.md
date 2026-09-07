@@ -60,8 +60,9 @@ new view is added there once.
 | `set=<id>` | quiz | Quiz a group, or `all` |
 | `mode=<id>` | quiz | `name` (default) or `describe`; `find` falls back to `name` while withheld |
 | `pin=<flag>` | atlas | Arrive in reveal mode with that structure picked |
+| `class=<name>` | all | Class name shown in the header; trimmed to 60 characters by `LAMBDA_VIEWS.className()` |
 
-Links out of any page keep `off` and drop `view`, `group`, `set`, and `pin`. Use
+Links out of any page keep `off` and `class` and drop `view`, `group`, `set`, and `pin`. Use
 `LAMBDA_VIEWS.link(page, { view: id })` to build one.
 
 ---
