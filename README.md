@@ -205,8 +205,7 @@ is still to be done.
 
 The site sets no cookies and collects no personal data. Visits and quiz runs are counted
 with [GoatCounter](https://www.goatcounter.com), an open-source counter that stores no
-identifiers; the totals appear in the home page footer once the site has been opened a
-thousand times. The feedback form is a Google Form and is anonymous unless you choose to
+identifiers; the totals appear in the home page footer. The feedback form is a Google Form and is anonymous unless you choose to
 give an email address.
 
 ## License

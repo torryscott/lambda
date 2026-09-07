@@ -380,9 +380,9 @@
 </script>
 <script>
 (function () {
-  /* Usage line: totals from GoatCounter's public counter. Hidden until the
-     site has been opened a thousand times, and hidden if the request fails,
-     so it never shows a small number or a broken widget. */
+  /* Usage line: totals from GoatCounter's public counter. Hidden if the
+     request fails or the count is still zero, so it never shows a broken
+     widget. */
   var line = document.getElementById('usage');
   if (!line || !window.fetch) return;
   var num = function (v) { return parseInt(String(v == null ? '' : v).replace(/\D/g, ''), 10) || 0; };
@@ -394,10 +394,10 @@
   Promise.all([get('TOTAL'), get('quiz-run')]).then(function (res) {
     var views = res[0] ? num(res[0].count) : 0;
     var runs = res[1] ? num(res[1].count) : 0;
-    if (views < 1000) return;
+    if (views < 1) return;
     var fmt = function (n) { return n.toLocaleString('en-US'); };
     var text = 'Opened ' + fmt(views) + ' times since September 2026';
-    if (runs >= 100) text += ' \u00b7 ' + fmt(runs) + ' quizzes taken';
+    if (runs >= 1) text += ' \u00b7 ' + fmt(runs) + ' quizzes taken';
     line.textContent = text;
     line.hidden = false;
   });
