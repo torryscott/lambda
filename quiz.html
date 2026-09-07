@@ -465,7 +465,7 @@
         </select>
         <small>Turn it off if you would rather not race.</small>
       </div>
-      <fieldset class="field seg">
+      <fieldset class="field seg" id="markerWrap">
         <legend>Marker</legend>
         <div class="segs">
           <label><input type="radio" name="marker" value="pulse" checked><span>Pulsing</span></label>
@@ -1012,6 +1012,7 @@
       b.setAttribute('aria-checked', on ? 'true' : 'false');
       b.tabIndex = on ? 0 : -1;          // one tab stop for the group; arrows move within it
     });
+    el('markerWrap').hidden = state.mode === 'describe';   // no plate, so no dot to pulse or hold still
     paintCount();
   }
   function setMode(m, focus) {
