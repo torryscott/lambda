@@ -833,6 +833,7 @@ const V = window.LAMBDA_VIEWS;
 const params = new URLSearchParams(window.location.search);
 let view = params.get('view');
 const groupParam = params.get('group');
+if (view && V.all.indexOf(view) < 0) view = null;   // a view this link does not include
 if (!view && groupParam && V.group(groupParam)) view = V.group(groupParam).views[0];
 
 // Every link out of here keeps the instructor's selection.

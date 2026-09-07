@@ -49,16 +49,32 @@ it works. To develop locally, run `python3 scripts/serve.py` and open `http://lo
 
 ## How instructor links work
 
-Every structure has a permanent short code: a view letter and a number, listed in `codes.js`.
-A link hides structures with `?off=`:
+The link builder writes an **inclusion** link. Every structure has a permanent bit position,
+and the link carries a mask, packed as base32, with a bit set for each structure that is in:
+
+```
+https://torryscott.github.io/lambda/?on=5777777777x7777773776py&views=74hq
+```
+
+`views=` does the same for the views. A structure or view added to Lambda after a link was
+made has no bit in that link, so it stays out. Links therefore mean exactly what they meant
+on the day they were made; an instructor who wants new material opens the builder from their
+link, which pre-fills, and copies a new one.
+
+Bit positions are append-only: a new code goes at the end of `BITS` in `codes.js`, and a new
+view at the end of `VIEW_BITS` in `views.js`. Nothing is ever inserted, removed, or reordered.
+`scripts/check-codes.py` checks that every code and view has a position.
+
+Every structure also has a permanent short code, a view letter and a number, listed in
+`codes.js`. Older links used them to say what to **hide**, and that form is still honored:
 
 ```
 https://torryscott.github.io/lambda/?off=D1.M3
 ```
 
 Codes are case-insensitive and are never reused, even if a structure is retired. The long
-form, `inc_<view>_<structure>=0`, is still honored. Instructors only ever say what to
-**remove**; with no parameters, everything is shown.
+form, `inc_<view>_<structure>=0`, is still honored too. With no parameters, everything is
+shown.
 
 The same structure gets a separate code in each view it appears in: the pons is one code on
 the ventral surface, another laterally, another in midsagittal section. They are different
@@ -73,6 +89,9 @@ Other parameters, all optional:
 | `set=<id>` | quiz | Quiz a group, or `all` for everything |
 | `mode=describe` | quiz | Start in *By definition* |
 | `pin=<flag>` | atlas | Open with one structure already picked (the glossary uses this) |
+| `on=<mask>` | all | Inclusion mask over structure bit positions; the builder writes this |
+| `views=<mask>` | all | Inclusion mask over view bit positions; the builder writes this |
+| `off=<codes>` | all | Older form: hide these structures |
 | `class=<name>` | all | A class name, shown above the title on the home page and beside the wordmark elsewhere; up to 60 characters |
 
 ---
@@ -85,7 +104,7 @@ atlas.html                 Atlas, and its chooser when no view is given
 quiz.html                  Quiz, and its chooser when no set or view is given
 glossary.html              Every structure with its definition
 accessibility.html         Accessibility statement
-codes.js                   Short codes <-> flags; parses ?off=
+codes.js                   Short codes <-> flags, bit positions; parses ?on= and ?off=
 views.js                   The twelve views and their three groups
 favicon.svg, icon-*.png    Site icon; the PNGs are what a phone's home screen uses
 manifest.webmanifest       Name and icons for "Add to Home Screen"
@@ -154,8 +173,11 @@ the link builder all read it, so a coordinate or a definition is written once:
    copy the JSON back into the data file. The tool also works from the keyboard: the list
    takes the arrow keys, **Add at center** places a marker, and the arrow keys nudge the dot,
    the pill, or a zone corner.
-3. Add the view to a group in `views.js` and give each new structure a code in `codes.js`.
-   Run `python3 scripts/check-codes.py` to confirm every structure has one.
+3. Add the view to a group in `views.js` and append its id to `VIEW_BITS` there. Give each
+   new structure a code in `codes.js` and append the code to `BITS`. Run
+   `python3 scripts/check-codes.py` to confirm every structure and view has a position.
+   Existing instructor links will not show the new material until the instructor makes a
+   new link; that is by design.
 4. Fill in `matter`, `about`, and `accept` for each structure.
 
 Nothing else changes. The choosers, the tab strips, the glossary, and the link builder all

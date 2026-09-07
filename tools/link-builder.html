@@ -176,7 +176,7 @@
     <p class="lede">Teach a subset of the structures? <strong>Uncheck the ones you don't cover</strong>, add your class name
        if you like, and share the link at the bottom of this page. The atlas, quiz, and glossary then show only what you
        left checked, and your selection follows students through every page.</p>
-    <p class="example">A link looks like <code>torryscott.github.io/lambda/?off=D1.M3</code>: the codes name the structures left out. Leave everything checked and the link is just the home page.</p>
+    <p class="example">A link looks like <code>torryscott.github.io/lambda/?on=5777777777x7777773776py</code>. That code spells out exactly which structures are in, so anything added to Lambda later stays out of your link until you make a new one.</p>
 
     <h2 class="sec">Your class</h2>
     <section class="card setup">
@@ -196,10 +196,13 @@
           <input type="text" id="baseUrl" class="mono" value="https://torryscott.github.io/lambda/">
           <small>Only change this if you host your own copy of Lambda.</small>
         </div>
-        <p>Every structure has a permanent short code, a view letter and a number. Unchecking a structure adds its code to
-           <code>?off=</code>; everything not listed stays visible. Codes are never reused, so a link keeps working as
-           structures are added later. The same structure has a separate code in each view it appears in.</p>
-        <p>Open this page from one of your own links and it starts with that link's selection and class name filled in.</p>
+        <p>The link carries two masks. <code>on=</code> has one bit per structure, in a permanent order, set for each
+           one you leave checked; <code>views=</code> does the same for the views. A structure or view added to Lambda
+           after your link was made has no bit in it, so it stays out until you open this page from your link and copy
+           a new one. Older links of the form <code>?off=D1.M3</code>, which listed what to hide, still work.</p>
+        <p>Every structure also has a permanent short code, a view letter and a number, shown at the right of each row.
+           The same structure has a separate code in each view it appears in. Open this page from one of your own
+           links and it starts with that link's selection and class name filled in.</p>
       </details>
     </section>
 
@@ -247,11 +250,11 @@ function cardFor(viewId, group) {
 }
 
 async function loadData() {
-  const files = await Promise.all(V.all.map(id =>
+  const files = await Promise.all(V.catalog.all.map(id =>
     fetch('../data/' + id + '.json').then(r => { if (!r.ok) throw new Error(id + ': ' + r.status); return r.json(); })));
   files.forEach((d, i) => {
-    const id = V.all[i];
-    const group = V.groupOf(id);
+    const id = V.catalog.all[i];
+    const group = V.catalog.groupOf(id);
     const card = cardFor(id, group);
     const slice = group.id === 'coronal' ? V.label(id).replace(/^Coronal /, '') : '';
     d.structures.forEach(s => {
@@ -310,11 +313,11 @@ function buildGroup(g) {
 }
 
 function buildUI() {
-  viewsEl.appendChild(buildGroup(V.group('surface')));
+  viewsEl.appendChild(buildGroup(V.catalog.group('surface')));
   const pair = document.createElement('div');
   pair.className = 'pair';
-  pair.appendChild(buildGroup(V.group('midsagittal')));
-  pair.appendChild(buildGroup(V.group('coronal')));
+  pair.appendChild(buildGroup(V.catalog.group('midsagittal')));
+  pair.appendChild(buildGroup(V.catalog.group('coronal')));
   viewsEl.appendChild(pair);
 }
 
@@ -328,7 +331,7 @@ function prefill() {
 
 function update() {
   const base = baseUrlEl.value.trim();
-  const excluded = [];
+  const included = [];
   let total = 0, selected = 0;
   const byGroup = {};
   for (const c of CARDS) {
@@ -336,7 +339,7 @@ function update() {
     for (const r of c.rows) {
       total++;
       const cb = document.querySelector(`input[data-flag="${r.flag}"]`);
-      if (cb.checked) { selected++; sel++; } else { excluded.push(r.flag); }
+      if (cb.checked) { selected++; sel++; included.push(r.flag); }
     }
     document.querySelector(`[data-count="${c.key}"]`).textContent = `${sel} of ${c.rows.length}`;
     const g = (byGroup[c.group] ||= { sel: 0, n: 0 });
@@ -346,13 +349,14 @@ function update() {
     const el = document.querySelector(`[data-gcount="${id}"]`);
     if (el) el.textContent = `${byGroup[id].sel} of ${byGroup[id].n}`;
   }
-  // Short codes from codes.js; a flag with no code falls back to the long form.
-  const code = f => LAMBDA.FLAGS[f];
-  const offCodes = excluded.map(code).filter(Boolean);
-  const longForm = excluded.filter(f => !code(f)).map(f => `${encodeURIComponent(f)}=0`);
+  // Two masks from codes.js and views.js: which structures are in, and which
+  // views. Both are written even when everything is checked, so the link
+  // fixes today's set and additions never leak into it.
+  const on = LAMBDA.encodeOn(included);
+  const views = V.encodeViews(V.catalog.all);
   const cls = classEl.value.trim();
-  const params = [offCodes.length ? `off=${offCodes.join('.')}` : '', ...longForm, cls ? `class=${encodeURIComponent(cls)}` : ''].filter(Boolean).join('&');
-  const url = params ? `${base}?${params}` : base;
+  const params = [`on=${on}`, `views=${views}`, cls ? `class=${encodeURIComponent(cls)}` : ''].filter(Boolean).join('&');
+  const url = total === 0 ? base : `${base}?${params}`;
   finalUrlEl.value = url;
   const off = total - selected;
   const dot = document.getElementById('statusDot');
@@ -360,7 +364,7 @@ function update() {
   const named = cls ? ` for ${cls}` : '';
   if (total === 0) summaryEl.textContent = 'Loading the structure lists…';
   else if (selected === 0) summaryEl.textContent = 'Nothing selected. Students would see no structures at all.';
-  else if (off === 0) summaryEl.textContent = `All ${total} structures${named}. This is the plain site; the link carries ${cls ? 'only the class name' : 'nothing extra'}.`;
+  else if (off === 0) summaryEl.textContent = `All ${total} structures${named}. The link fixes this set; anything added to Lambda later stays out until you make a new one.`;
   else summaryEl.textContent = `${selected} of ${total} structures${named}, ${off} left out.`;
   topCount.textContent = total === 0 ? '' : off ? `${selected} of ${total} checked` : `All ${total} checked`;
 }

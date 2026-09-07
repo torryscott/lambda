@@ -1,15 +1,20 @@
 /* Lambda — structure codes and URL flag resolution.
 
    Every structure has a permanent short code: a view letter and a number.
-   A student link hides structures by listing their codes:
+   The link builder writes an inclusion link, a base32 mask with one bit
+   per code (see BITS below) that says exactly which structures are in:
+
+     ?on=5777777777x7777773776py
+
+   Older links hide structures by listing their codes instead, and both
+   forms stay honored:
 
      ?off=D1.M3
 
-   Everything not listed is shown. The long form ?inc_<flag>=0 is still
-   honored. Codes are case-insensitive in the URL. They never change and
-   are never reused: when a structure is added, give it the next number in
-   its view's run, wherever it sits in the list. scripts/check-codes.py
-   verifies this file against the builder and the data files.
+   The long form ?inc_<flag>=0 is honored too. Codes are case-insensitive
+   in the URL. They never change and are never reused: when a structure is
+   added, give it the next number in its view's run and append it to BITS.
+   scripts/check-codes.py verifies this file against the data files.
 
    Letters: D dorsal · L lateral · V ventral · P posterior · C coronal · M midsagittal
 
@@ -132,6 +137,76 @@ window.LAMBDA = (function () {
   var FLAGS = {};
   for (var c in CODES) FLAGS[CODES[c]] = c;
 
+  /* Bit positions for inclusion links (?on=). A link made by the builder
+     says exactly which structures are in: one bit per code, packed into
+     base32. APPEND ONLY. A new code takes the next position at the end of
+     this list, whatever its letter; nothing is ever inserted, removed, or
+     reordered, because every existing link reads structures by position.
+     A code past the end of a link's mask did not exist when the link was
+     made, so it stays hidden for that link. That is the point: additions
+     never leak into links made before them. */
+  var BITS = [
+    'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'L1', 'L2', 'L3',
+    'P1', 'P2', 'P3', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7',
+    'V8', 'V9', 'V10', 'V11', 'D8', 'D9', 'D10', 'D11', 'D12', 'L4',
+    'L5', 'L6', 'L7', 'L8', 'L9', 'L10', 'L11', 'L12', 'L13', 'L14',
+    'L15', 'L16', 'V12', 'V13', 'V14', 'V15', 'V16', 'P4', 'P5', 'P6',
+    'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10',
+    'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20',
+    'C21', 'C22', 'C23', 'C24', 'C25', 'C26', 'C27', 'C28', 'C29', 'C30',
+    'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10',
+    'M11', 'M12', 'M13', 'M14', 'M15', 'M16', 'M17', 'M18', 'M19', 'M20',
+    'M21', 'M22', 'M23', 'M24', 'M25', 'M26', 'M27', 'M28', 'M29', 'M30',
+  ];
+
+  /* RFC 4648 base32, lowercase, no padding. Its alphabet has no 0, 1, or 8,
+     so a link read off a slide cannot confuse them with O, l, or B. */
+  var B32 = 'abcdefghijklmnopqrstuvwxyz234567';
+  function bytesToB32(bytes) {
+    var out = '', acc = 0, n = 0;
+    for (var i = 0; i < bytes.length; i++) {
+      acc = ((acc << 8) | bytes[i]) & 0xFFFF; n += 8;
+      while (n >= 5) { out += B32[(acc >>> (n - 5)) & 31]; n -= 5; acc &= (1 << n) - 1; }
+    }
+    if (n > 0) out += B32[(acc << (5 - n)) & 31];
+    return out;
+  }
+  function b32ToBytes(str) {
+    var s = String(str == null ? '' : str).toLowerCase().replace(/=+$/, '');
+    var bytes = [], acc = 0, n = 0;
+    for (var i = 0; i < s.length; i++) {
+      var v = B32.indexOf(s.charAt(i));
+      if (v < 0) return null;                              // not a mask at all
+      acc = ((acc << 5) | v) & 0xFFFF; n += 5;
+      if (n >= 8) { bytes.push((acc >>> (n - 8)) & 255); n -= 8; acc &= (1 << n) - 1; }
+    }
+    return bytes;
+  }
+  /* A mask is an array of booleans by position. Bit i lives in byte i>>3 at
+     bit i&7. Positions past the end read as off, which is how a link keeps
+     out whatever was added after it was made. */
+  function maskEncode(bits) {
+    var bytes = [];
+    for (var i = 0; i < bits.length; i++) {
+      if (!bits[i]) continue;
+      var k = i >> 3;
+      while (bytes.length <= k) bytes.push(0);
+      bytes[k] |= 1 << (i & 7);
+    }
+    return bytesToB32(bytes);
+  }
+  function maskDecode(str) {
+    var bytes = b32ToBytes(str);
+    if (!bytes) return null;
+    return function (i) { var k = i >> 3; return i >= 0 && k < bytes.length && ((bytes[k] >> (i & 7)) & 1) === 1; };
+  }
+  /* The ?on= value for a set of flags. */
+  function encodeOn(flags) {
+    var bits = [];
+    flags.forEach(function (f) { var i = BITS.indexOf(FLAGS[f]); if (i > -1) bits[i] = true; });
+    return maskEncode(bits);
+  }
+
   var q = new URLSearchParams(window.location.search);
   var hidden = {};                                 // flag -> true
   (q.get('off') || '').split(/[.,\s]+/).forEach(function (c) {
@@ -140,11 +215,21 @@ window.LAMBDA = (function () {
   });
   q.forEach(function (v, k) { if (k.indexOf('inc_') === 0 && v === '0') hidden[k] = true; });
 
+  /* An inclusion link (?on=) lists what is in. Anything else, including
+     every code added after the link was made, is hidden. A value that is
+     not a mask is ignored, like an unknown code in ?off=. */
+  var onMask = q.has('on') ? maskDecode(q.get('on')) : null;
+  if (onMask) {
+    for (var flag in FLAGS) { if (!onMask(BITS.indexOf(FLAGS[flag]))) hidden[flag] = true; }
+  }
+
   function shown(flag) { return !hidden[flag]; }
   function excludedMap() {
     var out = {};
     for (var f in hidden) out[f] = true;
     return out;
   }
-  return { CODES: CODES, FLAGS: FLAGS, shown: shown, excludedMap: excludedMap };
+  function linkKind() { return onMask ? 'on' : Object.keys(hidden).length ? 'off' : 'none'; }
+  return { CODES: CODES, FLAGS: FLAGS, BITS: BITS, shown: shown, excludedMap: excludedMap,
+           encodeOn: encodeOn, mask: { encode: maskEncode, decode: maskDecode }, linkKind: linkKind };
 })();

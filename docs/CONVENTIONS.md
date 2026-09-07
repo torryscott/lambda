@@ -31,6 +31,20 @@ honor the long form `inc_<flag>=0`. Rules:
 
 Letters: `D` dorsal · `L` lateral · `V` ventral · `P` posterior · `C` coronal · `M` midsagittal.
 
+### Bit positions
+
+Instructor links made by the builder are inclusion masks. `BITS` in `codes.js` lists every
+code in a permanent order; bit *i* of `?on=` is set when the structure with code `BITS[i]` is
+in. `VIEW_BITS` in `views.js` does the same for `?views=`. Masks are RFC 4648 base32,
+lowercase, no padding, least significant bit first within each byte; positions past the end
+of a mask read as off.
+
+- Both lists are **append only**. A new code or view goes at the end. Never insert, remove,
+  or reorder: every existing link reads by position.
+- Because a link only has bits for what existed when it was made, additions never appear in
+  older links. That is the intended behavior.
+- `scripts/check-codes.py` reports any code or view without a position.
+
 ### The `dosal` typo
 
 One flag is `inc_dosal_dorsomedian_fissure`, a misspelling that predates this system. It's
@@ -53,7 +67,9 @@ new view is added there once.
 
 | Parameter | Pages | Meaning |
 |---|---|---|
-| `off=<codes>` | all | Hide these structures; codes separated by `.` |
+| `on=<mask>` | all | Show exactly these structures (base32 over `BITS`); written by the builder |
+| `views=<mask>` | all | Show exactly these views (base32 over `VIEW_BITS`); written by the builder |
+| `off=<codes>` | all | Older form: hide these structures; codes separated by `.` |
 | `inc_<flag>=0` | all | Long form of `off` |
 | `view=<id>` | atlas, quiz | One view |
 | `group=<id>` | atlas | Open a group at its first view |
@@ -62,7 +78,7 @@ new view is added there once.
 | `pin=<flag>` | atlas | Arrive in reveal mode with that structure picked |
 | `class=<name>` | all | Class name shown in the header; trimmed to 60 characters by `LAMBDA_VIEWS.className()` |
 
-Links out of any page keep `off` and `class` and drop `view`, `group`, `set`, and `pin`. Use
+Links out of any page keep `on`, `views`, `off`, and `class` and drop `view`, `group`, `set`, and `pin`. Use
 `LAMBDA_VIEWS.link(page, { view: id })` to build one.
 
 ---

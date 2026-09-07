@@ -1112,6 +1112,7 @@
   var params = new URLSearchParams(window.location.search);
   var VIEW = params.get('view'), SET = params.get('set');
   if (SET && SET !== 'all' && !V.group(SET)) SET = null;
+  if (VIEW && V.all.indexOf(VIEW) < 0) VIEW = null;   // a view this link does not include
   el('homeLink').href = V.link('index.html', {});   // keeps the instructor's selection
   el('navAtlas').href = V.link('atlas.html', {});
   el('navQuiz').href = V.link('quiz.html', {});
@@ -1175,7 +1176,7 @@
       datas.forEach(function (d) { count[d.view] = d.structures.filter(function (s) { return !ex[s.flag]; }).length; });
       var sum = function (vs) { return vs.reduce(function (a, v) { return a + (count[v] || 0); }, 0); };
       var sets = V.groups.map(function (g) { return { id: g.id, label: g.label, blurb: g.blurb, n: sum(g.views), views: g.views.length, thumbs: [g.rep] }; });
-      sets.push({ id: 'all', label: 'Everything', blurb: 'All twelve views in one run.', n: sum(V.all), views: V.all.length, thumbs: V.all, wide: true });
+      sets.push({ id: 'all', label: 'Everything', blurb: 'All ' + V.all.length + ' views in one run.', n: sum(V.all), views: V.all.length, thumbs: V.all, wide: true });
       var host = el('setCards');
       sets.forEach(function (s) {
         var a = document.createElement('a');
