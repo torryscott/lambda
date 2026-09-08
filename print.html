@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lambda — Printable Atlas</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="A printable sheep brain atlas: every view on your link, labeled, laid out for paper or PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="codes.js"></script>
+<script src="views.js"></script>
+<script>window.goatcounter = { path: function () { return location.pathname; } };</script>
+<script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<style>
+  :root {
+    --ground: #FBFAF7; --panel: #FFFFFF; --ink: #1F1C18; --ink-soft: #4E4841; --muted: #797167;
+    --accent: #1e3a5f; --accent-hover: #2a4e7a; --rule: #E9E5DE; --rule-strong: #D9D3C9; --chip: #F3F0EA; --tissue: #C08A62;
+    --display: 'Libre Caslon Text', 'Iowan Old Style', Georgia, serif;
+    --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--ground); color: var(--ink); }
+  body { font-family: var(--sans); font-size: 11pt; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); }
+  [hidden] { display: none !important; }
+  .skip { position: absolute; left: -999px; top: 8px; z-index: 100; padding: 8px 12px; background: var(--accent); color: #fff; border-radius: 8px; font-weight: 600; text-decoration: none; }
+  .skip:focus { left: 8px; outline: 3px solid #fff; outline-offset: 2px; }
+
+  /* ---------- screen-only controls ---------- */
+  .controls { position: sticky; top: 0; z-index: 10; background: rgba(251,250,247,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+  .controls-inner { max-width: 1120px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .wordmark { display: inline-flex; align-items: center; gap: .42em; font-family: var(--display); font-size: 1.28rem; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+  .wordmark .mark { width: 1.2em; height: 1.2em; flex: none; color: var(--accent); }
+  .wordmark i { font-style: normal; color: var(--tissue); }
+  .controls .nav { display: flex; gap: 18px; }
+  .controls .nav a { font-size: .92rem; color: var(--ink-soft); text-decoration: none; }
+  .controls .nav a:hover { color: var(--ink); }
+  .controls fieldset { border: 0; margin: 0; padding: 0; display: inline-flex; align-items: center; gap: 8px; }
+  .controls legend { float: left; font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin-right: 6px; }
+  .segs { display: inline-flex; border: 1.5px solid var(--rule-strong); border-radius: 999px; overflow: hidden; background: #fff; }
+  .segs label { display: flex; cursor: pointer; margin: 0; }
+  .segs label + label { border-left: 1.5px solid var(--rule-strong); }
+  .segs input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .segs span { padding: 6px 14px; font-size: .88rem; color: var(--ink-soft); }
+  .segs label:has(input:checked) { background: var(--accent); }
+  .segs input:checked + span { color: #fff; font-weight: 600; }
+  .segs input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: -3px; }
+  .check { display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; cursor: pointer; }
+  .check input { width: 17px; height: 17px; accent-color: var(--accent); margin: 0; }
+  .controls .spacer { flex: 1; }
+  button.primary { font: inherit; font-size: .92rem; font-weight: 600; padding: 9px 18px; border: 1.5px solid var(--accent); border-radius: 999px; background: var(--accent); color: #fff; cursor: pointer; }
+  button.primary:hover { background: var(--accent-hover); }
+  button:focus-visible, a:focus-visible, .check input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .hint { font-size: .82rem; color: var(--muted); flex-basis: 100%; margin: -4px 0 0; }
+
+  /* ---------- the document ---------- */
+  .paper { max-width: 8.5in; margin: 28px auto 60px; background: var(--panel); box-shadow: 0 4px 24px rgba(31,28,24,.08); padding: 0.55in; }
+  .page { break-after: page; padding-bottom: 0.2in; }
+  .page:last-child { break-after: auto; }
+  .titleblock { border-bottom: 1.5px solid var(--ink); padding-bottom: 0.18in; margin-bottom: 0.3in; }
+  .classline { font-family: var(--sans); font-weight: 600; font-size: 10.5pt; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin: 0 0 6pt; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: 26pt; line-height: 1.1; letter-spacing: -.01em; margin: 0 0 6pt; }
+  h1 i { font-style: normal; color: var(--tissue); }
+  .subline { margin: 0; color: var(--ink-soft); font-size: 10.5pt; }
+  .subline .mono { font-family: var(--mono); font-size: 9pt; color: var(--muted); }
+  .view-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12pt; margin: 0 0 8pt; }
+  .view-head .eyebrow { font-family: var(--mono); font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 2pt; }
+  h2 { font-family: var(--display); font-weight: 400; font-size: 18pt; margin: 0; line-height: 1.1; }
+  .view-head .count { font-size: 9.5pt; color: var(--muted); white-space: nowrap; }
+
+  /* The figure. Everything on it is sized from the plate's own printed width
+     (container query units), so a pill is the same fraction of the plate on
+     paper as it is on screen and nothing depends on a measurement taken at
+     screen size. */
+  figure { margin: 0; }
+  .plate { position: relative; container-type: inline-size; margin: 0 auto; background: #fff; }
+  .plate img { display: block; width: 100%; height: auto; }
+  .plate svg.leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .plate svg.leaders line { stroke: var(--accent); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
+  .dot {
+    position: absolute; transform: translate(-50%, -50%);
+    width: max(4px, 0.72cqw); height: max(4px, 0.72cqw); border-radius: 50%;
+    background: var(--accent); border: max(0.6px, 0.15cqw) solid #fff; box-shadow: 0 0 0 max(0.8px, 0.28cqw) rgba(255,255,255,.9);
+  }
+  .pill {
+    position: absolute; transform: translate(-50%, -50%);
+    font-size: 1.4cqw; line-height: 1.15; font-weight: 600; color: #fff; background: var(--accent);
+    border: 0.1cqw solid rgba(255,255,255,.85); border-radius: 1em; padding: .3em .8em; width: max-content; max-width: 12em; text-align: center;
+  }
+  .num {
+    position: absolute; transform: translate(-50%, -50%);
+    width: 2.6cqw; height: 2.6cqw; border-radius: 50%; background: var(--accent); color: #fff; border: 0.12cqw solid rgba(255,255,255,.9);
+    font-family: var(--mono); font-size: 1.35cqw; font-weight: 500; line-height: 1; display: inline-flex; align-items: center; justify-content: center;
+  }
+  .key { margin: 10pt 0 0; padding: 0; list-style: none; columns: 3; column-gap: 18pt; font-size: 9.5pt; }
+  .key li { break-inside: avoid; padding: 2pt 0; display: flex; gap: 6pt; align-items: baseline; }
+  .key .n { font-family: var(--mono); font-size: 8.5pt; color: var(--accent); min-width: 1.6em; text-align: right; flex: none; }
+  .key.defs { columns: 1; font-size: 9.5pt; }
+  .key.defs li { display: block; padding: 4pt 0; border-top: 0.5px solid var(--rule); }
+  .key.defs .n { display: inline-block; margin-right: 6pt; min-width: 1.4em; }
+  .key.defs li:first-child { border-top: 0; }
+  .key.defs b { font-weight: 600; }
+  .key.defs .matter { color: var(--muted); font-size: 8.5pt; margin-left: 6pt; }
+  .key.defs .def { display: block; color: var(--ink-soft); margin-top: 1pt; }
+  .pagefoot { margin-top: 12pt; padding-top: 6pt; border-top: 0.5px solid var(--rule); display: flex; justify-content: space-between; gap: 12pt; font-family: var(--mono); font-size: 7.5pt; color: var(--muted); }
+  .pagefoot span:last-child { white-space: nowrap; }
+  .empty { padding: 40px 0; color: var(--muted); }
+
+  @page { size: letter; margin: 0.55in; }
+  @media print {
+    html, body { background: #fff; }
+    .controls, .skip { display: none !important; }
+    .paper { max-width: none; margin: 0; padding: 0; box-shadow: none; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    figure, .view-head, .key li { break-inside: avoid; }
+  }
+  @media (max-width: 720px) {
+    .paper { margin: 12px; padding: 18px; }
+    .controls-inner { padding: 12px 16px; gap: 14px; }
+    .key { columns: 2; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="controls">
+  <div class="controls-inner">
+    <a class="wordmark" id="homeLink" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a>
+    <nav class="nav" aria-label="Site"><a href="atlas.html" id="navAtlas">Atlas</a><a href="quiz.html" id="navQuiz">Quiz</a><a href="glossary.html" id="navGlossary">Glossary</a></nav>
+    <fieldset>
+      <legend>Labels</legend>
+      <div class="segs" role="radiogroup" aria-label="Label style">
+        <label><input type="radio" name="style" value="names" checked><span>Names on the figure</span></label>
+        <label><input type="radio" name="style" value="numbers"><span>Numbered key</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Views</legend>
+      <div class="segs" role="radiogroup" aria-label="Which views"><label><input type="radio" name="scope" value="all" checked><span id="scopeAllLabel">All views</span></label><label id="scopeOneWrap" hidden><input type="radio" name="scope" value="one"><span id="scopeOneLabel">This view</span></label></div>
+    </fieldset>
+    <label class="check"><input type="checkbox" id="defs"> Include definitions</label>
+    <span class="spacer"></span>
+    <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
+    <p class="hint">In the print dialog, choose <b>Save as PDF</b> as the destination to download it. Each view prints on its own page.</p>
+  </div>
+</div>
+
+<main id="main" class="paper" aria-label="Printable atlas">
+  <p class="empty" id="loading">Building the atlas…</p>
+</main>
+
+<script>
+(function () {
+  var V = window.LAMBDA_VIEWS, L = window.LAMBDA;
+  var params = new URLSearchParams(location.search);
+  var VIEW = params.get('view');
+  if (VIEW && V.all.indexOf(VIEW) < 0) VIEW = null;
+  ['homeLink', 'navAtlas', 'navQuiz', 'navGlossary'].forEach(function (id) {
+    var a = document.getElementById(id); a.href = V.link(a.getAttribute('href'), {});
+  });
+  var cls = V.className();
+  document.title = 'Lambda atlas' + (cls ? ' — ' + cls : '');
+
+  var main = document.getElementById('main');
+  var DATA = [];
+  var opts = { style: params.get('style') === 'numbers' ? 'numbers' : 'names',
+               scope: VIEW && params.get('scope') !== 'all' ? 'one' : 'all',
+               defs: params.get('defs') === '1' };
+  document.querySelector('input[name="style"][value="' + opts.style + '"]').checked = true;
+  document.getElementById('defs').checked = opts.defs;
+  if (VIEW) {
+    document.getElementById('scopeOneWrap').hidden = false;
+    document.getElementById('scopeOneLabel').textContent = V.label(VIEW) + ' only';
+    document.querySelector('input[name="scope"][value="' + opts.scope + '"]').checked = true;
+  }
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  function figure(d, shown) {
+    // number labels top to bottom, left to right, so a reader can find them
+    var order = shown.slice().sort(function (a, b) { return (a.label.y - b.label.y) || (a.label.x - b.label.x); });
+    var w = d.w || 2000, h = d.h || 1500;
+    var maxH = 6.1;                       // inches; keeps a tall plate and its key on one page
+    var widthIn = Math.min(6.8, maxH * w / h);   // leaves room either side for a label placed near an edge
+    var html = '<figure><div class="plate" style="aspect-ratio:' + w + '/' + h + ';width:min(100%,' + widthIn.toFixed(2) + 'in)">';
+    html += '<img src="' + esc(d.image) + '" alt="' + esc(d.label) + ' view of the sheep brain, labeled">';
+    html += '<svg class="leaders" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">';
+    order.forEach(function (s) {
+      html += '<line x1="' + s.label.x + '" y1="' + s.label.y + '" x2="' + s.target.x + '" y2="' + s.target.y + '"/>';
+    });
+    html += '</svg>';
+    order.forEach(function (s, i) {
+      html += '<span class="dot" style="left:' + (s.target.x * 100) + '%;top:' + (s.target.y * 100) + '%"></span>';
+      if (opts.style === 'numbers') html += '<span class="num" style="left:' + (s.label.x * 100) + '%;top:' + (s.label.y * 100) + '%">' + (i + 1) + '</span>';
+      else html += '<span class="pill" style="left:' + (s.label.x * 100) + '%;top:' + (s.label.y * 100) + '%">' + esc(s.name) + '</span>';
+    });
+    html += '</div></figure>';
+    if (opts.style === 'numbers' || opts.defs) {
+      html += '<ol class="key' + (opts.defs ? ' defs' : '') + '">';
+      order.forEach(function (s, i) {
+        var n = opts.style === 'numbers' ? '<span class="n">' + (i + 1) + '</span>' : '';
+        if (opts.defs) html += '<li>' + n + '<b>' + esc(s.name) + '</b>' + (s.matter ? '<span class="matter">' + esc(s.matter) + '</span>' : '') + '<span class="def">' + esc(s.about || '') + '</span></li>';
+        else html += '<li>' + n + '<span>' + esc(s.name) + '</span></li>';
+      });
+      html += '</ol>';
+    }
+    return html;
+  }
+
+  function render() {
+    var views = DATA.filter(function (d) { return opts.scope === 'all' || d.id === VIEW; });
+    var pages = views.filter(function (d) { return d.shown.length; });
+    var total = pages.reduce(function (n, d) { return n + d.shown.length; }, 0);
+    var html = '';
+    pages.forEach(function (d, i) {
+      var g = V.groupOf(d.id);
+      html += '<section class="page">';
+      if (i === 0) {
+        html += '<header class="titleblock">' + (cls ? '<p class="classline">' + esc(cls) + '</p>' : '')
+          + '<h1>Sheep Brain Atlas<i>.</i></h1>'
+          + '<p class="subline">' + total + ' structure' + (total === 1 ? '' : 's') + ' across ' + pages.length + ' view' + (pages.length === 1 ? '' : 's')
+          + ' &middot; <span class="mono">torryscott.github.io/lambda</span></p></header>';
+      }
+      html += '<div class="view-head"><div>' + (g ? '<p class="eyebrow">' + esc(g.label) + '</p>' : '') + '<h2>' + esc(d.label) + ' view</h2></div>'
+        + '<span class="count">' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span></div>';
+      html += figure(d, d.shown);
+      html += '<div class="pagefoot"><span>Lambda &middot; Sheep Brain Study Guide' + (cls ? ' &middot; ' + esc(cls) : '') + '</span><span>Photographs and text &copy; Torry Dennis &middot; CC BY-NC-SA 4.0 &middot; ' + (i + 1) + ' / ' + pages.length + '</span></div>';
+      html += '</section>';
+    });
+    main.innerHTML = html || '<p class="empty">This link has no structures to print.</p>';
+  }
+
+  document.querySelectorAll('input[name="style"]').forEach(function (r) { r.addEventListener('change', function () { opts.style = r.value; render(); }); });
+  document.querySelectorAll('input[name="scope"]').forEach(function (r) { r.addEventListener('change', function () { opts.scope = r.value; render(); }); });
+  document.getElementById('defs').addEventListener('change', function (e) { opts.defs = e.target.checked; render(); });
+  document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+
+  Promise.all(V.all.map(function (id) {
+    return fetch('data/' + id + '.json').then(function (r) { if (!r.ok) throw new Error(id + ': ' + r.status); return r.json(); });
+  })).then(function (datas) {
+    DATA = datas.map(function (d, i) {
+      d.id = V.all[i];
+      d.shown = d.structures.filter(function (s) { return L.shown(s.flag) && s.target && s.label; });
+      return d;
+    });
+    // plate sizes, for the aspect ratio, from the images themselves
+    return Promise.all(DATA.map(function (d) {
+      return new Promise(function (res) {
+        var im = new Image();
+        im.onload = function () { d.w = im.naturalWidth; d.h = im.naturalHeight; res(); };
+        im.onerror = function () { res(); };
+        im.src = d.image;
+      });
+    }));
+  }).then(render).catch(function (err) {
+    main.innerHTML = '<p class="empty">Could not load the atlas (' + esc(err.message) + '). Open this page from the site, or run <code>python3 scripts/serve.py</code> locally.</p>';
+  });
+})();
+</script>
+</body>
+</html>

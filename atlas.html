@@ -147,6 +147,15 @@
   }
   .list-btn:hover { border-color: var(--accent); }
   .list-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .chooser-note { margin: 22px 0 0; font-size: .92rem; color: var(--muted); max-width: 60ch; }
+  /* Printing this page directly: hide the chrome and the tap targets, and
+     show every label. The printable atlas (print.html) is the better route. */
+  @media print {
+    .topbar, .view-tabs, .controls-card, .hero-eyebrow, #detail, .foot, .skip { display: none !important; }
+    .marker::after { display: none; }
+    .stage.mode-hover .label-pill, .stage.mode-hover svg.leaders line { opacity: 1 !important; }
+    .stage.mode-hide .marker, .stage.mode-hide .label-pill, .stage.mode-hide svg.leaders line { display: block !important; }
+  }
   .skip { position: absolute; left: -999px; top: 8px; z-index: 100; padding: 8px 12px; background: var(--accent); color: #fff; border-radius: 8px; font-weight: 600; text-decoration: none; }
   .skip:focus { left: 8px; outline: 3px solid #fff; outline-offset: 2px; }
   .count-chip {
@@ -458,6 +467,7 @@
     <div class="group-cards" id="groupCards"></div>
     <h2 class="chooser-h">All views</h2>
     <div class="view-grid" id="viewGrid"></div>
+    <p class="chooser-note">Need it on paper? The <a id="printAll" href="print.html">printable atlas</a> lays out every view on this link, one per page, with names on the figure or a numbered key.</p>
   </section>
   <nav class="view-tabs" id="viewTabs" aria-label="Views in this group" hidden></nav>
   <div class="controls-card">
@@ -468,6 +478,7 @@
       <button data-mode="hide"                 role="radio" aria-checked="false" type="button" tabindex="-1">Hide markers</button>
     </div>
     <a class="list-btn quiz-link" id="quizLink" href="quiz.html">Quiz this view</a>
+    <a class="list-btn" id="printLink" href="print.html">Print</a>
     <span class="spacer"></span>
     <span class="count-chip" aria-live="polite" aria-atomic="true">
       <strong id="cntShown">0</strong> of <strong id="cntTotal">0</strong> structures shown
@@ -849,6 +860,7 @@ document.getElementById('navGlossary').href = V.link('glossary.html', {});
 
 /* No view asked for: offer the groups, then every view. */
 function showChooser() {
+  document.getElementById('printAll').href = V.link('print.html', {});
   document.title = 'Lambda \u2014 Atlas';
   document.getElementById('viewTitle').textContent = 'Atlas';
   document.getElementById('viewBlurb').textContent =
@@ -900,6 +912,7 @@ if (!view) {
 } else {
   renderTabs(view);
   document.getElementById('quizLink').href = V.link('quiz.html', { view: view });
+  document.getElementById('printLink').href = V.link('print.html', { view: view });
   loadView(view);
 }
 

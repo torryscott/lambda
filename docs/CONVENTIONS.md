@@ -69,7 +69,10 @@ new view is added there once.
 |---|---|---|
 | `on=<mask>` | all | Show exactly these structures (base32 over `BITS`); written by the builder |
 | `views=<mask>` | all | Show exactly these views (base32 over `VIEW_BITS`); written by the builder |
-| `view=<id>` | atlas, quiz | One view |
+| `view=<id>` | atlas, quiz, print | One view |
+| `style=numbers` | print | Numbered key instead of names on the figure |
+| `defs=1` | print | Include definitions under each plate |
+| `scope=all` | print | With `view`, still print every view |
 | `group=<id>` | atlas | Open a group at its first view |
 | `set=<id>` | quiz | Quiz a group, or `all` |
 | `mode=<id>` | quiz | `name` (default) or `describe`; `find` falls back to `name` while withheld |
