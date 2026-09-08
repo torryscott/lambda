@@ -105,7 +105,6 @@
   .head .brand .t { font-family: var(--display); font-size: 12.5pt; color: var(--ink); }
   .head .brand .t i { font-style: normal; color: var(--tissue); }
   .head .brand .cls { font-size: 8.5pt; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-  .head .brand .sub { font-size: 8.5pt; color: var(--muted); }
   .figrow { flex: 1 0 auto; display: flex; gap: 0.25in; align-items: flex-start; }
   .figrow.center { justify-content: center; }
   .figrow figure { margin: 0; flex: none; max-width: 100%; }
@@ -200,7 +199,6 @@
         <label class="check"><input type="checkbox" data-head="count" checked> Structure count</label>
         <label class="check"><input type="checkbox" data-head="title" checked> Atlas title</label>
         <label class="check"><input type="checkbox" data-head="cls" checked id="headCls"> Class name</label>
-        <label class="check"><input type="checkbox" data-head="totals" checked> Totals</label>
       </div>
     </fieldset>
     <fieldset>
@@ -279,7 +277,7 @@
   }
 
   /* Which parts of each page's heading to print. */
-  var head = { view: true, count: true, title: true, cls: !!cls, totals: true };
+  var head = { view: true, count: true, title: true, cls: !!cls };
   if (params.has('head')) {                       // ?head=view,count or ?head=none presets the toggles
     var keep = params.get('head').split(',');
     Object.keys(head).forEach(function (k) { head[k] = keep.indexOf(k) > -1; });
@@ -290,7 +288,7 @@
     i.checked = !!head[i.dataset.head];
     i.addEventListener('change', function () { head[i.dataset.head] = i.checked; render(); });
   });
-  function headShown() { return head.view || head.count || head.title || (head.cls && cls) || head.totals; }
+  function headShown() { return head.view || head.count || head.title || (head.cls && cls); }
 
   document.getElementById('vAll').addEventListener('click', function () { setAll(true); });
   document.getElementById('vNone').addEventListener('click', function () { setAll(false); });
@@ -343,9 +341,7 @@
   function render() {
     var views = DATA.filter(function (d) { return selected[d.id]; });
     var pages = views.filter(function (d) { return d.shown.length; });
-    var total = pages.reduce(function (n, d) { return n + d.shown.length; }, 0);
     var html = '';
-    var summary = total + ' structure' + (total === 1 ? '' : 's') + ' &middot; ' + pages.length + ' view' + (pages.length === 1 ? '' : 's');
     pages.forEach(function (d, i) {
       var g = V.groupOf(d.id);
       html += '<section class="page">';
@@ -355,7 +351,6 @@
         else if (head.count) left += '<h2><span class="count-in">' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span></h2>';
         if (head.title) right += '<div class="t">Sheep Brain Atlas<i>.</i></div>';
         if (head.cls && cls) right += '<div class="cls">' + esc(cls) + '</div>';
-        if (head.totals) right += '<div class="sub">' + summary + '</div>';
         html += '<div class="head"><div>' + left + '</div><div class="brand">' + right + '</div></div>';
       }
       html += figure(d, d.shown);
