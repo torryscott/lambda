@@ -284,6 +284,7 @@
   markEl.addEventListener('input', function () {
     opts.marker = parseFloat(markEl.value); markOut.value = opts.marker.toFixed(2) + '\u00d7';
     document.querySelectorAll('.plate').forEach(function (p) { p.style.setProperty('--ms', opts.marker); });
+    layoutLabels();                                      // bigger dots need more room too
   });
   var sizeEl = document.getElementById('labelSize'), sizeOut = document.getElementById('labelOut');
   sizeEl.value = opts.labels; sizeOut.value = opts.labels.toFixed(2) + '\u00d7';
@@ -426,10 +427,12 @@
   /* Labels are placed by hand for the default size. When the slider makes
      them bigger they can overlap, so after every render each plate's labels
      are nudged apart: start from the hand-placed spots, push any two that
-     overlap away from each other, pull each gently back toward its own spot,
-     keep everything on the plate, repeat until still. Leaders follow. All of
-     it is done in fractions of the plate, and the printed plate is the
-     screen plate scaled uniformly, so the result holds on paper. */
+     overlap away from each other, push a label off any marker dot it covers
+     (the dots stay put: they are the anatomy), pull each label gently back
+     toward its own spot, keep everything on the plate, repeat until still.
+     Leaders follow. All of it is done in fractions of the plate, and the
+     printed plate is the screen plate scaled uniformly, so the result holds
+     on paper. */
   function layoutLabels() {
     document.querySelectorAll('.plate').forEach(function (plate) {
       var pr = plate.getBoundingClientRect();
@@ -437,6 +440,12 @@
       var els = Array.prototype.slice.call(plate.querySelectorAll('.pill, .num'));
       if (!els.length) return;
       var pad = 0.006;                                   // breathing room between labels, as a fraction of plate width
+      var ry = pr.width / pr.height;                     // converts a width fraction into the same distance as a height fraction
+      var D = Array.prototype.slice.call(plate.querySelectorAll('.dot')).map(function (el) {
+        var r = el.getBoundingClientRect();
+        return { x: (r.left + r.width / 2 - pr.left) / pr.width, y: (r.top + r.height / 2 - pr.top) / pr.height,
+                 w: r.width / pr.width + pad * 2, h: r.height / pr.height + pad * 2 * ry };
+      });
       var L = els.map(function (el) {
         el.style.left = (parseFloat(el.dataset.x) * 100) + '%';   // measure from the hand-placed spot
         el.style.top = (parseFloat(el.dataset.y) * 100) + '%';
@@ -459,6 +468,16 @@
           var sx = ox, sy = oy * (pr.height / pr.width);
           if (sy <= sx) { var dy = (a.y <= b.y ? -1 : 1) * oy / 2; a.y += dy; b.y -= dy; }
           else { var dx = (a.x <= b.x ? -1 : 1) * ox / 2; a.x += dx; b.x -= dx; }
+          moved++;
+        }
+        // a label never sits on a marker, its own included
+        for (var k = 0; k < L.length; k++) for (var m = 0; m < D.length; m++) {
+          var l = L[k], d = D[m];
+          var ox2 = (l.w + d.w) / 2 - Math.abs(l.x - d.x);
+          var oy2 = (l.h + d.h) / 2 - Math.abs(l.y - d.y);
+          if (ox2 <= 0 || oy2 <= 0) continue;
+          if (oy2 * ry <= ox2) l.y += (l.y < d.y ? -1 : 1) * oy2;
+          else l.x += (l.x < d.x ? -1 : 1) * ox2;
           moved++;
         }
         L.forEach(function (l) {
