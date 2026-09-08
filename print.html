@@ -30,17 +30,23 @@
   .skip { position: absolute; left: -999px; top: 8px; z-index: 100; padding: 8px 12px; background: var(--accent); color: #fff; border-radius: 8px; font-weight: 600; text-decoration: none; }
   .skip:focus { left: 8px; outline: 3px solid #fff; outline-offset: 2px; }
 
-  /* ---------- screen-only controls ---------- */
-  .controls { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
-  .controls-inner { max-width: 1120px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  /* ---------- site header, the same as every other page ---------- */
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 0 14px; }
   .wordmark { display: inline-flex; align-items: center; gap: .42em; font-family: var(--display); font-size: 1.28rem; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
   .wordmark .mark { width: 1.2em; height: 1.2em; flex: none; color: var(--accent); }
   .wordmark i { font-style: normal; color: var(--tissue); }
-  .controls .nav { display: flex; gap: 18px; }
-  .controls .nav a { font-size: .92rem; color: var(--ink-soft); text-decoration: none; }
-  .controls .nav a:hover { color: var(--ink); }
-  .controls fieldset { border: 0; margin: 0; padding: 0; display: inline-flex; align-items: center; gap: 8px; }
-  .controls legend { float: left; font-size: .8rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin-right: 6px; }
+  .topbar nav { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+  .topbar nav a { font-size: .92rem; color: var(--ink-soft); text-decoration: none; padding: 6px 0; border-bottom: 1px solid transparent; }
+  .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-strong); }
+  .topbar nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  /* ---------- screen-only controls ---------- */
+  .controls { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .controls-inner { max-width: 1120px; margin: 0 auto; padding: 12px 24px 14px; display: flex; flex-direction: column; gap: 12px; }
+  .row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .controls fieldset { border: 0; margin: 0; padding: 0; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .controls legend { float: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin-right: 4px; }
   .segs { display: inline-flex; border: 1.5px solid var(--rule-strong); border-radius: 999px; overflow: hidden; background: #fff; }
   .segs label { display: flex; cursor: pointer; margin: 0; }
   .segs label + label { border-left: 1.5px solid var(--rule-strong); }
@@ -51,11 +57,27 @@
   .segs input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: -3px; }
   .check { display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; cursor: pointer; }
   .check input { width: 17px; height: 17px; accent-color: var(--accent); margin: 0; }
-  .controls .spacer { flex: 1; }
-  button.primary { font: inherit; font-size: .92rem; font-weight: 600; padding: 9px 18px; border: 1.5px solid var(--accent); border-radius: 999px; background: var(--accent); color: #fff; cursor: pointer; }
+  .spacer { flex: 1; }
+  button.primary { font: inherit; font-size: .92rem; font-weight: 600; padding: 9px 18px; border: 1.5px solid var(--accent); border-radius: 999px; background: var(--accent); color: #fff; cursor: pointer; white-space: nowrap; }
   button.primary:hover { background: var(--accent-hover); }
-  button:focus-visible, a:focus-visible, .check input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
-  .hint { font-size: .82rem; color: var(--muted); flex-basis: 100%; margin: -4px 0 0; }
+  button.small { font: inherit; font-size: .8rem; font-weight: 500; padding: 4px 12px; border: 1.5px solid var(--rule); border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; }
+  button.small:hover { color: var(--accent); border-color: var(--accent); }
+  button:focus-visible, a:focus-visible, .check input:focus-visible, .vpill input:focus-visible + img { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .hint { font-size: .82rem; color: var(--muted); margin: -2px 0 0; }
+  .hint b { color: var(--ink-soft); }
+
+  /* Views: one thumbnail pill per view, all on by default, click to leave one out. */
+  .vpills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vpill { position: relative; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;
+           color: var(--ink-soft); font-weight: 600; font-size: .86rem; padding: 4px 12px 4px 4px;
+           border-radius: 999px; border: 1.5px solid var(--rule-strong); background: #fff; }
+  .vpill input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .vpill img { width: 46px; height: 32px; object-fit: cover; border-radius: 999px; background: #fff; flex: none; opacity: .45; filter: grayscale(.6); }
+  .vpill:hover { border-color: var(--accent); color: var(--accent); }
+  .vpill:has(input:checked) { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .vpill:has(input:checked) img { opacity: 1; filter: none; }
+  .vpill:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .vsum { font-size: .82rem; color: var(--muted); }
 
   /* ---------- the document: landscape letter, one view per page ---------- */
   .paper { max-width: 11in; margin: 28px auto 60px; background: #FFFFFF; box-shadow: 0 4px 24px rgba(0,0,0,.14); padding: 0.5in; }
@@ -131,25 +153,40 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<div class="controls">
-  <div class="controls-inner">
+<div class="wrap">
+  <header class="topbar">
     <a class="wordmark" id="homeLink" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a>
-    <nav class="nav" aria-label="Site"><a href="atlas.html" id="navAtlas">Atlas</a><a href="quiz.html" id="navQuiz">Quiz</a><a href="glossary.html" id="navGlossary">Glossary</a></nav>
-    <fieldset>
-      <legend>Labels</legend>
-      <div class="segs" role="radiogroup" aria-label="Label style">
-        <label><input type="radio" name="style" value="names" checked><span>Names on the figure</span></label>
-        <label><input type="radio" name="style" value="numbers"><span>Numbered key</span></label>
-      </div>
-    </fieldset>
+    <nav aria-label="Site">
+      <a href="atlas.html" id="navAtlas">Atlas</a>
+      <a href="quiz.html" id="navQuiz">Quiz</a>
+      <a href="glossary.html" id="navGlossary">Glossary</a>
+      <a href="https://github.com/torryscott/lambda">Source</a>
+    </nav>
+  </header>
+</div>
+
+<div class="controls" role="region" aria-label="Print options">
+  <div class="controls-inner">
+    <div class="row">
+      <fieldset>
+        <legend>Labels</legend>
+        <div class="segs" role="radiogroup" aria-label="Label style">
+          <label><input type="radio" name="style" value="names" checked><span>Names on the figure</span></label>
+          <label><input type="radio" name="style" value="numbers"><span>Numbered key</span></label>
+        </div>
+      </fieldset>
+      <label class="check"><input type="checkbox" id="defs"> Include definitions</label>
+      <span class="spacer"></span>
+      <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
+    </div>
     <fieldset>
       <legend>Views</legend>
-      <div class="segs" role="radiogroup" aria-label="Which views"><label><input type="radio" name="scope" value="all" checked><span id="scopeAllLabel">All views</span></label><label id="scopeOneWrap" hidden><input type="radio" name="scope" value="one"><span id="scopeOneLabel">This view</span></label></div>
+      <div class="vpills" id="vpills"></div>
+      <button class="small" type="button" id="vAll">All</button>
+      <button class="small" type="button" id="vNone">None</button>
+      <span class="vsum" id="vsum" aria-live="polite"></span>
     </fieldset>
-    <label class="check"><input type="checkbox" id="defs"> Include definitions</label>
-    <span class="spacer"></span>
-    <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
-    <p class="hint">In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. Each view prints on its own page.</p>
+    <p class="hint">Every view on your link is included; click a view to leave it out. In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. Each view prints on its own page.</p>
   </div>
 </div>
 
@@ -171,16 +208,28 @@
 
   var main = document.getElementById('main');
   var DATA = [];
-  var opts = { style: params.get('style') === 'numbers' ? 'numbers' : 'names',
-               scope: VIEW && params.get('scope') !== 'all' ? 'one' : 'all',
-               defs: params.get('defs') === '1' };
+  var opts = { style: params.get('style') === 'numbers' ? 'numbers' : 'names', defs: params.get('defs') === '1' };
   document.querySelector('input[name="style"][value="' + opts.style + '"]').checked = true;
   document.getElementById('defs').checked = opts.defs;
-  if (VIEW) {
-    document.getElementById('scopeOneWrap').hidden = false;
-    document.getElementById('scopeOneLabel').textContent = V.label(VIEW) + ' only';
-    document.querySelector('input[name="scope"][value="' + opts.scope + '"]').checked = true;
+
+  /* Which views to print: every view on the link, unless the page was opened
+     for one view (?view=), in which case that one starts alone. */
+  var selected = {};
+  V.all.forEach(function (id) { selected[id] = !VIEW || params.get('scope') === 'all' || id === VIEW; });
+  var pills = document.getElementById('vpills');
+  V.all.forEach(function (id) {
+    var l = document.createElement('label'); l.className = 'vpill';
+    l.innerHTML = '<input type="checkbox" value="' + id + '"' + (selected[id] ? ' checked' : '') + '><img src="' + V.thumb(id) + '" alt=""><span>' + esc(V.label(id)) + '</span>';
+    l.querySelector('input').addEventListener('change', function (e) { selected[id] = e.target.checked; render(); });
+    pills.appendChild(l);
+  });
+  function setAll(on) {
+    V.all.forEach(function (id) { selected[id] = on; });
+    pills.querySelectorAll('input').forEach(function (i) { i.checked = on; });
+    render();
   }
+  document.getElementById('vAll').addEventListener('click', function () { setAll(true); });
+  document.getElementById('vNone').addEventListener('click', function () { setAll(false); });
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
@@ -225,7 +274,7 @@
   }
 
   function render() {
-    var views = DATA.filter(function (d) { return opts.scope === 'all' || d.id === VIEW; });
+    var views = DATA.filter(function (d) { return selected[d.id]; });
     var pages = views.filter(function (d) { return d.shown.length; });
     var total = pages.reduce(function (n, d) { return n + d.shown.length; }, 0);
     var html = '';
@@ -238,11 +287,12 @@
       html += figure(d, d.shown);
       html += '</section>';
     });
-    main.innerHTML = html || '<p class="empty">This link has no structures to print.</p>';
+    main.innerHTML = html || '<p class="empty">' + (views.length ? 'The views you picked have no structures on this link.' : 'No views selected. Click a view above to include it.') + '</p>';
+    var on = V.all.filter(function (id) { return selected[id]; }).length;
+    document.getElementById('vsum').textContent = on === V.all.length ? 'All ' + on + ' views' : on + ' of ' + V.all.length + ' views';
   }
 
   document.querySelectorAll('input[name="style"]').forEach(function (r) { r.addEventListener('change', function () { opts.style = r.value; render(); }); });
-  document.querySelectorAll('input[name="scope"]').forEach(function (r) { r.addEventListener('change', function () { opts.scope = r.value; render(); }); });
   document.getElementById('defs').addEventListener('change', function (e) { opts.defs = e.target.checked; render(); });
   document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
 
