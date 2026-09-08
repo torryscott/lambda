@@ -59,7 +59,7 @@
 
   /* ---------- the document: landscape letter, one view per page ---------- */
   .paper { max-width: 11in; margin: 28px auto 60px; background: #FFFFFF; box-shadow: 0 4px 24px rgba(0,0,0,.14); padding: 0.5in; }
-  .page { min-height: 7.5in; display: flex; flex-direction: column; break-after: page; }
+  .page { break-after: page; }   /* no fixed height: a section that overran the printable area would spill onto a blank sheet */
   .page:last-child { break-after: auto; }
   .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12pt; margin: 0 0 8pt; padding-bottom: 5pt; border-bottom: 1.5px solid var(--ink); }
   .head .eyebrow { font-family: var(--mono); font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 1pt; }
@@ -122,7 +122,6 @@
   }
   @media (max-width: 720px) {
     .paper { margin: 12px; padding: 18px; }
-    .page { min-height: 0; }
     .figrow { flex-wrap: wrap; }
     .controls-inner { padding: 12px 16px; gap: 14px; }
     .key, .key.defs { columns: 1; }
@@ -150,7 +149,7 @@
     <label class="check"><input type="checkbox" id="defs"> Include definitions</label>
     <span class="spacer"></span>
     <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
-    <p class="hint">In the print dialog, choose <b>Save as PDF</b> as the destination to download it. Each view prints on its own page.</p>
+    <p class="hint">In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. Each view prints on its own page.</p>
   </div>
 </div>
 
@@ -194,7 +193,7 @@
     // height, and the width follows from the plate's own proportions. A
     // numbered key without definitions sits beside the plate instead of
     // below it, so the plate leaves it a column.
-    var PLATE_H = opts.defs ? 4.8 : 6.6, PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;   // with definitions, leave the lower part of the page for them
+    var PLATE_H = opts.defs ? 4.8 : 6.3, PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;   // 6.3 leaves slack for browsers whose printable area is a little smaller; with definitions, leave the lower part of the page for them
     var side = opts.style === 'numbers' && !opts.defs;
     var widthIn = Math.min(side ? PAGE_W - KEY_W - GAP : PAGE_W, PLATE_H * w / h);
     var html = '<div class="figrow' + (side ? '' : ' center') + '"><figure><div class="plate" style="aspect-ratio:' + w + '/' + h + ';width:' + widthIn.toFixed(2) + 'in">';
