@@ -72,7 +72,8 @@ new view is added there once.
 | `view=<id>` | atlas, quiz, print | One view |
 | `style=numbers` | print | Numbered key instead of names on the figure |
 | `defs=1` | print | Include definitions under each plate |
-| `scope=all` | print | With `view`, still print every view |
+| `scope=all` | print | With `view`, start with every view selected |
+| `head=<parts>` | print | Heading parts to print: any of `view,count,title,cls,totals`, or `none` |
 | `group=<id>` | atlas | Open a group at its first view |
 | `set=<id>` | quiz | Quiz a group, or `all` |
 | `mode=<id>` | quiz | `name` (default) or `describe`; `find` falls back to `name` while withheld |

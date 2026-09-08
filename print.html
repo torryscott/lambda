@@ -66,7 +66,21 @@
   .hint { font-size: .82rem; color: var(--muted); margin: -2px 0 0; }
   .hint b { color: var(--ink-soft); }
 
-  /* Views: one thumbnail pill per view, all on by default, click to leave one out. */
+  .checks { display: inline-flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Views: one thumbnail pill per view, all on by default, click to leave one
+     out. Grouped as the site groups them, with a group chip that toggles the
+     whole group at once. */
+  .vgroups { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: flex-start; }
+  .vgroup { display: flex; flex-direction: column; gap: 8px; }
+  .gchip { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
+           color: var(--muted); background: transparent; border: 0; padding: 0; cursor: pointer; }
+  .gchip::before { content: ""; width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid var(--rule-strong); background: #fff; box-sizing: border-box; }
+  .gchip[aria-pressed="true"] { color: var(--accent); }
+  .gchip[aria-pressed="true"]::before { background: var(--accent); border-color: var(--accent); }
+  .gchip[aria-pressed="mixed"] { color: var(--accent); }
+  .gchip[aria-pressed="mixed"]::before { background: linear-gradient(90deg, var(--accent) 50%, #fff 50%); border-color: var(--accent); }
+  .gchip:hover { color: var(--accent); }
   .vpills { display: flex; flex-wrap: wrap; gap: 8px; }
   .vpill { position: relative; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;
            color: var(--ink-soft); font-weight: 600; font-size: .86rem; padding: 4px 12px 4px 4px;
@@ -137,7 +151,7 @@
   @page { size: letter landscape; margin: 0.5in; }
   @media print {
     html, body { background: #fff; }
-    .controls, .skip { display: none !important; }
+    .wrap, .controls, .skip { display: none !important; }   /* the site header and the print options never print */
     .paper { max-width: none; margin: 0; padding: 0; box-shadow: none; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     figure, .head, .key li { break-inside: avoid; }
@@ -180,12 +194,24 @@
       <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
     </div>
     <fieldset>
+      <legend>Heading</legend>
+      <div class="checks">
+        <label class="check"><input type="checkbox" data-head="view" checked> View name</label>
+        <label class="check"><input type="checkbox" data-head="count" checked> Structure count</label>
+        <label class="check"><input type="checkbox" data-head="title" checked> Atlas title</label>
+        <label class="check"><input type="checkbox" data-head="cls" checked id="headCls"> Class name</label>
+        <label class="check"><input type="checkbox" data-head="totals" checked> Totals</label>
+      </div>
+    </fieldset>
+    <fieldset>
       <legend>Views</legend>
-      <div class="vpills" id="vpills"></div>
-      <button class="small" type="button" id="vAll">All</button>
+      <div class="vgroups" id="vgroups"></div>
+    </fieldset>
+    <div class="row">
+      <button class="small" type="button" id="vAll">All views</button>
       <button class="small" type="button" id="vNone">None</button>
       <span class="vsum" id="vsum" aria-live="polite"></span>
-    </fieldset>
+    </div>
     <p class="hint">Every view on your link is included; click a view to leave it out. In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. Each view prints on its own page.</p>
   </div>
 </div>
@@ -216,18 +242,56 @@
      for one view (?view=), in which case that one starts alone. */
   var selected = {};
   V.all.forEach(function (id) { selected[id] = !VIEW || params.get('scope') === 'all' || id === VIEW; });
-  var pills = document.getElementById('vpills');
-  V.all.forEach(function (id) {
+  var groupsEl = document.getElementById('vgroups');
+  var chips = {};
+  function pill(id) {
     var l = document.createElement('label'); l.className = 'vpill';
     l.innerHTML = '<input type="checkbox" value="' + id + '"' + (selected[id] ? ' checked' : '') + '><img src="' + V.thumb(id) + '" alt=""><span>' + esc(V.label(id)) + '</span>';
     l.querySelector('input').addEventListener('change', function (e) { selected[id] = e.target.checked; render(); });
-    pills.appendChild(l);
+    return l;
+  }
+  V.groups.forEach(function (g) {
+    var wrap = document.createElement('div'); wrap.className = 'vgroup';
+    var chip = document.createElement('button'); chip.type = 'button'; chip.className = 'gchip'; chip.textContent = g.label;
+    chip.title = 'Toggle every ' + g.label.toLowerCase() + ' view';
+    chip.addEventListener('click', function () {
+      var allOn = g.views.every(function (id) { return selected[id]; });
+      g.views.forEach(function (id) { selected[id] = !allOn; });
+      syncPills(); render();
+    });
+    chips[g.id] = chip;
+    var row = document.createElement('div'); row.className = 'vpills';
+    g.views.forEach(function (id) { row.appendChild(pill(id)); });
+    wrap.appendChild(chip); wrap.appendChild(row); groupsEl.appendChild(wrap);
   });
+  function syncPills() {
+    groupsEl.querySelectorAll('input[type="checkbox"]').forEach(function (i) { i.checked = !!selected[i.value]; });
+  }
+  function syncChips() {
+    V.groups.forEach(function (g) {
+      var n = g.views.filter(function (id) { return selected[id]; }).length;
+      chips[g.id].setAttribute('aria-pressed', n === 0 ? 'false' : n === g.views.length ? 'true' : 'mixed');
+    });
+  }
   function setAll(on) {
     V.all.forEach(function (id) { selected[id] = on; });
-    pills.querySelectorAll('input').forEach(function (i) { i.checked = on; });
-    render();
+    syncPills(); render();
   }
+
+  /* Which parts of each page's heading to print. */
+  var head = { view: true, count: true, title: true, cls: !!cls, totals: true };
+  if (params.has('head')) {                       // ?head=view,count or ?head=none presets the toggles
+    var keep = params.get('head').split(',');
+    Object.keys(head).forEach(function (k) { head[k] = keep.indexOf(k) > -1; });
+    if (!cls) head.cls = false;
+  }
+  if (!cls) { var hc = document.getElementById('headCls'); hc.checked = false; hc.disabled = true; hc.parentNode.title = 'This link has no class name'; }
+  document.querySelectorAll('input[data-head]').forEach(function (i) {
+    i.checked = !!head[i.dataset.head];
+    i.addEventListener('change', function () { head[i.dataset.head] = i.checked; render(); });
+  });
+  function headShown() { return head.view || head.count || head.title || (head.cls && cls) || head.totals; }
+
   document.getElementById('vAll').addEventListener('click', function () { setAll(true); });
   document.getElementById('vNone').addEventListener('click', function () { setAll(false); });
 
@@ -242,7 +306,10 @@
     // height, and the width follows from the plate's own proportions. A
     // numbered key without definitions sits beside the plate instead of
     // below it, so the plate leaves it a column.
-    var PLATE_H = opts.defs ? 4.8 : 6.3, PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;   // 6.3 leaves slack for browsers whose printable area is a little smaller; with definitions, leave the lower part of the page for them
+    // 6.3 leaves slack for browsers whose printable area is a little smaller;
+    // without a heading the plate can take the room the heading used; with
+    // definitions, leave the lower part of the page for them.
+    var PLATE_H = (opts.defs ? 4.8 : 6.3) + (headShown() ? 0 : 0.5), PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;
     var side = opts.style === 'numbers' && !opts.defs;
     var widthIn = Math.min(side ? PAGE_W - KEY_W - GAP : PAGE_W, PLATE_H * w / h);
     var html = '<div class="figrow' + (side ? '' : ' center') + '"><figure><div class="plate" style="aspect-ratio:' + w + '/' + h + ';width:' + widthIn.toFixed(2) + 'in">';
@@ -282,12 +349,20 @@
     pages.forEach(function (d, i) {
       var g = V.groupOf(d.id);
       html += '<section class="page">';
-      html += '<div class="head"><div>' + (g ? '<p class="eyebrow">' + esc(g.label) + '</p>' : '') + '<h2>' + esc(d.label) + ' view <span class="count-in">&middot; ' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span></h2></div>'
-        + '<div class="brand"><div class="t">Sheep Brain Atlas<i>.</i></div>' + (cls ? '<div class="cls">' + esc(cls) + '</div>' : '') + '<div class="sub">' + summary + '</div></div></div>';
+      if (headShown()) {
+        var left = '', right = '';
+        if (head.view) left += (g ? '<p class="eyebrow">' + esc(g.label) + '</p>' : '') + '<h2>' + esc(d.label) + ' view' + (head.count ? ' <span class="count-in">&middot; ' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span>' : '') + '</h2>';
+        else if (head.count) left += '<h2><span class="count-in">' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span></h2>';
+        if (head.title) right += '<div class="t">Sheep Brain Atlas<i>.</i></div>';
+        if (head.cls && cls) right += '<div class="cls">' + esc(cls) + '</div>';
+        if (head.totals) right += '<div class="sub">' + summary + '</div>';
+        html += '<div class="head"><div>' + left + '</div><div class="brand">' + right + '</div></div>';
+      }
       html += figure(d, d.shown);
       html += '</section>';
     });
     main.innerHTML = html || '<p class="empty">' + (views.length ? 'The views you picked have no structures on this link.' : 'No views selected. Click a view above to include it.') + '</p>';
+    syncChips();
     var on = V.all.filter(function (id) { return selected[id]; }).length;
     document.getElementById('vsum').textContent = on === V.all.length ? 'All ' + on + ' views' : on + ' of ' + V.all.length + ' views';
   }
