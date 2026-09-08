@@ -73,6 +73,7 @@ new view is added there once.
 | `style=numbers` | print | Numbered key instead of names on the figure |
 | `defs=1` | print | Include definitions under each plate |
 | `scope=all` | print | With `view`, start with every view selected |
+| `labels=<factor>` | print | Label size, 0.7 to 1.6; overlapping labels are nudged apart |
 | `head=<parts>` | print | Heading parts to print: any of `view,count,title,cls,rule`, or `none` |
 | `group=<id>` | atlas | Open a group at its first view |
 | `set=<id>` | quiz | Quiz a group, or `all` |
