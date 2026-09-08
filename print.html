@@ -44,7 +44,15 @@
 
   /* ---------- screen-only controls ---------- */
   .controls { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-  .controls-inner { max-width: 1120px; margin: 0 auto; padding: 12px 24px 14px; display: flex; flex-direction: column; gap: 12px; }
+  .controls-inner { max-width: 1120px; margin: 0 auto; padding: 10px 24px 12px; display: flex; flex-direction: column; gap: 12px; }
+  .bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .optbtn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .9rem; font-weight: 600; color: var(--ink); background: #fff; border: 1.5px solid var(--rule-strong); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .optbtn::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
+  .optbtn[aria-expanded="true"]::after { transform: rotate(-135deg) translateY(-2px); }
+  .optbtn:hover { border-color: var(--accent); color: var(--accent); }
+  .optsum { font-size: .84rem; color: var(--muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .controls.collapsed #optPanel { display: none; }
+  #optPanel { display: flex; flex-direction: column; gap: 12px; }
   .row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
   .controls fieldset { border: 0; margin: 0; padding: 0; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .controls legend { float: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin-right: 4px; }
@@ -176,7 +184,10 @@
     .topbar nav button.primary { margin-left: 0; flex: 1 0 100%; }
     .paper { margin: 12px; padding: 18px; }
     .figrow { flex-wrap: wrap; }
-    .controls-inner { padding: 12px 16px; gap: 12px; }
+    .controls-inner { padding: 10px 16px; gap: 12px; }
+    .controls:not(.collapsed) { position: static; }   /* an open panel is taller than the screen; let it scroll away */
+    .bar .primary { padding: 7px 14px; font-size: .88rem; }
+    .optsum { flex-basis: 100%; order: 3; }
     .row { gap: 12px 16px; }
     .slider input { width: 96px; }
     .vgroups { gap: 10px 18px; }
@@ -196,13 +207,18 @@
       <a href="quiz.html" id="navQuiz">Quiz</a>
       <a href="glossary.html" id="navGlossary">Glossary</a>
       <a href="https://github.com/torryscott/lambda">Source</a>
-      <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
     </nav>
   </header>
 </div>
 
 <div class="controls" role="region" aria-label="Print options">
   <div class="controls-inner">
+    <div class="bar">
+      <button type="button" class="optbtn" id="optToggle" aria-expanded="true" aria-controls="optPanel">Options</button>
+      <span class="optsum" id="optSum" aria-live="polite"></span>
+      <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
+    </div>
+    <div id="optPanel">
     <div class="row">
       <fieldset>
         <legend>Labels</legend>
@@ -244,6 +260,7 @@
       <span class="vsum" id="vsum" aria-live="polite"></span>
     </div>
     <p class="hint">Every view on your link is included; click a view to leave it out. In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. Each view prints on its own page.</p>
+    </div>
   </div>
 </div>
 
@@ -274,7 +291,7 @@
   document.querySelector('input[name="fill"][value="' + opts.fill + '"]').checked = true;
   document.querySelectorAll('input[name="fill"]').forEach(function (r) {
     r.addEventListener('change', function () {
-      opts.fill = r.value;
+      opts.fill = r.value; paintSummary();
       document.querySelectorAll('.plate').forEach(function (p) { p.classList.toggle('outline', opts.fill === 'outline'); });
       layoutLabels();                                  // an outline pill is a hair wider than a filled one
     });
@@ -282,14 +299,14 @@
   var markEl = document.getElementById('markerSize'), markOut = document.getElementById('markerOut');
   markEl.value = opts.marker; markOut.value = opts.marker.toFixed(2) + '\u00d7';
   markEl.addEventListener('input', function () {
-    opts.marker = parseFloat(markEl.value); markOut.value = opts.marker.toFixed(2) + '\u00d7';
+    opts.marker = parseFloat(markEl.value); markOut.value = opts.marker.toFixed(2) + '\u00d7'; paintSummary();
     document.querySelectorAll('.plate').forEach(function (p) { p.style.setProperty('--ms', opts.marker); });
     layoutLabels();                                      // bigger dots need more room too
   });
   var sizeEl = document.getElementById('labelSize'), sizeOut = document.getElementById('labelOut');
   sizeEl.value = opts.labels; sizeOut.value = opts.labels.toFixed(2) + '\u00d7';
   sizeEl.addEventListener('input', function () {
-    opts.labels = parseFloat(sizeEl.value); sizeOut.value = opts.labels.toFixed(2) + '\u00d7';
+    opts.labels = parseFloat(sizeEl.value); sizeOut.value = opts.labels.toFixed(2) + '\u00d7'; paintSummary();
     document.querySelectorAll('.plate').forEach(function (p) { p.style.setProperty('--ls', opts.labels); });
     layoutLabels();
   });
@@ -420,6 +437,7 @@
     main.innerHTML = html || '<p class="empty">' + (views.length ? 'The views you picked have no structures on this link.' : 'No views selected. Click a view above to include it.') + '</p>';
     syncChips();
     layoutLabels();
+    paintSummary();
     var on = V.all.filter(function (id) { return selected[id]; }).length;
     document.getElementById('vsum').textContent = on === V.all.length ? 'All ' + on + ' views' : on + ' of ' + V.all.length + ' views';
   }
@@ -504,6 +522,26 @@
   document.querySelectorAll('input[name="style"]').forEach(function (r) { r.addEventListener('change', function () { opts.style = r.value; render(); }); });
   document.getElementById('defs').addEventListener('change', function (e) { opts.defs = e.target.checked; render(); });
   document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+
+  /* The options fold away behind one button, so the preview is reachable on
+     a phone. Open by default on a wide screen, closed on a narrow one. */
+  var controls = document.querySelector('.controls'), optToggle = document.getElementById('optToggle');
+  function setOpen(open) {
+    controls.classList.toggle('collapsed', !open);
+    optToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    optToggle.firstChild.textContent = open ? 'Hide options' : 'Options';
+  }
+  optToggle.addEventListener('click', function () { setOpen(controls.classList.contains('collapsed')); });
+  setOpen(!window.matchMedia('(max-width: 720px)').matches);
+  function paintSummary() {
+    var on = V.all.filter(function (id) { return selected[id]; }).length;
+    document.getElementById('optSum').textContent =
+      (opts.style === 'numbers' ? 'Numbered key' : 'Names') + ' \u00b7 ' + (opts.fill === 'outline' ? 'outline' : 'filled')
+      + (opts.labels !== 1 ? ' \u00b7 labels ' + opts.labels.toFixed(2) + '\u00d7' : '')
+      + (opts.marker !== 1 ? ' \u00b7 markers ' + opts.marker.toFixed(2) + '\u00d7' : '')
+      + (opts.defs ? ' \u00b7 definitions' : '')
+      + ' \u00b7 ' + (on === V.all.length ? 'all ' + on + ' views' : on + ' of ' + V.all.length + ' views');
+  }
 
   Promise.all(V.all.map(function (id) {
     return fetch('data/' + id + '.json').then(function (r) { if (!r.ok) throw new Error(id + ': ' + r.status); return r.json(); });
