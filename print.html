@@ -57,26 +57,30 @@
   button:focus-visible, a:focus-visible, .check input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
   .hint { font-size: .82rem; color: var(--muted); flex-basis: 100%; margin: -4px 0 0; }
 
-  /* ---------- the document ---------- */
-  .paper { max-width: 8.5in; margin: 28px auto 60px; background: var(--panel); box-shadow: 0 4px 24px rgba(31,28,24,.08); padding: 0.55in; }
-  .page { break-after: page; padding-bottom: 0.2in; }
+  /* ---------- the document: landscape letter, one view per page ---------- */
+  .paper { max-width: 11in; margin: 28px auto 60px; background: var(--panel); box-shadow: 0 4px 24px rgba(31,28,24,.08); padding: 0.5in; }
+  .page { min-height: 7.5in; display: flex; flex-direction: column; break-after: page; }
   .page:last-child { break-after: auto; }
-  .titleblock { border-bottom: 1.5px solid var(--ink); padding-bottom: 0.18in; margin-bottom: 0.3in; }
-  .classline { font-family: var(--sans); font-weight: 600; font-size: 10.5pt; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin: 0 0 6pt; }
-  h1 { font-family: var(--display); font-weight: 400; font-size: 26pt; line-height: 1.1; letter-spacing: -.01em; margin: 0 0 6pt; }
-  h1 i { font-style: normal; color: var(--tissue); }
-  .subline { margin: 0; color: var(--ink-soft); font-size: 10.5pt; }
-  .subline .mono { font-family: var(--mono); font-size: 9pt; color: var(--muted); }
-  .view-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12pt; margin: 0 0 8pt; }
-  .view-head .eyebrow { font-family: var(--mono); font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 2pt; }
-  h2 { font-family: var(--display); font-weight: 400; font-size: 18pt; margin: 0; line-height: 1.1; }
-  .view-head .count { font-size: 9.5pt; color: var(--muted); white-space: nowrap; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12pt; margin: 0 0 8pt; padding-bottom: 5pt; border-bottom: 1.5px solid var(--ink); }
+  .head .eyebrow { font-family: var(--mono); font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 1pt; }
+  h2 { font-family: var(--display); font-weight: 400; font-size: 19pt; margin: 0; line-height: 1.05; }
+  h2 .count-in { font-family: var(--sans); font-size: 9.5pt; color: var(--muted); font-weight: 400; margin-left: 4pt; }
+  .head .brand { text-align: right; line-height: 1.3; }
+  .head .brand .t { font-family: var(--display); font-size: 12.5pt; color: var(--ink); }
+  .head .brand .t i { font-style: normal; color: var(--tissue); }
+  .head .brand .cls { font-size: 8.5pt; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  .head .brand .sub { font-size: 8.5pt; color: var(--muted); }
+  .figrow { flex: 1 0 auto; display: flex; gap: 0.25in; align-items: flex-start; }
+  .figrow.center { justify-content: center; }
+  .figrow figure { margin: 0; flex: none; max-width: 100%; }
+  .side { flex: 1; min-width: 2.4in; }
+  .side .key { columns: 1; margin: 0; font-size: 9pt; }
+  .side .key li { padding: 1.5pt 0; }
 
   /* The figure. Everything on it is sized from the plate's own printed width
      (container query units), so a pill is the same fraction of the plate on
      paper as it is on screen and nothing depends on a measurement taken at
      screen size. */
-  figure { margin: 0; }
   .plate { position: relative; container-type: inline-size; margin: 0 auto; background: #fff; }
   .plate img { display: block; width: 100%; height: auto; }
   .plate svg.leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
@@ -99,29 +103,31 @@
   .key { margin: 10pt 0 0; padding: 0; list-style: none; columns: 3; column-gap: 18pt; font-size: 9.5pt; }
   .key li { break-inside: avoid; padding: 2pt 0; display: flex; gap: 6pt; align-items: baseline; }
   .key .n { font-family: var(--mono); font-size: 8.5pt; color: var(--accent); min-width: 1.6em; text-align: right; flex: none; }
-  .key.defs { columns: 1; font-size: 9.5pt; }
-  .key.defs li { display: block; padding: 4pt 0; border-top: 0.5px solid var(--rule); }
-  .key.defs .n { display: inline-block; margin-right: 6pt; min-width: 1.4em; }
+  .key.defs { columns: 2; column-gap: 24pt; font-size: 9pt; }
+  .key.defs li { display: block; padding: 3pt 0; border-top: 0.5px solid var(--rule); }
   .key.defs li:first-child { border-top: 0; }
+  .key.defs .n { display: inline-block; margin-right: 6pt; min-width: 1.4em; }
   .key.defs b { font-weight: 600; }
-  .key.defs .matter { color: var(--muted); font-size: 8.5pt; margin-left: 6pt; }
+  .key.defs .matter { color: var(--muted); font-size: 8pt; margin-left: 6pt; }
   .key.defs .def { display: block; color: var(--ink-soft); margin-top: 1pt; }
-  .pagefoot { margin-top: 12pt; padding-top: 6pt; border-top: 0.5px solid var(--rule); display: flex; justify-content: space-between; gap: 12pt; font-family: var(--mono); font-size: 7.5pt; color: var(--muted); }
+  .pagefoot { margin-top: auto; padding-top: 5pt; border-top: 0.5px solid var(--rule); display: flex; justify-content: space-between; gap: 12pt; font-family: var(--mono); font-size: 7.5pt; color: var(--muted); }
   .pagefoot span:last-child { white-space: nowrap; }
   .empty { padding: 40px 0; color: var(--muted); }
 
-  @page { size: letter; margin: 0.55in; }
+  @page { size: letter landscape; margin: 0.5in; }
   @media print {
     html, body { background: #fff; }
     .controls, .skip { display: none !important; }
     .paper { max-width: none; margin: 0; padding: 0; box-shadow: none; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    figure, .view-head, .key li { break-inside: avoid; }
+    figure, .head, .key li { break-inside: avoid; }
   }
   @media (max-width: 720px) {
     .paper { margin: 12px; padding: 18px; }
+    .page { min-height: 0; }
+    .figrow { flex-wrap: wrap; }
     .controls-inner { padding: 12px 16px; gap: 14px; }
-    .key { columns: 2; }
+    .key, .key.defs { columns: 1; }
   }
 </style>
 </head>
@@ -185,9 +191,15 @@
     // number labels top to bottom, left to right, so a reader can find them
     var order = shown.slice().sort(function (a, b) { return (a.label.y - b.label.y) || (a.label.x - b.label.x); });
     var w = d.w || 2000, h = d.h || 1500;
-    var maxH = 6.1;                       // inches; keeps a tall plate and its key on one page
-    var widthIn = Math.min(6.8, maxH * w / h);   // leaves room either side for a label placed near an edge
-    var html = '<figure><div class="plate" style="aspect-ratio:' + w + '/' + h + ';width:min(100%,' + widthIn.toFixed(2) + 'in)">';
+    // Landscape letter with half-inch margins is 10 by 7.5 inches. The head
+    // and foot take about an inch, so the plate gets up to 6.4 inches of
+    // height, and the width follows from the plate's own proportions. A
+    // numbered key without definitions sits beside the plate instead of
+    // below it, so the plate leaves it a column.
+    var PLATE_H = opts.defs ? 4.6 : 6.4, PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;   // with definitions, leave the lower part of the page for them
+    var side = opts.style === 'numbers' && !opts.defs;
+    var widthIn = Math.min(side ? PAGE_W - KEY_W - GAP : PAGE_W, PLATE_H * w / h);
+    var html = '<div class="figrow' + (side ? '' : ' center') + '"><figure><div class="plate" style="aspect-ratio:' + w + '/' + h + ';width:' + widthIn.toFixed(2) + 'in">';
     html += '<img src="' + esc(d.image) + '" alt="' + esc(d.label) + ' view of the sheep brain, labeled">';
     html += '<svg class="leaders" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">';
     order.forEach(function (s) {
@@ -200,15 +212,18 @@
       else html += '<span class="pill" style="left:' + (s.label.x * 100) + '%;top:' + (s.label.y * 100) + '%">' + esc(s.name) + '</span>';
     });
     html += '</div></figure>';
+    var key = '';
     if (opts.style === 'numbers' || opts.defs) {
-      html += '<ol class="key' + (opts.defs ? ' defs' : '') + '">';
+      key += '<ol class="key' + (opts.defs ? ' defs' : '') + '">';
       order.forEach(function (s, i) {
         var n = opts.style === 'numbers' ? '<span class="n">' + (i + 1) + '</span>' : '';
-        if (opts.defs) html += '<li>' + n + '<b>' + esc(s.name) + '</b>' + (s.matter ? '<span class="matter">' + esc(s.matter) + '</span>' : '') + '<span class="def">' + esc(s.about || '') + '</span></li>';
-        else html += '<li>' + n + '<span>' + esc(s.name) + '</span></li>';
+        if (opts.defs) key += '<li>' + n + '<b>' + esc(s.name) + '</b>' + (s.matter ? '<span class="matter">' + esc(s.matter) + '</span>' : '') + '<span class="def">' + esc(s.about || '') + '</span></li>';
+        else key += '<li>' + n + '<span>' + esc(s.name) + '</span></li>';
       });
-      html += '</ol>';
+      key += '</ol>';
     }
+    if (side) html += '<div class="side">' + key + '</div></div>';   // key beside the plate
+    else html += '</div>' + key;                                      // definitions run below, onto more pages if needed
     return html;
   }
 
@@ -217,19 +232,14 @@
     var pages = views.filter(function (d) { return d.shown.length; });
     var total = pages.reduce(function (n, d) { return n + d.shown.length; }, 0);
     var html = '';
+    var summary = total + ' structure' + (total === 1 ? '' : 's') + ' &middot; ' + pages.length + ' view' + (pages.length === 1 ? '' : 's');
     pages.forEach(function (d, i) {
       var g = V.groupOf(d.id);
       html += '<section class="page">';
-      if (i === 0) {
-        html += '<header class="titleblock">' + (cls ? '<p class="classline">' + esc(cls) + '</p>' : '')
-          + '<h1>Sheep Brain Atlas<i>.</i></h1>'
-          + '<p class="subline">' + total + ' structure' + (total === 1 ? '' : 's') + ' across ' + pages.length + ' view' + (pages.length === 1 ? '' : 's')
-          + ' &middot; <span class="mono">torryscott.github.io/lambda</span></p></header>';
-      }
-      html += '<div class="view-head"><div>' + (g ? '<p class="eyebrow">' + esc(g.label) + '</p>' : '') + '<h2>' + esc(d.label) + ' view</h2></div>'
-        + '<span class="count">' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span></div>';
+      html += '<div class="head"><div>' + (g ? '<p class="eyebrow">' + esc(g.label) + '</p>' : '') + '<h2>' + esc(d.label) + ' view <span class="count-in">&middot; ' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span></h2></div>'
+        + '<div class="brand"><div class="t">Sheep Brain Atlas<i>.</i></div>' + (cls ? '<div class="cls">' + esc(cls) + '</div>' : '') + '<div class="sub">' + summary + '</div></div></div>';
       html += figure(d, d.shown);
-      html += '<div class="pagefoot"><span>Lambda &middot; Sheep Brain Study Guide' + (cls ? ' &middot; ' + esc(cls) : '') + '</span><span>Photographs and text &copy; Torry Dennis &middot; CC BY-NC-SA 4.0 &middot; ' + (i + 1) + ' / ' + pages.length + '</span></div>';
+      html += '<div class="pagefoot"><span>Lambda &middot; Sheep Brain Study Guide &middot; torryscott.github.io/lambda</span><span>Photographs and text &copy; Torry Dennis &middot; CC BY-NC-SA 4.0 &middot; ' + (i + 1) + ' / ' + pages.length + '</span></div>';
       html += '</section>';
     });
     main.innerHTML = html || '<p class="empty">This link has no structures to print.</p>';

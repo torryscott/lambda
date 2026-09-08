@@ -18,7 +18,7 @@ run it, adapt it, or extend it to their own specimens.
 |---|---|
 | **Atlas** (`atlas.html`) | Twelve photographs of a dissected sheep brain with live labels. Three study modes: show labels, hover or tap to reveal, hide markers. Picking a marker shows its definition. |
 | **Quiz** (`quiz.html`) | A timed practicum on the same structures. *Name it* marks a structure with a pulsing dot and asks for its name; *By definition* shows the definition and asks for the name, so it needs no image. Runs cover a group of views, everything, or a single view. |
-| **Printable atlas** (`print.html`) | Every view on the link laid out for paper, one per page, with names on the figure or a numbered key, optionally with definitions. Print it or save it as a PDF from the browser. |
+| **Printable atlas** (`print.html`) | Every view on the link laid out for landscape letter paper, one per page, with names on the figure or a numbered key beside it, optionally with definitions. Print it or save it as a PDF from the browser. |
 | **Glossary** (`glossary.html`) | Every structure with its tissue type, definition, synonyms, and a link to each view it appears in. Searchable, filterable by group. |
 | **Link builder** (`tools/link-builder.html`) | Instructor page: uncheck the structures you don't teach, name your class, and copy a student link. Every page honors it. |
 | **Capture tool** (`tools/atlas-coord-capture.html`) | Authoring page for placing markers and labels on a new plate. Works with a mouse or a keyboard. |
