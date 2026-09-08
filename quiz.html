@@ -255,36 +255,7 @@
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
-  /* ---------- enlarge: a pannable, pinch-zoomable view centred on the X ---------- */
   .stage { position: relative; }
-  .zoom-btn {
-    position: absolute; right: 8px; bottom: 8px; z-index: 4;
-    display: inline-flex; align-items: center; gap: 6px;
-    font: inherit; font-size: .8rem; font-weight: 500; color: var(--ink);
-    background: rgba(255,255,255,.92); border: 1px solid var(--rule-strong); border-radius: 999px;
-    padding: 6px 11px; cursor: pointer; box-shadow: var(--shadow-sm);
-  }
-  .zoom-btn svg { width: 14px; height: 14px; }
-  .zoom-btn:hover { background: #fff; }
-  .zoom-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  #plate { cursor: zoom-in; }
-  .zoom { position: fixed; inset: 0; z-index: 60; background: rgba(20,20,30,.94); }
-  .zoom-scroller { position: absolute; inset: 0; overflow: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y pinch-zoom; }
-  .zoom-canvas { position: relative; width: var(--zw, 1000px); }
-  .zoom-canvas img { display: block; width: 100%; height: auto; }
-  .zoom-close {
-    position: fixed; top: 14px; right: 14px; z-index: 61;
-    font: inherit; font-size: .95rem; font-weight: 600; color: var(--ink);
-    background: #fff; border: 0; border-radius: 999px; padding: 10px 16px; cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0,0,0,.35);
-  }
-  .zoom-close:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
-  .zoom-hint {
-    position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); margin: 0;
-    color: rgba(255,255,255,.85); font-size: .85rem; background: rgba(0,0,0,.45);
-    padding: 6px 12px; border-radius: 999px; pointer-events: none;
-  }
-  @media (hover: hover) and (pointer: fine) { .zoom-hint { display: none; } }
 
   /* ---------- quiz mode chooser ---------- */
   .modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0; text-align: left; }
@@ -506,7 +477,6 @@
       <div class="stage-wrap">
         <div class="stage" id="stage">
           <img id="plate" alt="" >
-          <button class="zoom-btn" id="zoomBtn" type="button" aria-label="Enlarge the image"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 6V2h4M14 10v4h-4M2 2l4.5 4.5M14 14 9.5 9.5"/></svg>Enlarge</button>
         </div>
       </div>
     </div>
@@ -518,7 +488,7 @@
       <p class="prompt" id="promptDescribe" hidden>Which structure is this?</p>
       <blockquote class="describe" id="describeText" hidden></blockquote>
       <p class="matter">This is <b id="matterHint">—</b></p>
-      <p class="matter" id="findHelp" hidden>Tap its location on the image. Enlarge gives a closer look.</p>
+      <p class="matter" id="findHelp" hidden>Tap its location on the image.</p>
       <form class="answer-row" id="answerForm" autocomplete="off">
         <input type="text" id="answerInput" placeholder="Structure name"
                aria-label="Structure name" autocapitalize="off" autocorrect="off" spellcheck="false">
@@ -569,16 +539,6 @@
 
 <footer class="foot">Lambda · sheep brain study guide</footer>
 
-<div class="zoom" id="zoom" role="dialog" aria-modal="true" aria-label="Enlarged view of the plate" hidden>
-  <div class="zoom-scroller" id="zoomScroller">
-    <div class="zoom-canvas" id="zoomCanvas">
-      <img id="zoomImg" alt="Enlarged plate with the target marked">
-      <div class="xmark" id="zoomX" aria-hidden="true"></div>
-    </div>
-  </div>
-  <button class="zoom-close" id="zoomClose" type="button">Close</button>
-  <p class="zoom-hint" aria-hidden="true">Drag to pan · pinch to zoom</p>
-</div>
 
 <script>
 (function () {
@@ -1006,7 +966,7 @@
   el('plate').addEventListener('click', function (e) {
     if (state.mode !== 'find' || state.answered) return;
     e.preventDefault();
-    e.stopImmediatePropagation();   // this tap is an answer, not a request to enlarge
+    e.stopImmediatePropagation();   // this tap is an answer; nothing else should act on it
     var r = e.currentTarget.getBoundingClientRect();
     gradeFind((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height, false);
   });
@@ -1245,55 +1205,6 @@
     });
   }
 
-  /* ---------- enlarge ---------- */
-  (function () {
-    var zoom = el('zoom'), scroller = el('zoomScroller'), canvas = el('zoomCanvas'),
-        zimg = el('zoomImg'), zx = el('zoomX'), closeBtn = el('zoomClose'), plate = el('plate');
-    var lastFocus = null;
-    function openZoom() {
-      var s = current(); if (!s || !plate.src) return;
-      lastFocus = document.activeElement;
-      var w = Math.min(plate.naturalWidth || 2000, Math.max(window.innerWidth * 2.4, 1000));
-      canvas.style.setProperty('--zw', w + 'px');
-      canvas.style.setProperty('--iw', w + 'px');          // the X scales with the enlarged plate
-      var finding = state.mode === 'find' && !state.answered;   // must not give the location away
-      zx.hidden = finding;
-      zx.style.left = (s.target.x * 100) + '%';
-      zx.style.top  = (s.target.y * 100) + '%';
-      zimg.src = plate.src;
-      zoom.hidden = false;
-      document.body.style.overflow = 'hidden';
-      var centre = function () {
-        var h = w * (plate.naturalHeight / plate.naturalWidth);
-        var cx = finding ? 0.5 : s.target.x, cy = finding ? 0.5 : s.target.y;
-        scroller.scrollLeft = cx * w - scroller.clientWidth / 2;
-        scroller.scrollTop  = cy * h - scroller.clientHeight / 2;
-        closeBtn.focus();
-      };
-      if (zimg.complete && zimg.naturalWidth) centre(); else zimg.onload = centre;
-    }
-    function closeZoom() {
-      zoom.hidden = true;
-      document.body.style.overflow = '';
-      if (lastFocus && lastFocus.focus) lastFocus.focus();
-    }
-    plate.addEventListener('click', function (e) {
-      if (e.defaultPrevented) return;   // the find-it handler took that tap as an answer
-      openZoom();
-    });
-    // In find mode a tap on the enlarged plate is the answer too.
-    zimg.addEventListener('click', function (e) {
-      if (state.mode !== 'find' || state.answered) return;
-      var r = zimg.getBoundingClientRect();
-      var fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
-      closeZoom();
-      gradeFind(fx, fy, false);
-    });
-    el('zoomBtn').addEventListener('click', openZoom);
-    closeBtn.addEventListener('click', closeZoom);
-    scroller.addEventListener('click', function (e) { if (e.target === scroller || e.target === canvas) closeZoom(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !zoom.hidden) closeZoom(); });
-  })();
 })();
 </script>
 
