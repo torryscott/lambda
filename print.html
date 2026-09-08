@@ -441,10 +441,11 @@
       if (!els.length) return;
       var pad = 0.006;                                   // breathing room between labels, as a fraction of plate width
       var ry = pr.width / pr.height;                     // converts a width fraction into the same distance as a height fraction
+      var dotPad = 0.009;                                // clearance around a marker, so a label never crowds it
       var D = Array.prototype.slice.call(plate.querySelectorAll('.dot')).map(function (el) {
         var r = el.getBoundingClientRect();
         return { x: (r.left + r.width / 2 - pr.left) / pr.width, y: (r.top + r.height / 2 - pr.top) / pr.height,
-                 w: r.width / pr.width + pad * 2, h: r.height / pr.height + pad * 2 * ry };
+                 w: r.width / pr.width + dotPad * 2, h: r.height / pr.height + dotPad * 2 * ry };
       });
       var L = els.map(function (el) {
         el.style.left = (parseFloat(el.dataset.x) * 100) + '%';   // measure from the hand-placed spot
@@ -456,8 +457,12 @@
                  x: parseFloat(el.dataset.x), y: parseFloat(el.dataset.y),
                  w: r.width / pr.width + pad * 2, h: r.height / pr.height + pad * 2 * (pr.width / pr.height) };
       });
-      for (var iter = 0; iter < 80; iter++) {
+      // Each round: a gentle pull home first, then the pushes, so the pushes
+      // always have the last word. The final rounds skip the pull, so the
+      // layout settles with nothing overlapping.
+      for (var iter = 0; iter < 140; iter++) {
         var moved = 0;
+        if (iter < 110) L.forEach(function (l) { l.x += (l.ax - l.x) * 0.05; l.y += (l.ay - l.y) * 0.05; });
         for (var i = 0; i < L.length; i++) for (var j = i + 1; j < L.length; j++) {
           var a = L[i], b = L[j];
           var ox = (a.w + b.w) / 2 - Math.abs(a.x - b.x);
@@ -465,8 +470,7 @@
           if (ox <= 0 || oy <= 0) continue;
           // separate along the axis that needs the smaller move; vertical
           // moves in plate units are compared on the same scale as horizontal
-          var sx = ox, sy = oy * (pr.height / pr.width);
-          if (sy <= sx) { var dy = (a.y <= b.y ? -1 : 1) * oy / 2; a.y += dy; b.y -= dy; }
+          if (oy * ry <= ox) { var dy = (a.y <= b.y ? -1 : 1) * oy / 2; a.y += dy; b.y -= dy; }
           else { var dx = (a.x <= b.x ? -1 : 1) * ox / 2; a.x += dx; b.x -= dx; }
           moved++;
         }
@@ -481,11 +485,10 @@
           moved++;
         }
         L.forEach(function (l) {
-          l.x += (l.ax - l.x) * 0.05; l.y += (l.ay - l.y) * 0.05;      // a gentle pull home
           l.x = Math.min(1 - l.w / 2, Math.max(l.w / 2, l.x));         // stay on the plate
           l.y = Math.min(1 - l.h / 2, Math.max(l.h / 2, l.y));
         });
-        if (!moved && iter > 5) break;
+        if (!moved && iter >= 110) break;
       }
       var lines = plate.querySelectorAll('svg.leaders line');
       L.forEach(function (l) {
