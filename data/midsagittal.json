@@ -419,7 +419,7 @@
       "flag": "inc_mid_medulla",
       "name": "Medulla",
       "matter": "Gray and White Matter",
-      "about": "The medulla oblongata is the caudal-most region of the brainstem, regulating autonomic functions such as breathing, heart rate, and blood pressure.",
+      "about": "The caudal-most region of the brainstem, regulating autonomic functions such as breathing, heart rate, and blood pressure.",
       "target": {
         "x": 0.7403,
         "y": 0.7413

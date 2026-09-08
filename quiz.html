@@ -661,7 +661,12 @@
     var a = normalize(given);
     if (!a) return false;
     var aSorted = a.split(' ').sort().join(' ');
-    var candidates = [structure.name].concat(structure.accept || []);
+    // In By definition, a synonym that can be read straight off the shown
+    // definition does not count; the student has to produce the name.
+    var accept = (structure.accept || []).filter(function (syn) {
+      return !(state.mode === 'describe' && visibleIn(structure.about, syn));
+    });
+    var candidates = [structure.name].concat(accept);
     for (var i = 0; i < candidates.length; i++) {
       if (a === normalize(candidates[i])) return true;
       if (aSorted === sortedKey(candidates[i])) return true;
@@ -1061,26 +1066,35 @@
     r.addEventListener('change', function () { document.body.classList.toggle('still', isStill()); store.set('lambda.quiz.still', isStill() ? '1' : '0'); paintSummary(); });
   });
 
-  /* Describe it shows a definition, and many definitions name the structure
-     they describe. Mask the name, its accepted synonyms, and word forms built
-     on the name's stems (cerebellar for Cerebellum), leaving a blank. */
+  /* By definition shows the definition as the question, so the structure's
+     own name must not appear in it. Mask the full name and the distinctive
+     word of it (so "callosal" hides under Corpus Callosum), but leave
+     generic anatomy in the sentence: "the gyrus rostral to the central
+     sulcus" reads as a clue, not a giveaway. Synonyms are not masked, since
+     for some structures the synonym is the clue ("It is the primary motor
+     cortex"); instead isCorrect() refuses a synonym that is visible in the
+     shown text, so the student has to produce the name. */
   var MASK_STOP = /^(body|bodies|matter|lateral|medial|superior|inferior|anterior|posterior|middle|third|fourth|cerebral|gray|grey|white|the|of|and|tract|nerve)$/i;
+  var MASK_GENERIC = /^(gyrus|gyri|sulcus|sulci|lobe|lobes|nucleus|nuclei|ventricle|ventricles|capsule|peduncle|peduncles|fissure|cortex|commissure|colliculus|colliculi|plexus|cistern|bulb|hemisphere|hemispheres|cerebellar|olfactory|optic|internal|external|extreme|central)$/i;
   function maskDefinition(text, s) {
     var out = text || '';
     var esc = function (str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); };
-    [s.name].concat(s.accept || []).forEach(function (n) {
-      n = (n || '').trim();
-      if (!n) return;
-      out = out.replace(new RegExp('\\b' + esc(n).replace(/\s+/g, '\\s+') + '(s|es)?\\b', 'gi'), '____');
-    });
-    s.name.split(/\s+/).forEach(function (w) {
+    var words = s.name.split(/\s+/);
+    out = out.replace(new RegExp('\\b' + esc(s.name).replace(/\s+/g, '\\s+') + '(s|es)?\\b', 'gi'), '____');
+    words.forEach(function (w) {
       w = w.replace(/[^a-z]/gi, '');
       if (w.length < 5 || MASK_STOP.test(w)) return;
+      if (words.length > 1 && MASK_GENERIC.test(w)) return;   // the generic half of a name stays readable
       var root = w.replace(/(ies|es|um|us|ae|is|ic|al|ar|s|a|i|e)$/i, '');
       if (root.length < 4) root = w;
       out = out.replace(new RegExp('\\b' + root + '\\w*', 'gi'), '____');
     });
     return out.replace(/____(\s+____)+/g, '____');
+  }
+  /* Does this phrase appear, whole, in the text a By definition question shows? */
+  function visibleIn(text, phrase) {
+    var esc = phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+    return new RegExp('\\b' + esc + '(s|es)?\\b', 'i').test(text || '');
   }
 
   /* The pool for a run: every allowed structure, except that Describe it

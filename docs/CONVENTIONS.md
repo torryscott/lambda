@@ -110,7 +110,7 @@ Links out of any page keep `on`, `views`, and `class` and drop `view`, `group`, 
 | `flag` | The inclusion flag; must have a code in `codes.js`. |
 | `name` | Canonical structure name. The glossary merges entries across views by this name, so spell it the same everywhere. |
 | `matter` | Tissue-type hint shown in the quiz and the glossary. |
-| `about` | Definition. Shown in the atlas card, the glossary, and as the *By definition* question, where the structure's own name and synonyms are masked. |
+| `about` | Definition. Shown in the atlas card, the glossary, and as the *By definition* question, where the structure's own name is masked. A synonym that appears in the definition is not accepted as the answer to that question. |
 | `accept` | Genuine synonyms the quiz counts as right. |
 | `target` | Marker position on the anatomy, as fractions of image width and height. |
 | `label` | Label pill position, same coordinate space. Placed by hand; never moved by code. |

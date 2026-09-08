@@ -7,7 +7,7 @@
       "flag": "inc_lat_frontal_lobe",
       "name": "Frontal Lobe",
       "matter": "a Lobe",
-      "about": "The most rostral lobe of the cerebrum. Seen from the side it forms the front third of the hemisphere, ending at the frontal pole.",
+      "about": "The most rostral lobe of the cerebrum. Seen from the side it forms the rostral third of the hemisphere, ending at the rostral pole.",
       "accept": [],
       "target": {
         "x": 0.1969,
