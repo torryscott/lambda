@@ -23,7 +23,7 @@
     --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--ground); color: var(--ink); }
+  html, body { margin: 0; background: #ECECEC; color: var(--ink); }   /* a gray desk on screen; the sheet itself is pure white */
   body { font-family: var(--sans); font-size: 11pt; line-height: 1.45; -webkit-font-smoothing: antialiased; }
   a { color: var(--accent); }
   [hidden] { display: none !important; }
@@ -31,7 +31,7 @@
   .skip:focus { left: 8px; outline: 3px solid #fff; outline-offset: 2px; }
 
   /* ---------- screen-only controls ---------- */
-  .controls { position: sticky; top: 0; z-index: 10; background: rgba(251,250,247,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
+  .controls { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule); }
   .controls-inner { max-width: 1120px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
   .wordmark { display: inline-flex; align-items: center; gap: .42em; font-family: var(--display); font-size: 1.28rem; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
   .wordmark .mark { width: 1.2em; height: 1.2em; flex: none; color: var(--accent); }
@@ -58,7 +58,7 @@
   .hint { font-size: .82rem; color: var(--muted); flex-basis: 100%; margin: -4px 0 0; }
 
   /* ---------- the document: landscape letter, one view per page ---------- */
-  .paper { max-width: 11in; margin: 28px auto 60px; background: var(--panel); box-shadow: 0 4px 24px rgba(31,28,24,.08); padding: 0.5in; }
+  .paper { max-width: 11in; margin: 28px auto 60px; background: #FFFFFF; box-shadow: 0 4px 24px rgba(0,0,0,.14); padding: 0.5in; }
   .page { min-height: 7.5in; display: flex; flex-direction: column; break-after: page; }
   .page:last-child { break-after: auto; }
   .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12pt; margin: 0 0 8pt; padding-bottom: 5pt; border-bottom: 1.5px solid var(--ink); }
@@ -81,7 +81,7 @@
      (container query units), so a pill is the same fraction of the plate on
      paper as it is on screen and nothing depends on a measurement taken at
      screen size. */
-  .plate { position: relative; container-type: inline-size; margin: 0 auto; background: #fff; }
+  .plate { position: relative; container-type: inline-size; margin: 0 auto; background: #FFFFFF; }
   .plate img { display: block; width: 100%; height: auto; }
   .plate svg.leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
   .plate svg.leaders line { stroke: var(--accent); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
@@ -110,8 +110,6 @@
   .key.defs b { font-weight: 600; }
   .key.defs .matter { color: var(--muted); font-size: 8pt; margin-left: 6pt; }
   .key.defs .def { display: block; color: var(--ink-soft); margin-top: 1pt; }
-  .pagefoot { margin-top: auto; padding-top: 5pt; border-top: 0.5px solid var(--rule); display: flex; justify-content: space-between; gap: 12pt; font-family: var(--mono); font-size: 7.5pt; color: var(--muted); }
-  .pagefoot span:last-child { white-space: nowrap; }
   .empty { padding: 40px 0; color: var(--muted); }
 
   @page { size: letter landscape; margin: 0.5in; }
@@ -196,7 +194,7 @@
     // height, and the width follows from the plate's own proportions. A
     // numbered key without definitions sits beside the plate instead of
     // below it, so the plate leaves it a column.
-    var PLATE_H = opts.defs ? 4.6 : 6.4, PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;   // with definitions, leave the lower part of the page for them
+    var PLATE_H = opts.defs ? 4.8 : 6.6, PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;   // with definitions, leave the lower part of the page for them
     var side = opts.style === 'numbers' && !opts.defs;
     var widthIn = Math.min(side ? PAGE_W - KEY_W - GAP : PAGE_W, PLATE_H * w / h);
     var html = '<div class="figrow' + (side ? '' : ' center') + '"><figure><div class="plate" style="aspect-ratio:' + w + '/' + h + ';width:' + widthIn.toFixed(2) + 'in">';
@@ -239,7 +237,6 @@
       html += '<div class="head"><div>' + (g ? '<p class="eyebrow">' + esc(g.label) + '</p>' : '') + '<h2>' + esc(d.label) + ' view <span class="count-in">&middot; ' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span></h2></div>'
         + '<div class="brand"><div class="t">Sheep Brain Atlas<i>.</i></div>' + (cls ? '<div class="cls">' + esc(cls) + '</div>' : '') + '<div class="sub">' + summary + '</div></div></div>';
       html += figure(d, d.shown);
-      html += '<div class="pagefoot"><span>Lambda &middot; Sheep Brain Study Guide &middot; torryscott.github.io/lambda</span><span>Photographs and text &copy; Torry Dennis &middot; CC BY-NC-SA 4.0 &middot; ' + (i + 1) + ' / ' + pages.length + '</span></div>';
       html += '</section>';
     });
     main.innerHTML = html || '<p class="empty">This link has no structures to print.</p>';
