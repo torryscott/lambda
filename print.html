@@ -98,6 +98,7 @@
   .page { break-after: page; }   /* no fixed height: a section that overran the printable area would spill onto a blank sheet */
   .page:last-child { break-after: auto; }
   .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12pt; margin: 0 0 8pt; padding-bottom: 5pt; border-bottom: 1.5px solid var(--ink); }
+  .head.norule { border-bottom: 0; padding-bottom: 0; }
   .head .eyebrow { font-family: var(--mono); font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 1pt; }
   h2 { font-family: var(--display); font-weight: 400; font-size: 19pt; margin: 0; line-height: 1.05; }
   h2 .count-in { font-family: var(--sans); font-size: 9.5pt; color: var(--muted); font-weight: 400; margin-left: 4pt; }
@@ -201,6 +202,7 @@
         <label class="check"><input type="checkbox" data-head="count" checked> Structure count</label>
         <label class="check"><input type="checkbox" data-head="title" checked> Atlas title</label>
         <label class="check"><input type="checkbox" data-head="cls" checked id="headCls"> Class name</label>
+        <label class="check"><input type="checkbox" data-head="rule" checked> Dividing line</label>
       </div>
     </fieldset>
     <fieldset>
@@ -281,7 +283,7 @@
   }
 
   /* Which parts of each page's heading to print. */
-  var head = { view: true, count: true, title: true, cls: !!cls };
+  var head = { view: true, count: true, title: true, cls: !!cls, rule: true };
   if (params.has('head')) {                       // ?head=view,count or ?head=none presets the toggles
     var keep = params.get('head').split(',');
     Object.keys(head).forEach(function (k) { head[k] = keep.indexOf(k) > -1; });
@@ -355,7 +357,7 @@
         else if (head.count) left += '<h2><span class="count-in">' + d.shown.length + ' structure' + (d.shown.length === 1 ? '' : 's') + '</span></h2>';
         if (head.title) right += '<div class="wm">' + MARK + '<span>Lambda<i>.</i></span></div><div class="t">Sheep Brain Atlas</div>';
         if (head.cls && cls) right += '<div class="cls">' + esc(cls) + '</div>';
-        html += '<div class="head"><div>' + left + '</div><div class="brand">' + right + '</div></div>';
+        html += '<div class="head' + (head.rule ? '' : ' norule') + '"><div>' + left + '</div><div class="brand">' + right + '</div></div>';
       }
       html += figure(d, d.shown);
       html += '</section>';
