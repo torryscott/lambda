@@ -37,6 +37,7 @@
   .wordmark .mark { width: 1.2em; height: 1.2em; flex: none; color: var(--accent); }
   .wordmark i { font-style: normal; color: var(--tissue); }
   .topbar nav { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+  .topbar nav button.primary { margin-left: 10px; }
   .topbar nav a { font-size: .92rem; color: var(--ink-soft); text-decoration: none; padding: 6px 0; border-bottom: 1px solid transparent; }
   .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-strong); }
   .topbar nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
@@ -75,7 +76,7 @@
      out. Grouped as the site groups them, with a group chip that toggles the
      whole group at once. */
   .vgroups { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: flex-start; }
-  .vgroup { display: flex; flex-direction: column; gap: 8px; }
+  .vgroup { display: flex; flex-direction: column; gap: 8px; min-width: 0; max-width: 100%; }
   .gchip { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
            color: var(--muted); background: transparent; border: 0; padding: 0; cursor: pointer; }
   .gchip::before { content: ""; width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid var(--rule-strong); background: #fff; box-sizing: border-box; }
@@ -113,7 +114,7 @@
   .head .brand .cls { font-size: 8.5pt; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
   .figrow { flex: 1 0 auto; display: flex; gap: 0.25in; align-items: flex-start; }
   .figrow.center { justify-content: center; }
-  .figrow figure { margin: 0; flex: none; max-width: 100%; }
+  .figrow figure { margin: 0; flex: 0 1 auto; min-width: 0; max-width: 100%; }   /* may shrink on a narrow screen; never grows past the plate's printed width */
   .side { flex: 1; min-width: 2.4in; }
   .side .key { columns: 1; margin: 0; font-size: 9pt; }
   .side .key li { padding: 1.5pt 0; }
@@ -122,16 +123,20 @@
      (container query units), so a pill is the same fraction of the plate on
      paper as it is on screen and nothing depends on a measurement taken at
      screen size. */
-  .plate { position: relative; container-type: inline-size; margin: 0 auto; background: #FFFFFF; }
+  .plate { position: relative; container-type: inline-size; margin: 0 auto; background: #FFFFFF; max-width: 100%; }   /* inches for print; never wider than the screen */
   .plate img { display: block; width: 100%; height: auto; }
   .plate svg.leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
   .plate svg.leaders line { stroke: var(--accent); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
   .dot {
     position: absolute; transform: translate(-50%, -50%);
-    width: max(4px, 0.72cqw); height: max(4px, 0.72cqw); border-radius: 50%;
-    background: var(--accent); border: max(0.6px, 0.15cqw) solid #fff; box-shadow: 0 0 0 max(0.8px, 0.28cqw) rgba(255,255,255,.9);
+    width: max(4px, calc(1cqw * var(--ms))); height: max(4px, calc(1cqw * var(--ms))); border-radius: 50%;
+    background: var(--accent); border: max(0.6px, calc(0.18cqw * var(--ms))) solid #fff; box-shadow: 0 0 0 max(0.8px, calc(0.3cqw * var(--ms))) rgba(255,255,255,.95);
   }
-  .plate { --ls: 1; }   /* label size factor, from the slider */
+  /* Outline labels: white with navy text, the printed-atlas convention. Navy
+     stays on the dots and leaders as the accent. */
+  .plate.outline .pill { background: #fff; color: var(--accent); border: 0.12cqw solid var(--accent); }
+  .plate.outline .num { background: #fff; color: var(--accent); border: 0.14cqw solid var(--accent); font-weight: 600; }
+  .plate { --ls: 1; --ms: 1; }   /* label and marker size factors, from the sliders */
   .pill {
     position: absolute; transform: translate(-50%, -50%);
     font-size: calc(1.4cqw * var(--ls)); line-height: 1.15; font-weight: 600; color: #fff; background: var(--accent);
@@ -163,9 +168,19 @@
     figure, .head, .key li { break-inside: avoid; }
   }
   @media (max-width: 720px) {
+    .wrap { padding: 0 16px; }
+    .topbar { flex-wrap: wrap; row-gap: 10px; padding-top: 16px; }
+    .wordmark { flex: 1 0 100%; font-size: 1.18rem; }
+    .topbar nav { gap: 16px; width: 100%; }
+    .topbar nav a { white-space: nowrap; font-size: .88rem; }
+    .topbar nav button.primary { margin-left: 0; flex: 1 0 100%; }
     .paper { margin: 12px; padding: 18px; }
     .figrow { flex-wrap: wrap; }
-    .controls-inner { padding: 12px 16px; gap: 14px; }
+    .controls-inner { padding: 12px 16px; gap: 12px; }
+    .row { gap: 12px 16px; }
+    .slider input { width: 96px; }
+    .vgroups { gap: 10px 18px; }
+    .vpill img { width: 40px; height: 28px; }
     .key, .key.defs { columns: 1; }
   }
 </style>
@@ -181,6 +196,7 @@
       <a href="quiz.html" id="navQuiz">Quiz</a>
       <a href="glossary.html" id="navGlossary">Glossary</a>
       <a href="https://github.com/torryscott/lambda">Source</a>
+      <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
     </nav>
   </header>
 </div>
@@ -195,12 +211,19 @@
           <label><input type="radio" name="style" value="numbers"><span>Numbered key</span></label>
         </div>
       </fieldset>
+      <div class="segs" role="radiogroup" aria-label="Label fill">
+        <label><input type="radio" name="fill" value="outline" checked><span>Outline</span></label>
+        <label><input type="radio" name="fill" value="filled"><span>Filled</span></label>
+      </div>
+      <label class="slider">Size <input type="range" id="labelSize" min="0.7" max="1.6" step="0.05" value="1"><output id="labelOut" for="labelSize">1.00×</output></label>
       <label class="check"><input type="checkbox" id="defs"> Include definitions</label>
-      <label class="slider">Label size <input type="range" id="labelSize" min="0.7" max="1.6" step="0.05" value="1"><output id="labelOut" for="labelSize">1.00×</output></label>
-      <span class="spacer"></span>
-      <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
     </div>
-    <fieldset>
+    <div class="row">
+      <fieldset>
+        <legend>Marker</legend>
+        <label class="slider">Size <input type="range" id="markerSize" min="0.5" max="2" step="0.05" value="1"><output id="markerOut" for="markerSize">1.00×</output></label>
+      </fieldset>
+      <fieldset>
       <legend>Heading</legend>
       <div class="checks">
         <label class="check"><input type="checkbox" data-head="view" checked> View name</label>
@@ -209,7 +232,8 @@
         <label class="check"><input type="checkbox" data-head="cls" checked id="headCls"> Class name</label>
         <label class="check"><input type="checkbox" data-head="rule" checked> Dividing line</label>
       </div>
-    </fieldset>
+      </fieldset>
+    </div>
     <fieldset>
       <legend>Views</legend>
       <div class="vgroups" id="vgroups"></div>
@@ -244,7 +268,23 @@
   var MARK = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5"/><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></g></svg>';
   var DATA = [];
   var opts = { style: params.get('style') === 'numbers' ? 'numbers' : 'names', defs: params.get('defs') === '1',
-               labels: Math.min(1.6, Math.max(0.7, parseFloat(params.get('labels')) || 1)) };
+               labels: Math.min(1.6, Math.max(0.7, parseFloat(params.get('labels')) || 1)),
+               marker: Math.min(2, Math.max(0.5, parseFloat(params.get('marker')) || 1)),
+               fill: params.get('fill') === 'filled' ? 'filled' : 'outline' };
+  document.querySelector('input[name="fill"][value="' + opts.fill + '"]').checked = true;
+  document.querySelectorAll('input[name="fill"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      opts.fill = r.value;
+      document.querySelectorAll('.plate').forEach(function (p) { p.classList.toggle('outline', opts.fill === 'outline'); });
+      layoutLabels();                                  // an outline pill is a hair wider than a filled one
+    });
+  });
+  var markEl = document.getElementById('markerSize'), markOut = document.getElementById('markerOut');
+  markEl.value = opts.marker; markOut.value = opts.marker.toFixed(2) + '\u00d7';
+  markEl.addEventListener('input', function () {
+    opts.marker = parseFloat(markEl.value); markOut.value = opts.marker.toFixed(2) + '\u00d7';
+    document.querySelectorAll('.plate').forEach(function (p) { p.style.setProperty('--ms', opts.marker); });
+  });
   var sizeEl = document.getElementById('labelSize'), sizeOut = document.getElementById('labelOut');
   sizeEl.value = opts.labels; sizeOut.value = opts.labels.toFixed(2) + '\u00d7';
   sizeEl.addEventListener('input', function () {
@@ -329,7 +369,7 @@
     var PLATE_H = (opts.defs ? 4.8 : 6.3) + (headShown() ? 0 : 0.5), PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;
     var side = opts.style === 'numbers' && !opts.defs;
     var widthIn = Math.min(side ? PAGE_W - KEY_W - GAP : PAGE_W, PLATE_H * w / h);
-    var html = '<div class="figrow' + (side ? '' : ' center') + '"><figure><div class="plate" style="aspect-ratio:' + w + '/' + h + ';width:' + widthIn.toFixed(2) + 'in;--ls:' + opts.labels + '">';
+    var html = '<div class="figrow' + (side ? '' : ' center') + '"><figure><div class="plate' + (opts.fill === 'outline' ? ' outline' : '') + '" style="aspect-ratio:' + w + '/' + h + ';width:' + widthIn.toFixed(2) + 'in;--ls:' + opts.labels + ';--ms:' + opts.marker + '">';
     html += '<img src="' + esc(d.image) + '" alt="' + esc(d.label) + ' view of the sheep brain, labeled">';
     html += '<svg class="leaders" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">';
     order.forEach(function (s, i) {

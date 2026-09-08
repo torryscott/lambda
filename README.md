@@ -79,7 +79,7 @@ Other parameters, all optional:
 | Parameter | Page | Meaning |
 |---|---|---|
 | `view=<id>` | atlas, quiz, print | One view, e.g. `dorsal`, `coronal-b` |
-| `style=numbers`, `defs=1`, `labels=1.3`, `head=…` | print | Numbered key instead of names on the figure; include definitions; label size factor from 0.7 to 1.6; which heading parts to print (`view,count,title,cls,rule` or `none`) |
+| `style=numbers`, `fill=filled`, `defs=1`, `labels=1.3`, `marker=1.3`, `head=…` | print | Numbered key instead of names on the figure; filled rather than outline labels; include definitions; label size 0.7 to 1.6; marker size 0.5 to 2; which heading parts to print (`view,count,title,cls,rule` or `none`) |
 | `group=<id>` | atlas | Open a group at its first view: `surface`, `midsagittal`, `coronal` |
 | `set=<id>` | quiz | Quiz a group, or `all` for everything |
 | `mode=describe` | quiz | Start in *By definition* |
