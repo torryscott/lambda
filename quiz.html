@@ -24,8 +24,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg-a: #FBFAF7;
-    --bg-b: #F6F3EE;
     --panel: #ffffff;
     --ink: #1F1C18;
     --ink-soft: #4E4841;
@@ -53,10 +51,7 @@
     font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
-    background:
-      radial-gradient(1100px 500px at 85% -10%, rgba(43,77,109,.06), transparent 60%),
-      radial-gradient(900px 420px at 0% 0%, rgba(30,58,95,.06), transparent 55%),
-      linear-gradient(180deg, var(--bg-a), var(--bg-b));
+    background: var(--ground, #FBFAF7);   /* the same flat ground as the home page */
     min-height: 100vh;
   }
 

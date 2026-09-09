@@ -25,8 +25,6 @@
 <style>
   :root {
     --bg: #FBFAF7;
-    --bg-grad-a: #FBFAF7;
-    --bg-grad-b: #F6F3EE;
     --panel: #ffffff;
     --ink: #1F1C18;
     --ink-soft: #4E4841;
@@ -56,10 +54,7 @@
     line-height: 1.55;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
-    background:
-      radial-gradient(1100px 500px at 85% -10%, rgba(43, 77, 109, 0.06), transparent 60%),
-      radial-gradient(900px 420px at 0% 0%, rgba(30, 58, 95, 0.06), transparent 55%),
-      linear-gradient(180deg, var(--bg-grad-a), var(--bg-grad-b));
+    background: var(--ground, #FBFAF7);   /* the same flat ground as the home page */
     min-height: 100vh;
   }
 

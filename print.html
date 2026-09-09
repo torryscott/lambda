@@ -24,7 +24,7 @@
     --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: #ECECEC; color: var(--ink); }   /* a gray desk on screen; the sheet itself is pure white */
+  html, body { margin: 0; background: var(--ground); color: var(--ink); }   /* the site's ground; the sheet on it is pure white */
   body { font-family: var(--sans); font-size: 11pt; line-height: 1.45; -webkit-font-smoothing: antialiased; }
   a { color: var(--accent); }
   [hidden] { display: none !important; }
@@ -49,7 +49,7 @@
      which gives the whole window height back to the preview. Each section
      folds on its own heading. */
   .layout { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
-  .controls { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 0 -24px; }
+  .controls { position: sticky; top: 0; z-index: 10; background: rgba(251,250,247,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 0 -24px; }
   .controls-inner { max-width: 1120px; margin: 0 auto; padding: 10px 24px 12px; display: flex; flex-direction: column; gap: 10px; }
   .bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .optbtn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .9rem; font-weight: 600; color: var(--ink); background: #fff; border: 1.5px solid var(--rule-strong); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
@@ -143,7 +143,7 @@
   }
 
   /* ---------- the document: landscape letter, one view per page ---------- */
-  .paper { max-width: 11in; margin: 28px auto 60px; background: #FFFFFF; box-shadow: 0 4px 24px rgba(0,0,0,.14); padding: 0.5in; }
+  .paper { max-width: 11in; margin: 28px auto 60px; background: #FFFFFF; border: 1px solid var(--rule); box-shadow: 0 4px 24px rgba(31,28,24,.08); padding: 0.5in; }
   .page { break-after: page; page-break-after: always; }   /* no fixed height: a section that overran the printable area would spill onto a blank sheet */
   .page:last-child { break-after: auto; page-break-after: auto; }
   .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12pt; margin: 0 0 8pt; padding-bottom: 5pt; border-bottom: 1.5px solid var(--ink); }
