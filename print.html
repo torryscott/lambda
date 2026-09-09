@@ -140,8 +140,8 @@
 
   /* ---------- the document: landscape letter, one view per page ---------- */
   .paper { max-width: 11in; margin: 28px auto 60px; background: #FFFFFF; box-shadow: 0 4px 24px rgba(0,0,0,.14); padding: 0.5in; }
-  .page { break-after: page; }   /* no fixed height: a section that overran the printable area would spill onto a blank sheet */
-  .page:last-child { break-after: auto; }
+  .page { break-after: page; page-break-after: always; }   /* no fixed height: a section that overran the printable area would spill onto a blank sheet */
+  .page:last-child { break-after: auto; page-break-after: auto; }
   .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12pt; margin: 0 0 8pt; padding-bottom: 5pt; border-bottom: 1.5px solid var(--ink); }
   .head.norule { border-bottom: 0; padding-bottom: 0; }
   .head .eyebrow { font-family: var(--mono); font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 1pt; }
@@ -154,10 +154,17 @@
   .head .brand .wm i { font-style: normal; color: var(--tissue); }
   .head .brand .t { font-size: 9pt; color: var(--ink-soft); letter-spacing: .01em; }
   .head .brand .cls { font-size: 8.5pt; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-  .figrow { flex: 1 0 auto; display: flex; gap: 0.25in; align-items: flex-start; }
-  .figrow.center { justify-content: center; }
-  .figrow figure { margin: 0; flex: 0 1 auto; min-width: 0; max-width: 100%; }   /* may shrink on a narrow screen; never grows past the plate's printed width */
-  .side { flex: 1; min-width: 2.4in; }
+  /* The plate alone: a centered inline block, so its width is its own (in
+     inches) capped by the page. The plate with a side key: a grid whose
+     first column is the plate's width. Neither relies on flex shrinking,
+     which Safari resolves differently from Chrome when printing. */
+  .figrow.center { display: block; text-align: center; }
+  .figrow.center figure { display: inline-block; margin: 0; max-width: 100%; text-align: left; vertical-align: top; }
+  .figrow.side { display: grid; grid-template-columns: var(--pw, 7in) minmax(0, 1fr); gap: 0.25in; align-items: start; }
+  .figrow.side figure { margin: 0; min-width: 0; }
+  .figrow.side .plate { width: 100% !important; }
+  .side { min-width: 0; }
+  @media screen and (max-width: 900px) { .figrow.side { grid-template-columns: minmax(0, 1fr); } }   /* screens only: print keeps the key beside the plate */
   .side .key { columns: 1; margin: 0; font-size: 9pt; }
   .side .key li { padding: 1.5pt 0; }
 
@@ -169,10 +176,13 @@
   .plate img { display: block; width: 100%; height: auto; }
   .plate svg.leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
   .plate svg.leaders line { stroke: var(--accent); stroke-width: 1.1; vector-effect: non-scaling-stroke; }
+  /* A dot is a thick navy border around nothing, with a white outline, so it
+     prints even when the browser skips backgrounds (Safari does by default). */
   .dot {
-    position: absolute; transform: translate(-50%, -50%);
+    position: absolute; transform: translate(-50%, -50%); box-sizing: border-box;
     width: max(4px, calc(1cqw * var(--ms))); height: max(4px, calc(1cqw * var(--ms))); border-radius: 50%;
-    background: var(--accent); border: max(0.6px, calc(0.18cqw * var(--ms))) solid #fff; box-shadow: 0 0 0 max(0.8px, calc(0.3cqw * var(--ms))) rgba(255,255,255,.95);
+    background: transparent; border: max(2px, calc(0.5cqw * var(--ms))) solid var(--accent);
+    outline: max(0.8px, calc(0.3cqw * var(--ms))) solid #fff;
   }
   /* Outline labels: white with navy text, the printed-atlas convention. Navy
      stays on the dots and leaders as the accent. */
@@ -215,7 +225,7 @@
     .wrap, .controls, .skip { display: none !important; }   /* the site header and the print options never print */
     .paper { max-width: none; margin: 0; padding: 0; box-shadow: none; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    figure, .head, .key li { break-inside: avoid; }
+    figure, .head, .key li { break-inside: avoid; page-break-inside: avoid; }
   }
   @media (max-width: 720px) {
     .wrap { padding: 0 16px; }
@@ -309,7 +319,7 @@
           </div>
         </div>
       </section>
-      <p class="hint">Drag any label to move it; it stays where you put it on this device, and other labels keep clear of it. Every view on your link is included; click a view to leave it out. In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. Each view prints on its own page.</p>
+      <p class="hint">Drag any label to move it; it stays where you put it on this device, and other labels keep clear of it. Every view on your link is included; click a view to leave it out. In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. In Safari, filled labels also need <b>Print backgrounds</b> turned on. Each view prints on its own page.</p>
     </div>
   </div>
 </div>
@@ -452,7 +462,7 @@
     var PLATE_H = (opts.defs ? 4.8 : 6.3) + (headShown() ? 0 : 0.5), PAGE_W = 10, KEY_W = 2.7, GAP = 0.25;
     var side = opts.style === 'numbers' && !opts.defs;
     var widthIn = Math.min(side ? PAGE_W - KEY_W - GAP : PAGE_W, PLATE_H * w / h);
-    var html = '<div class="figrow' + (side ? '' : ' center') + '"><figure><div class="plate' + (opts.fill === 'outline' ? ' outline' : '') + '" data-view="' + esc(d.id) + '" style="aspect-ratio:' + w + '/' + h + ';width:' + widthIn.toFixed(2) + 'in;--ls:' + opts.labels + ';--ms:' + opts.marker + '">';
+    var html = '<div class="figrow ' + (side ? 'side' : 'center') + '" style="--pw:' + widthIn.toFixed(2) + 'in"><figure><div class="plate' + (opts.fill === 'outline' ? ' outline' : '') + '" data-view="' + esc(d.id) + '" style="aspect-ratio:' + w + '/' + h + ';width:' + widthIn.toFixed(2) + 'in;--ls:' + opts.labels + ';--ms:' + opts.marker + '">';
     html += '<img src="' + esc(d.image) + '" alt="' + esc(d.label) + ' view of the sheep brain, labeled">';
     html += '<svg class="leaders" viewBox="0 0 1 1" preserveAspectRatio="none" aria-hidden="true">';
     order.forEach(function (s, i) {
