@@ -42,9 +42,14 @@
   .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-strong); }
   .topbar nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
 
-  /* ---------- screen-only controls ---------- */
-  .controls { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-  .controls-inner { max-width: 1120px; margin: 0 auto; padding: 10px 24px 12px; display: flex; flex-direction: column; gap: 12px; }
+  /* ---------- screen-only controls ----------
+     Below 1100px they are a fold-away bar above the paper (closed by default
+     on a phone). From 1100px up they become a sticky rail beside the paper,
+     which gives the whole window height back to the preview. Each section
+     folds on its own heading. */
+  .layout { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+  .controls { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 0 -24px; }
+  .controls-inner { max-width: 1120px; margin: 0 auto; padding: 10px 24px 12px; display: flex; flex-direction: column; gap: 10px; }
   .bar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .optbtn { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .9rem; font-weight: 600; color: var(--ink); background: #fff; border: 1.5px solid var(--rule-strong); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
   .optbtn::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
@@ -52,40 +57,46 @@
   .optbtn:hover { border-color: var(--accent); color: var(--accent); }
   .optsum { font-size: .84rem; color: var(--muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .controls.collapsed #optPanel { display: none; }
-  #optPanel { display: flex; flex-direction: column; gap: 12px; }
-  .row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
-  .controls fieldset { border: 0; margin: 0; padding: 0; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .controls legend { float: left; font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin-right: 4px; }
+  #optPanel { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4px 32px; align-items: start; }
+  .opt { min-width: 0; }
+  .opt.wide { grid-column: 1 / -1; }
+  .sec-h { display: flex; align-items: center; justify-content: space-between; width: 100%; font: inherit; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; color: var(--muted); background: none; border: 0; padding: 8px 0 6px; cursor: pointer; text-align: left; }
+  .sec-h::after { content: ""; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-135deg); margin-right: 4px; transition: transform .15s; }
+  .sec-h[aria-expanded="false"]::after { transform: rotate(45deg) translateY(-2px); }
+  .sec-h:hover { color: var(--accent); }
+  .opt.folded .sec-body { display: none; }
+  .sec-body { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-bottom: 6px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .controls fieldset { border: 0; margin: 0; padding: 0; display: contents; }
   .segs { display: inline-flex; border: 1.5px solid var(--rule-strong); border-radius: 999px; overflow: hidden; background: #fff; }
   .segs label { display: flex; cursor: pointer; margin: 0; }
   .segs label + label { border-left: 1.5px solid var(--rule-strong); }
   .segs input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  .segs span { padding: 6px 14px; font-size: .88rem; color: var(--ink-soft); }
+  .segs span { padding: 6px 14px; font-size: .88rem; color: var(--ink-soft); white-space: nowrap; }
   .segs label:has(input:checked) { background: var(--accent); }
   .segs input:checked + span { color: #fff; font-weight: 600; }
   .segs input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: -3px; }
   .check { display: inline-flex; align-items: center; gap: 8px; font-size: .92rem; cursor: pointer; }
-  .slider { display: inline-flex; align-items: center; gap: 10px; font-size: .92rem; }
-  .slider input { width: 140px; accent-color: var(--accent); margin: 0; }
-  .slider output { font-family: var(--mono); font-size: .82rem; color: var(--muted); min-width: 3.2em; }
   .check input { width: 17px; height: 17px; accent-color: var(--accent); margin: 0; }
+  .checks { display: inline-flex; gap: 8px 16px; flex-wrap: wrap; }
+  .slider { display: inline-flex; align-items: center; gap: 10px; font-size: .92rem; }
+  .slider input { width: 130px; accent-color: var(--accent); margin: 0; }
+  .slider output { font-family: var(--mono); font-size: .82rem; color: var(--muted); min-width: 3.2em; }
   .spacer { flex: 1; }
   button.primary { font: inherit; font-size: .92rem; font-weight: 600; padding: 9px 18px; border: 1.5px solid var(--accent); border-radius: 999px; background: var(--accent); color: #fff; cursor: pointer; white-space: nowrap; }
   button.primary:hover { background: var(--accent-hover); }
   button.small { font: inherit; font-size: .8rem; font-weight: 500; padding: 4px 12px; border: 1.5px solid var(--rule); border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; }
   button.small:hover { color: var(--accent); border-color: var(--accent); }
-  button:focus-visible, a:focus-visible, .check input:focus-visible, .vpill input:focus-visible + img { outline: 3px solid var(--accent); outline-offset: 3px; }
-  .hint { font-size: .82rem; color: var(--muted); margin: -2px 0 0; }
+  button:focus-visible, a:focus-visible, .check input:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .hint { font-size: .8rem; color: var(--muted); margin: 4px 0 0; grid-column: 1 / -1; }
   .hint b { color: var(--ink-soft); }
-
-  .checks { display: inline-flex; gap: 16px; flex-wrap: wrap; }
 
   /* Views: one thumbnail pill per view, all on by default, click to leave one
      out. Grouped as the site groups them, with a group chip that toggles the
      whole group at once. */
-  .vgroups { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: flex-start; }
+  .vgroups { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: flex-start; width: 100%; }
   .vgroup { display: flex; flex-direction: column; gap: 8px; min-width: 0; max-width: 100%; }
-  .gchip { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .74rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
+  .gchip { align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 600;
            color: var(--muted); background: transparent; border: 0; padding: 0; cursor: pointer; }
   .gchip::before { content: ""; width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid var(--rule-strong); background: #fff; box-sizing: border-box; }
   .gchip[aria-pressed="true"] { color: var(--accent); }
@@ -105,6 +116,28 @@
   .vpill:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; }
   .vsum { font-size: .82rem; color: var(--muted); }
 
+  /* The rail */
+  @media (min-width: 1100px) {
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; }
+    .controls { grid-column: 2; grid-row: 1; margin: 28px 0 0; top: 16px; max-height: calc(100vh - 32px); overflow: auto; overscroll-behavior: contain;
+                border: 1px solid var(--rule); border-radius: 14px; background: #fff; backdrop-filter: none; box-shadow: 0 4px 24px rgba(0,0,0,.06); }
+    .controls-inner { padding: 14px 18px 16px; gap: 6px; }
+    .paper { grid-column: 1; grid-row: 1; margin: 28px 0 60px; }
+    .optbtn { display: none; }
+    .controls.collapsed #optPanel { display: grid; }   /* the rail never folds as a whole */
+    .bar { flex-direction: column; align-items: stretch; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
+    .bar .primary { width: 100%; }
+    .optsum { white-space: normal; font-size: .8rem; line-height: 1.35; }
+    #optPanel { grid-template-columns: 1fr; gap: 0; }
+    .opt + .opt { border-top: 1px solid var(--rule); }
+    .sec-body { gap: 8px 12px; }
+    .slider { width: 100%; }
+    .slider input { flex: 1; width: auto; }
+    .vgroups { gap: 10px 0; }
+    .vpill { font-size: .82rem; }
+    .vpill img { width: 40px; height: 28px; }
+  }
+
   /* ---------- the document: landscape letter, one view per page ---------- */
   .paper { max-width: 11in; margin: 28px auto 60px; background: #FFFFFF; box-shadow: 0 4px 24px rgba(0,0,0,.14); padding: 0.5in; }
   .page { break-after: page; }   /* no fixed height: a section that overran the printable area would spill onto a blank sheet */
@@ -112,8 +145,9 @@
   .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12pt; margin: 0 0 8pt; padding-bottom: 5pt; border-bottom: 1.5px solid var(--ink); }
   .head.norule { border-bottom: 0; padding-bottom: 0; }
   .head .eyebrow { font-family: var(--mono); font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 1pt; }
-  h2 { font-family: var(--display); font-weight: 400; font-size: 19pt; margin: 0; line-height: 1.05; }
-  h2 .count-in { font-family: var(--sans); font-size: 9.5pt; color: var(--muted); font-weight: 400; margin-left: 4pt; }
+  .head h2 { font-family: var(--display); font-weight: 400; font-size: 19pt; margin: 0; line-height: 1.05; }
+  .opt h2 { margin: 0; font-size: inherit; }
+  .head h2 .count-in { font-family: var(--sans); font-size: 9.5pt; color: var(--muted); font-weight: 400; margin-left: 4pt; }
   .head .brand { text-align: right; line-height: 1.3; }
   .head .brand .wm { display: inline-flex; align-items: center; gap: .38em; font-family: var(--display); font-size: 13.5pt; letter-spacing: -.01em; color: var(--ink); line-height: 1.1; }
   .head .brand .wm svg { width: 1.15em; height: 1.15em; color: var(--accent); flex: none; }
@@ -219,6 +253,7 @@
   </header>
 </div>
 
+<div class="layout">
 <div class="controls" role="region" aria-label="Print options">
   <div class="controls-inner">
     <div class="bar">
@@ -227,48 +262,54 @@
       <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
     </div>
     <div id="optPanel">
-    <div class="row">
-      <fieldset>
-        <legend>Labels</legend>
-        <div class="segs" role="radiogroup" aria-label="Label style">
-          <label><input type="radio" name="style" value="names" checked><span>Names on the figure</span></label>
-          <label><input type="radio" name="style" value="numbers"><span>Numbered key</span></label>
+      <section class="opt" data-sec="labels">
+        <h2><button type="button" class="sec-h" aria-expanded="true" aria-controls="secLabels">Labels</button></h2>
+        <div class="sec-body" id="secLabels">
+          <fieldset><legend class="sr-only">Label style</legend>
+            <div class="segs" role="radiogroup" aria-label="Label style">
+              <label><input type="radio" name="style" value="names" checked><span>Names on the figure</span></label>
+              <label><input type="radio" name="style" value="numbers"><span>Numbered key</span></label>
+            </div>
+          </fieldset>
+          <div class="segs" role="radiogroup" aria-label="Label fill">
+            <label><input type="radio" name="fill" value="outline" checked><span>Outline</span></label>
+            <label><input type="radio" name="fill" value="filled"><span>Filled</span></label>
+          </div>
+          <label class="slider">Size <input type="range" id="labelSize" min="0.7" max="1.6" step="0.05" value="1"><output id="labelOut" for="labelSize">1.00×</output></label>
+          <label class="check"><input type="checkbox" id="defs"> Include definitions</label>
+          <button class="small" type="button" id="resetPins" hidden>Reset label positions</button>
         </div>
-      </fieldset>
-      <div class="segs" role="radiogroup" aria-label="Label fill">
-        <label><input type="radio" name="fill" value="outline" checked><span>Outline</span></label>
-        <label><input type="radio" name="fill" value="filled"><span>Filled</span></label>
-      </div>
-      <label class="slider">Size <input type="range" id="labelSize" min="0.7" max="1.6" step="0.05" value="1"><output id="labelOut" for="labelSize">1.00×</output></label>
-      <label class="check"><input type="checkbox" id="defs"> Include definitions</label>
-      <button class="small" type="button" id="resetPins" hidden>Reset label positions</button>
-    </div>
-    <div class="row">
-      <fieldset>
-        <legend>Marker</legend>
-        <label class="slider">Size <input type="range" id="markerSize" min="0.5" max="2" step="0.05" value="1"><output id="markerOut" for="markerSize">1.00×</output></label>
-      </fieldset>
-      <fieldset>
-      <legend>Heading</legend>
-      <div class="checks">
-        <label class="check"><input type="checkbox" data-head="view" checked> View name</label>
-        <label class="check"><input type="checkbox" data-head="count" checked> Structure count</label>
-        <label class="check"><input type="checkbox" data-head="title" checked> Atlas title</label>
-        <label class="check"><input type="checkbox" data-head="cls" checked id="headCls"> Class name</label>
-        <label class="check"><input type="checkbox" data-head="rule" checked> Dividing line</label>
-      </div>
-      </fieldset>
-    </div>
-    <fieldset>
-      <legend>Views</legend>
-      <div class="vgroups" id="vgroups"></div>
-    </fieldset>
-    <div class="row">
-      <button class="small" type="button" id="vAll">All views</button>
-      <button class="small" type="button" id="vNone">None</button>
-      <span class="vsum" id="vsum" aria-live="polite"></span>
-    </div>
-    <p class="hint">Drag any label to move it; it stays where you put it on this device, and other labels keep clear of it. Every view on your link is included; click a view to leave it out. In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. Each view prints on its own page.</p>
+      </section>
+      <section class="opt" data-sec="marker">
+        <h2><button type="button" class="sec-h" aria-expanded="true" aria-controls="secMarker">Marker</button></h2>
+        <div class="sec-body" id="secMarker">
+          <label class="slider">Size <input type="range" id="markerSize" min="0.5" max="2" step="0.05" value="1"><output id="markerOut" for="markerSize">1.00×</output></label>
+        </div>
+      </section>
+      <section class="opt" data-sec="heading">
+        <h2><button type="button" class="sec-h" aria-expanded="true" aria-controls="secHeading">Heading</button></h2>
+        <div class="sec-body" id="secHeading">
+          <div class="checks">
+            <label class="check"><input type="checkbox" data-head="view" checked> View name</label>
+            <label class="check"><input type="checkbox" data-head="count" checked> Structure count</label>
+            <label class="check"><input type="checkbox" data-head="title" checked> Atlas title</label>
+            <label class="check"><input type="checkbox" data-head="cls" checked id="headCls"> Class name</label>
+            <label class="check"><input type="checkbox" data-head="rule" checked> Dividing line</label>
+          </div>
+        </div>
+      </section>
+      <section class="opt wide" data-sec="views">
+        <h2><button type="button" class="sec-h" aria-expanded="true" aria-controls="secViews">Views</button></h2>
+        <div class="sec-body" id="secViews">
+          <div class="vgroups" id="vgroups"></div>
+          <div class="checks">
+            <button class="small" type="button" id="vAll">All views</button>
+            <button class="small" type="button" id="vNone">None</button>
+            <span class="vsum" id="vsum" aria-live="polite"></span>
+          </div>
+        </div>
+      </section>
+      <p class="hint">Drag any label to move it; it stays where you put it on this device, and other labels keep clear of it. Every view on your link is included; click a view to leave it out. In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. Each view prints on its own page.</p>
     </div>
   </div>
 </div>
@@ -276,6 +317,7 @@
 <main id="main" class="paper" aria-label="Printable atlas">
   <p class="empty" id="loading">Building the atlas…</p>
 </main>
+</div>
 
 <script>
 (function () {
@@ -615,6 +657,16 @@
   }
   optToggle.addEventListener('click', function () { setOpen(controls.classList.contains('collapsed')); });
   setOpen(!window.matchMedia('(max-width: 720px)').matches);
+  // each section folds on its own heading; Heading starts folded in the rail, since it is set once and left
+  document.querySelectorAll('.sec-h').forEach(function (h) {
+    h.addEventListener('click', function () {
+      var sec = h.closest('.opt'), folded = sec.classList.toggle('folded');
+      h.setAttribute('aria-expanded', folded ? 'false' : 'true');
+    });
+  });
+  if (window.matchMedia('(min-width: 1100px)').matches) {
+    var hs = document.querySelector('.opt[data-sec="heading"]'); hs.classList.add('folded'); hs.querySelector('.sec-h').setAttribute('aria-expanded', 'false');
+  }
   function paintSummary() {
     var on = V.all.filter(function (id) { return selected[id]; }).length;
     document.getElementById('optSum').textContent =
