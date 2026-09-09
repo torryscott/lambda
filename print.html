@@ -657,16 +657,13 @@
   }
   optToggle.addEventListener('click', function () { setOpen(controls.classList.contains('collapsed')); });
   setOpen(!window.matchMedia('(max-width: 720px)').matches);
-  // each section folds on its own heading; Heading starts folded in the rail, since it is set once and left
+  // each section folds on its own heading; all start open
   document.querySelectorAll('.sec-h').forEach(function (h) {
     h.addEventListener('click', function () {
       var sec = h.closest('.opt'), folded = sec.classList.toggle('folded');
       h.setAttribute('aria-expanded', folded ? 'false' : 'true');
     });
   });
-  if (window.matchMedia('(min-width: 1100px)').matches) {
-    var hs = document.querySelector('.opt[data-sec="heading"]'); hs.classList.add('folded'); hs.querySelector('.sec-h').setAttribute('aria-expanded', 'false');
-  }
   function paintSummary() {
     var on = V.all.filter(function (id) { return selected[id]; }).length;
     document.getElementById('optSum').textContent =
