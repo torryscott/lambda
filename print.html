@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="codes.js"></script>
 <script src="views.js"></script>
+<script src="print-export.js"></script>
 <script>window.goatcounter = { path: function () { return location.pathname; } };</script>
 <script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 <style>
@@ -55,6 +56,8 @@
   .optbtn::after { content: ""; width: 7px; height: 7px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
   .optbtn[aria-expanded="true"]::after { transform: rotate(-135deg) translateY(-2px); }
   .optbtn:hover { border-color: var(--accent); color: var(--accent); }
+  .optbtn.plain::after { display: none; }
+  .optbtn.plain { font-weight: 500; }
   .optsum { font-size: .84rem; color: var(--muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .controls.collapsed #optPanel { display: none; }
   #optPanel { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 4px 32px; align-items: start; }
@@ -127,6 +130,7 @@
     .controls.collapsed #optPanel { display: grid; }   /* the rail never folds as a whole */
     .bar { flex-direction: column; align-items: stretch; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
     .bar .primary { width: 100%; }
+    .bar .optbtn.plain { display: inline-flex; width: 100%; justify-content: center; }
     .optsum { white-space: normal; font-size: .8rem; line-height: 1.35; }
     #optPanel { grid-template-columns: 1fr; gap: 0; }
     .opt + .opt { border-top: 1px solid var(--rule); }
@@ -269,7 +273,8 @@
     <div class="bar">
       <button type="button" class="optbtn" id="optToggle" aria-expanded="true" aria-controls="optPanel">Options</button>
       <span class="optsum" id="optSum" aria-live="polite"></span>
-      <button class="primary" type="button" id="printBtn">Print or save as PDF</button>
+      <button class="primary" type="button" id="downloadBtn">Download PDF</button>
+      <button class="optbtn plain" type="button" id="printBtn">Print</button>
     </div>
     <div id="optPanel">
       <section class="opt" data-sec="labels">
@@ -288,6 +293,15 @@
           <label class="slider">Size <input type="range" id="labelSize" min="0.7" max="1.6" step="0.05" value="1"><output id="labelOut" for="labelSize">1.00×</output></label>
           <label class="check"><input type="checkbox" id="defs"> Include definitions</label>
           <button class="small" type="button" id="resetPins" hidden>Reset label positions</button>
+        </div>
+      </section>
+      <section class="opt" data-sec="page">
+        <h2><button type="button" class="sec-h" aria-expanded="true" aria-controls="secPage">Page</button></h2>
+        <div class="sec-body" id="secPage">
+          <div class="segs" role="radiogroup" aria-label="Paper size">
+            <label><input type="radio" name="paper" value="letter" checked><span>Letter</span></label>
+            <label><input type="radio" name="paper" value="a4"><span>A4</span></label>
+          </div>
         </div>
       </section>
       <section class="opt" data-sec="marker">
@@ -319,7 +333,7 @@
           </div>
         </div>
       </section>
-      <p class="hint">Drag any label to move it; it stays where you put it on this device, and other labels keep clear of it. Every view on your link is included; click a view to leave it out. In the print dialog, choose <b>Save as PDF</b> as the destination to download it, and <b>Landscape</b> if your browser hasn't picked it already. In Safari, filled labels also need <b>Print backgrounds</b> turned on. Each view prints on its own page.</p>
+      <p class="hint"><b>Download PDF</b> builds the file here in the browser, landscape, one view per page, the same in every browser. Drag any label to move it; it stays where you put it on this device, and other labels keep clear of it. Every view on your link is included; click a view to leave it out. <b>Print</b> uses the browser's own dialog instead; choose Landscape there if it hasn't been picked, and in Safari turn on Print backgrounds for filled labels.</p>
     </div>
   </div>
 </div>
@@ -360,6 +374,7 @@
   var MARK = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5"/><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4"/><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5"/><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77"/><path d="M18 18a4 4 0 0 0 2-7.464"/><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517"/><path d="M6 18a4 4 0 0 1-2-7.464"/><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77"/></g></svg>';
   var DATA = [];
   var opts = { style: params.get('style') === 'numbers' ? 'numbers' : 'names', defs: params.get('defs') === '1',
+               paper: params.get('paper') === 'a4' ? 'a4' : 'letter',
                labels: Math.min(1.6, Math.max(0.7, parseFloat(params.get('labels')) || 1)),
                marker: Math.min(2, Math.max(0.5, parseFloat(params.get('marker')) || 1)),
                fill: params.get('fill') === 'filled' ? 'filled' : 'outline' };
@@ -656,6 +671,42 @@
   document.querySelectorAll('input[name="style"]').forEach(function (r) { r.addEventListener('change', function () { opts.style = r.value; render(); }); });
   document.getElementById('defs').addEventListener('change', function (e) { opts.defs = e.target.checked; render(); });
   document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+  document.querySelector('input[name="paper"][value="' + opts.paper + '"]').checked = true;
+  document.querySelectorAll('input[name="paper"]').forEach(function (r) { r.addEventListener('change', function () { opts.paper = r.value; paintSummary(); }); });
+
+  /* What the exporter needs: for each page on screen, the plate and every
+     label at its final spot, dragged or solved, as fractions of the plate. */
+  function collect() {
+    var pagesOut = [];
+    DATA.filter(function (d) { return selected[d.id] && d.shown.length; }).forEach(function (d) {
+      var plate = document.querySelector('.plate[data-view="' + d.id + '"]');
+      if (!plate) return;
+      var byFlag = {}; d.shown.forEach(function (s) { byFlag[s.flag] = s; });
+      var g = V.groupOf(d.id);
+      var shown = [];
+      plate.querySelectorAll('.pill, .num').forEach(function (el) {
+        var s = byFlag[el.dataset.flag]; if (!s) return;
+        shown.push({ name: s.name, flag: s.flag, matter: s.matter || '', about: s.about || '', num: +el.dataset.i + 1,
+                     tx: s.target.x, ty: s.target.y, lx: parseFloat(el.style.left) / 100, ly: parseFloat(el.style.top) / 100 });
+      });
+      shown.sort(function (a, b) { return a.num - b.num; });
+      pagesOut.push({ id: d.id, label: d.label, group: g ? g.label : '', image: d.image, w: d.w, h: d.h, shown: shown });
+    });
+    return { pages: pagesOut, opts: opts, head: head, cls: cls, paper: opts.paper };
+  }
+  var dl = document.getElementById('downloadBtn');
+  dl.addEventListener('click', function () {
+    var job = collect();
+    if (!job.pages.length) { document.getElementById('optSum').textContent = 'Nothing to export: pick at least one view.'; return; }
+    dl.disabled = true; dl.textContent = 'Building PDF…';
+    window.LAMBDA_EXPORT.download(job).then(function () {
+      dl.disabled = false; dl.textContent = 'Download PDF';
+    }).catch(function (err) {
+      dl.disabled = false; dl.textContent = 'Download PDF';
+      document.getElementById('optSum').textContent = 'The PDF could not be built (' + err.message + '). The Print button still works.';
+    });
+  });
+  window.LAMBDA_PRINT = { collect: collect };   // for tests
 
   /* The options fold away behind one button, so the preview is reachable on
      a phone. Open by default on a wide screen, closed on a narrow one. */
@@ -681,6 +732,7 @@
       + (opts.labels !== 1 ? ' \u00b7 labels ' + opts.labels.toFixed(2) + '\u00d7' : '')
       + (opts.marker !== 1 ? ' \u00b7 markers ' + opts.marker.toFixed(2) + '\u00d7' : '')
       + (opts.defs ? ' \u00b7 definitions' : '')
+      + (opts.paper === 'a4' ? ' \u00b7 A4' : '')
       + ' \u00b7 ' + (on === V.all.length ? 'all ' + on + ' views' : on + ' of ' + V.all.length + ' views');
   }
 

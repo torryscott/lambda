@@ -53,3 +53,19 @@ SOFTWARE.
 ```
 
 The home-screen icons (`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`) are the same Lucide brain rendered in navy on the site's cream ground.
+
+## Fonts (fonts/)
+
+The printable atlas embeds the site's typefaces in the PDFs it builds, so the files in
+`fonts/` are redistributed here under the SIL Open Font License, Version 1.1:
+
+- IBM Plex Sans and IBM Plex Mono, copyright 2017 IBM Corp., reserved font name "Plex".
+  License: `fonts/OFL-IBM-Plex.txt`.
+- Libre Caslon Text, copyright 2018 The Libre Caslon Text Project Authors.
+  License: `fonts/OFL-Libre-Caslon-Text.txt`.
+
+## PDF export
+
+`print-export.js` builds PDFs in the browser with [pdf-lib](https://pdf-lib.js.org) and
+[@pdf-lib/fontkit](https://github.com/Hopding/fontkit), both MIT licensed, loaded from a
+CDN only when a PDF is requested.

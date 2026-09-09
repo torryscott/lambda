@@ -76,6 +76,7 @@ new view is added there once.
 | `fill=filled` | print | Navy labels with white text instead of the outline default |
 | `labels=<factor>` | print | Label size, 0.7 to 1.6; overlapping labels are nudged apart |
 | `marker=<factor>` | print | Dot size, 0.5 to 2 |
+| `paper=a4` | print | A4 instead of Letter, for the PDF and the preview |
 | `head=<parts>` | print | Heading parts to print: any of `view,count,title,cls,rule`, or `none` |
 | `group=<id>` | atlas | Open a group at its first view |
 | `set=<id>` | quiz | Quiz a group, or `all` |
