@@ -196,7 +196,7 @@
   .pill {
     position: absolute; transform: translate(-50%, -50%);
     font-size: calc(1.4cqw * var(--ls)); line-height: 1.15; font-weight: 600; color: #fff; background: var(--accent);
-    border: 0.1cqw solid rgba(255,255,255,.85); border-radius: 1em; padding: .3em .8em; width: max-content; max-width: 12em; text-align: center;
+    border: 0.1cqw solid rgba(255,255,255,.85); border-radius: 1em; padding: .3em .8em; width: max-content; max-width: 12em; text-align: center; text-wrap: balance;
   }
   .num {
     position: absolute; transform: translate(-50%, -50%);
@@ -547,10 +547,28 @@
      Leaders follow. All of it is done in fractions of the plate, and the
      printed plate is the screen plate scaled uniformly, so the result holds
      on paper. */
+
+  /* A label that wraps keeps the box at its maximum width, leaving slack beside
+     the longer line. After layout, measure the widest line and shrink the box
+     to it. Width is set in em, so it scales with the pill wherever it prints. */  function tightenPills(root, selector) {
+    root.querySelectorAll(selector).forEach(function (el) {
+      el.style.width = '';
+      var fs = parseFloat(getComputedStyle(el).fontSize); if (!fs) return;
+      var range = document.createRange(); range.selectNodeContents(el);
+      var rects = Array.prototype.slice.call(range.getClientRects());
+      if (rects.length < 2) return;                          // one line: already as tight as it gets
+      var widest = 0; rects.forEach(function (r) { widest = Math.max(widest, r.width); });
+      var cs = getComputedStyle(el), extra = cs.boxSizing === 'border-box'
+        ? parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + parseFloat(cs.borderLeftWidth) + parseFloat(cs.borderRightWidth) : 0;
+      el.style.width = ((widest + extra) / fs + 0.08).toFixed(3) + 'em';   // in em, so it scales with the pill
+    });
+  }
+  
   function layoutLabels() {
     document.querySelectorAll('.plate').forEach(function (plate) {
       var pr = plate.getBoundingClientRect();
       if (!pr.width || !pr.height) return;
+      tightenPills(plate, '.pill');
       var els = Array.prototype.slice.call(plate.querySelectorAll('.pill, .num'));
       if (!els.length) return;
       var pad = 0.006;                                   // breathing room between labels, as a fraction of plate width
@@ -615,7 +633,9 @@
       });
     });
   }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layoutLabels);   // pill widths change when the web font arrives
+  // Pill widths change when the web font arrives. fonts.ready can resolve
+  // before the font is even requested, so also listen for each load to finish.
+  if (document.fonts) { document.fonts.ready.then(layoutLabels); document.fonts.addEventListener('loadingdone', layoutLabels); }
 
   /* Dragging a label. The pointer's movement is converted to fractions of the
      plate, the leader follows live, and on release the spot is pinned and

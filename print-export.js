@@ -47,14 +47,28 @@
   function col(hex) { var n = parseInt(hex.slice(1), 16); return PDFLib.rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255); }
   var C = { navy: '#1e3a5f', ink: '#1F1C18', soft: '#4E4841', muted: '#797167', tissue: '#C08A62', rule: '#E9E5DE', white: '#FFFFFF' };
 
-  /* Greedy word wrap for a font at a size, never wider than maxW. */
+  /* Word wrap for a font at a size, never wider than maxW. A label that
+     needs two lines is balanced: the break that makes the wider line as
+     narrow as possible, which is what the page's labels do too. */
   function wrap(text, font, size, maxW) {
     var words = String(text).split(/\s+/), lines = [], line = '';
-    words.forEach(function (w) {
-      var t = line ? line + ' ' + w : w;
-      if (font.widthOfTextAtSize(t, size) <= maxW || !line) line = t; else { lines.push(line); line = w; }
+    var w = function (s) { return font.widthOfTextAtSize(s, size); };
+    words.forEach(function (word) {
+      var t = line ? line + ' ' + word : word;
+      if (w(t) <= maxW || !line) line = t; else { lines.push(line); line = word; }
     });
     if (line) lines.push(line);
+    if (lines.length === 2 && words.length > 2) {
+      var best = null;
+      for (var i = 1; i < words.length; i++) {
+        var a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
+        var wa = w(a), wb = w(b);
+        if (wa > maxW || wb > maxW) continue;
+        var m = Math.max(wa, wb);
+        if (!best || m < best.m) best = { m: m, lines: [a, b] };
+      }
+      if (best) lines = best.lines;
+    }
     return lines;
   }
   function ascent(font, size) { return font.heightAtSize(size, { descender: false }); }
