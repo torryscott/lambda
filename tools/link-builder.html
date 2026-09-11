@@ -70,15 +70,6 @@
   .field label .opt { font-weight: 400; color: var(--muted); }
   .field input[type="text"] { width: 100%; font: inherit; padding: 9px 12px; border: 1.5px solid var(--rule-strong); border-radius: 8px; background: var(--panel); color: var(--ink); }
   .field small { display: block; margin-top: 5px; font-size: .82rem; color: var(--muted); }
-  .field input.mono { font-family: var(--mono); font-size: .84rem; }
-  .setup details { grid-column: 1 / -1; margin: 0; }
-  details > summary { cursor: pointer; font-weight: 600; color: var(--accent); font-size: .9rem; list-style: none; padding: 2px 0; }
-  details > summary::-webkit-details-marker { display: none; }
-  details > summary::before { content: "\25B8"; display: inline-block; margin-right: 8px; color: var(--muted); font-size: .8em; transition: transform .15s; }
-  details[open] > summary::before { transform: rotate(90deg); }
-  details .field { margin-top: 12px; }
-  details p { margin: 10px 0 0; font-size: .88rem; color: var(--muted); max-width: 70ch; }
-  details code { font-family: var(--mono); font-size: .82rem; background: var(--chip); padding: 1px 5px; border-radius: 3px; }
 
   .toolbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 30px 0 4px; }
   .toolbar .sec { margin: 0; }
@@ -178,7 +169,7 @@
     <p class="lede">Teach a subset of the structures? <strong>Uncheck the ones you don't cover</strong>, add your class name
        if you like, and share the link at the bottom of this page. The atlas, quiz, and glossary then show only what you
        left checked, and your selection follows students through every page.</p>
-    <p class="example">A link looks like <code>torryscott.github.io/lambda/?on=5777777777x7777773776py</code>. That code spells out exactly which structures are in, so anything added to Lambda later stays out of your link until you make a new one.</p>
+    <p class="example">A link looks like <code>torryscott.github.io/lambda/?on=5777777777x7777773776py</code>. That code spells out exactly which structures are in, so anything added to Lambda later stays out of your link until you make a new one. To change a link later, open this page from it: your selection and class name come back filled in.</p>
 
     <h2 class="sec">Your class</h2>
     <section class="card setup">
@@ -191,20 +182,6 @@
         <button type="button" class="ghost" id="resetBtn">Select all</button>
         <button type="button" class="ghost" id="clearBtn">Deselect all</button>
       </div>
-      <details>
-        <summary>Advanced</summary>
-        <div class="field">
-          <label for="baseUrl">Site address</label>
-          <input type="text" id="baseUrl" class="mono" value="https://torryscott.github.io/lambda/">
-          <small>Only change this if you host your own copy of Lambda.</small>
-        </div>
-        <p>The link carries two masks. <code>on=</code> has one bit per structure, in a permanent order, set for each
-           one you leave checked; <code>views=</code> does the same for the views. A structure or view added to Lambda
-           after your link was made has no bit in it, so it stays out until you open this page from your link and copy
-           a new one. A link with no masks at all is the plain site and shows everything.</p>
-        <p>Open this page from one of your own links and it starts with that link's selection and class name
-           filled in.</p>
-      </details>
     </section>
 
     <div class="toolbar">
@@ -267,7 +244,8 @@ async function loadData() {
 }
 
 const viewsEl = document.getElementById('views');
-const baseUrlEl = document.getElementById('baseUrl');
+// Links point at the site this page belongs to, so a hosted copy of Lambda links to itself.
+const BASE = location.origin + location.pathname.replace(/tools\/link-builder\.html$/, '');
 const classEl = document.getElementById('className');
 const finalUrlEl = document.getElementById('finalUrl');
 const summaryEl = document.getElementById('summary');
@@ -330,7 +308,7 @@ function prefill() {
 }
 
 function update() {
-  const base = baseUrlEl.value.trim();
+  const base = BASE;
   const included = [];
   let total = 0, selected = 0;
   const byGroup = {};
@@ -381,7 +359,6 @@ document.addEventListener('click', e => {
   if (b.dataset.card) setAll(document.querySelector(`.view[data-card="${b.dataset.card}"]`), on);
   else if (b.dataset.group) setAll(document.querySelector(`.group[data-kind="${b.dataset.group}"]`), on);
 });
-baseUrlEl.addEventListener('input', update);
 classEl.addEventListener('input', update);
 document.getElementById('resetBtn').addEventListener('click', () => setAll(viewsEl, true));
 document.getElementById('clearBtn').addEventListener('click', () => setAll(viewsEl, false));
