@@ -127,7 +127,6 @@
   .area:hover { background: var(--chip); }
   .area label { flex: 1; cursor: pointer; font-size: .94rem; color: var(--ink); user-select: none; }
   .area label small { margin-left: 8px; font-size: .74rem; color: var(--muted); letter-spacing: .04em; }
-  .area .code { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
   .area input[type="checkbox"] {
     appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 1.5px solid var(--rule-strong); border-radius: 4px;
     cursor: pointer; position: relative; background: #fff; flex-shrink: 0;
@@ -203,9 +202,8 @@
            one you leave checked; <code>views=</code> does the same for the views. A structure or view added to Lambda
            after your link was made has no bit in it, so it stays out until you open this page from your link and copy
            a new one. A link with no masks at all is the plain site and shows everything.</p>
-        <p>Every structure also has a permanent short code, a view letter and a number, shown at the right of each row.
-           The same structure has a separate code in each view it appears in. Open this page from one of your own
-           links and it starts with that link's selection and class name filled in.</p>
+        <p>Open this page from one of your own links and it starts with that link's selection and class name
+           filled in.</p>
       </details>
     </section>
 
@@ -290,8 +288,7 @@ function buildCard(c) {
     row.className = 'area';
     const id = `cb_${r.flag}`;
     const where = r.slices.length ? `<small>${r.slices.join(' · ')}</small>` : '';
-    const code = LAMBDA.FLAGS[r.flag] ? `<span class="code" aria-hidden="true">${LAMBDA.FLAGS[r.flag]}</span>` : '';
-    row.innerHTML = `<input type="checkbox" id="${id}" data-flag="${r.flag}" checked><label for="${id}">${r.area}${where}</label>${code}`;
+    row.innerHTML = `<input type="checkbox" id="${id}" data-flag="${r.flag}" checked><label for="${id}">${r.area}${where}</label>`;
     list.appendChild(row);
   }
   el.appendChild(list);
