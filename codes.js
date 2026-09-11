@@ -220,6 +220,37 @@ window.LAMBDA = (function () {
     return out;
   }
   function linkKind() { return onMask ? 'on' : 'none'; }
+
+  /* Label positions an instructor placed by hand, carried in the link as
+     ?pos=. One entry per moved label: the structure's code, a letter for
+     the view (its place in VIEW_BITS, since coronal slices share codes),
+     and x and y in thousandths of the plate, e.g. D5a-412-887, joined by
+     underscores. Everything in it survives URL encoding untouched. */
+  var VIEW_LETTERS = 'abcdefghijklmnopqrstuvwxyz';
+  var POS = {};
+  (q.get('pos') || '').split('_').forEach(function (e) {
+    var m = /^([A-Z]+\d+)([a-z])-(\d{1,4})-(\d{1,4})$/i.exec(e.trim());
+    if (!m || !CODES[m[1].toUpperCase()]) return;
+    POS[m[1].toUpperCase() + m[2].toLowerCase()] = { x: Math.min(1, +m[3] / 1000), y: Math.min(1, +m[4] / 1000) };
+  });
+  function viewLetter(viewId) {
+    var V = window.LAMBDA_VIEWS, bits = V && V.catalog ? V.catalog.viewBits : null;
+    var i = bits ? bits.indexOf(viewId) : -1;
+    return i > -1 ? VIEW_LETTERS.charAt(i) : null;
+  }
+  function posKey(viewId, flag) { var c = FLAGS[flag], l = viewLetter(viewId); return c && l ? c + l : null; }
+  var positions = {
+    get: function (viewId, flag) { var k = posKey(viewId, flag); return k && POS[k] ? POS[k] : null; },
+    set: function (viewId, flag, x, y) { var k = posKey(viewId, flag); if (k) POS[k] = { x: x, y: y }; },
+    remove: function (viewId, flag) { var k = posKey(viewId, flag); if (k) delete POS[k]; },
+    clearView: function (viewId) { var l = viewLetter(viewId); Object.keys(POS).forEach(function (k) { if (k.slice(-1) === l) delete POS[k]; }); },
+    clear: function () { POS = {}; },
+    count: function () { return Object.keys(POS).length; },
+    countView: function (viewId) { var l = viewLetter(viewId); return Object.keys(POS).filter(function (k) { return k.slice(-1) === l; }).length; },
+    serialize: function () {
+      return Object.keys(POS).sort().map(function (k) { var p = POS[k]; return k + '-' + Math.round(p.x * 1000) + '-' + Math.round(p.y * 1000); }).join('_');
+    }
+  };
   return { CODES: CODES, FLAGS: FLAGS, BITS: BITS, shown: shown, excludedMap: excludedMap,
-           encodeOn: encodeOn, mask: { encode: maskEncode, decode: maskDecode }, linkKind: linkKind };
+           encodeOn: encodeOn, mask: { encode: maskEncode, decode: maskDecode }, linkKind: linkKind, positions: positions };
 })();

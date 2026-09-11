@@ -86,7 +86,7 @@
     link: function (page, set) {
       var p = new URLSearchParams(window.location.search);
       ['view', 'group', 'set', 'pin'].forEach(function (k) { p.delete(k); });
-      Object.keys(set || {}).forEach(function (k) { if (set[k]) p.set(k, set[k]); });
+      Object.keys(set || {}).forEach(function (k) { if (set[k]) p.set(k, set[k]); else if (set[k] === '') p.delete(k); });
       var qs = p.toString();
       return page + (qs ? '?' + qs : '');
     }
