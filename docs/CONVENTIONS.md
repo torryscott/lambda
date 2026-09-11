@@ -83,10 +83,8 @@ new view is added there once.
 | `mode=<id>` | quiz | `name` (default) or `describe`; `find` falls back to `name` while withheld |
 | `pin=<flag>` | atlas | Arrive in reveal mode with that structure picked |
 | `class=<name>` | all | Class name shown in the header; trimmed to 60 characters by `LAMBDA_VIEWS.className()` |
-| `pos=<entries>` | atlas, print | Hand-placed label positions: `<code><view letter>-<x>-<y>`, thousandths of the plate, `_`-joined; the view letter is the view's index in `VIEW_BITS` (a, b, c, ...). Parsed by `LAMBDA.positions` |
-| `arrange=1` | atlas | Drag labels; each drop rewrites `pos=` in the address bar and the page's links |
 
-Links out of any page keep `on`, `views`, `class`, and `pos` and drop `view`, `group`, `set`, and `pin`. Use
+Links out of any page keep `on`, `views`, and `class` and drop `view`, `group`, `set`, and `pin`. Use
 `LAMBDA_VIEWS.link(page, { view: id })` to build one.
 
 ---

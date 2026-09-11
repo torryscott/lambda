@@ -87,8 +87,6 @@ Other parameters, all optional:
 | `on=<mask>` | all | Inclusion mask over structure bit positions; the builder writes this |
 | `views=<mask>` | all | Inclusion mask over view bit positions; the builder writes this |
 | `class=<name>` | all | A class name, shown above the title on the home page and beside the wordmark elsewhere; up to 60 characters |
-| `pos=<entries>` | atlas, print | Label positions placed by hand: `<code><view letter>-<x>-<y>` in thousandths of the plate, joined by `_`; set by dragging in the atlas's arrange mode |
-| `arrange=1` | atlas | Arrange mode: drag labels, and the link updates as you go |
 
 ---
 

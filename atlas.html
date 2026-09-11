@@ -142,16 +142,6 @@
   }
   .list-btn:hover { border-color: var(--accent); }
   .list-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  /* Arrange mode: an instructor drags labels; the positions ride in the link. */
-  .arrange-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 10px 0 0; padding: 10px 14px;
-                 border: 1.5px solid var(--accent); border-radius: 12px; background: var(--accent-soft, #E8EEF5); font-size: .92rem; color: var(--ink); }
-  .arrange-bar .arrange-text { flex: 1 1 280px; }
-  .arrange-bar .list-btn { text-decoration: none; }
-  .arrange-bar .list-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .arranging .mode-group { opacity: .45; pointer-events: none; }
-  .arranging .label-pill { cursor: grab; touch-action: none; user-select: none; }
-  .arranging .label-pill.dragging { cursor: grabbing; z-index: 5; box-shadow: 0 2px 10px rgba(0,0,0,.25); }
-  .arranging .label-pill.moved { outline: 1.5px solid var(--tissue, #C08A62); outline-offset: 1px; }
   .chooser-note { margin: 22px 0 0; font-size: .92rem; color: var(--muted); max-width: 60ch; }
   /* Printing this page directly: hide the chrome and the tap targets, and
      show every label. The printable atlas (print.html) is the better route. */
@@ -444,8 +434,8 @@
     .topbar nav a { white-space: nowrap; font-size: .88rem; }
   }
 </style>
-<script src="codes.js?v=2c5683a5"></script>
-<script src="views.js?v=9ffa23a4"></script>
+<script src="codes.js?v=8f49de69"></script>
+<script src="views.js?v=e36b1b27"></script>
 <!-- Usage counting: GoatCounter, no cookies, no personal data. -->
 <script>window.goatcounter = { path: function () { return location.pathname; } };</script>   <!-- count the page, never the query string (instructor links carry a class name) -->
 <script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
@@ -489,13 +479,6 @@
     <span class="count-chip" aria-live="polite" aria-atomic="true">
       <strong id="cntShown">0</strong> of <strong id="cntTotal">0</strong> structures shown
     </span>
-  </div>
-  <div class="arrange-bar" id="arrangeBar" hidden role="region" aria-label="Arrange labels">
-    <span class="arrange-text"><strong>Arranging labels for this link.</strong> Drag any label where you want it; the link updates as you go. <span id="arrangeCount"></span></span>
-    <button type="button" class="list-btn" id="arrangeReset">Reset this view</button>
-    <button type="button" class="list-btn primary" id="arrangeCopy">Copy student link</button>
-    <a class="list-btn" id="arrangeBuilder" href="tools/link-builder.html">Back to the link builder</a>
-    <a class="list-btn" id="arrangeDone" href="atlas.html">Done</a>
   </div>
 
   <div class="atlas-card">
@@ -634,7 +617,6 @@ window.addEventListener('resize', () => { syncFloat(); if (!pop.hidden && popM) 
 /* Does this device have a real hover-capable pointer? A phone or tablet
    does not, so hover-based reveal has to become tap-based there. */
 const CAN_HOVER = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-const ARRANGE = new URLSearchParams(window.location.search).get('arrange') === '1';
 
 function render() {
   hidePop();
@@ -729,8 +711,7 @@ function buildFigure(container, visible) {
     const highlight = () => { dot.classList.add('hovered'); pill.classList.add('hovered'); line.classList.add('hovered'); };
     const unhighlight = () => { dot.classList.remove('hovered'); pill.classList.remove('hovered'); line.classList.remove('hovered'); };
     const enter = () => { showPop(m, pill); highlight(); };
-    entry.enter = enter; entry.leave = unhighlight; entry.m = m; entry.pill = pill; entry.line = line;
-    if (ARRANGE && LAMBDA.positions.get(view, m.flag)) pill.classList.add('moved');
+    entry.enter = enter; entry.leave = unhighlight; entry.m = m; entry.pill = pill;
     entries.push(entry);
 
     // Pointer hover — only where hovering is actually possible.
@@ -772,7 +753,6 @@ function buildFigure(container, visible) {
     container._tapWired = true;
     container.addEventListener('click', e => {
       if (e.detail === 0) return;                       // keyboard: the dot handles it
-      if (ARRANGE) return;                              // arranging: a click is the end of a drag, not a pick
       if (container.classList.contains('mode-hide')) return;
       const list = container._entries || [];
       e.preventDefault(); e.stopPropagation();
@@ -956,79 +936,6 @@ if (!view) {
   loadView(view);
 }
 
-/* ---------- arrange mode: drag labels, positions ride in the link ---------- */
-if (ARRANGE && view) {
-  document.body.classList.add('arranging');
-  document.getElementById('arrangeBar').hidden = false;
-}
-function paintArrange() {
-  const n = LAMBDA.positions.countView(view), all = LAMBDA.positions.count();
-  document.getElementById('arrangeCount').textContent =
-    (n ? n + ' label' + (n === 1 ? '' : 's') + ' placed on this view' : 'No labels moved on this view yet') + (all > n ? ', ' + all + ' in the link overall.' : '.');
-  document.getElementById('arrangeBuilder').href = V.link('tools/link-builder.html', { arrange: '' });
-  document.getElementById('arrangeDone').href = V.link('atlas.html', { view: view, arrange: '' });
-}
-/* After a drop: rewrite ?pos= in the address bar, then refresh every link
-   on the page so tabs and nav carry the new positions. */
-function commitPositions() {
-  const p = new URLSearchParams(window.location.search);
-  const pos = LAMBDA.positions.serialize();
-  if (pos) p.set('pos', pos); else p.delete('pos');
-  history.replaceState(null, '', window.location.pathname + '?' + p.toString());
-  document.getElementById('homeLink').href = V.link('index.html', {});
-  document.getElementById('atlasHome').href = V.link('atlas.html', {});
-  document.getElementById('navAtlas').href = V.link('atlas.html', {});
-  document.getElementById('navQuiz').href = V.link('quiz.html', {});
-  document.getElementById('navGlossary').href = V.link('glossary.html', {});
-  document.getElementById('quizLink').href = V.link('quiz.html', { view: view });
-  document.getElementById('printLink').href = V.link('print.html', { view: view });
-  renderTabs(view);
-  paintArrange();
-}
-if (ARRANGE && view) {
-  let drag = null;
-  stage.addEventListener('pointerdown', e => {
-    const pill = e.target.closest && e.target.closest('.label-pill'); if (!pill || e.button) return;
-    const entry = (stage._entries || []).find(en => en.pill === pill); if (!entry) return;
-    const r = stage.getBoundingClientRect();
-    drag = { entry, r, sx: e.clientX, sy: e.clientY, x0: entry.m.label.x, y0: entry.m.label.y, moved: false };
-    pill.setPointerCapture(e.pointerId); pill.classList.add('dragging'); e.preventDefault();
-  });
-  stage.addEventListener('pointermove', e => {
-    if (!drag) return;
-    const x = Math.min(0.98, Math.max(0.02, drag.x0 + (e.clientX - drag.sx) / drag.r.width));
-    const y = Math.min(0.98, Math.max(0.02, drag.y0 + (e.clientY - drag.sy) / drag.r.height));
-    if (Math.abs(e.clientX - drag.sx) + Math.abs(e.clientY - drag.sy) > 3) drag.moved = true;
-    drag.entry.pill.style.left = (x * 100) + '%'; drag.entry.pill.style.top = (y * 100) + '%';
-    drag.entry.line.setAttribute('x2', x * 100); drag.entry.line.setAttribute('y2', y * 100);
-    drag.cur = { x, y };
-  });
-  const endDrag = () => {
-    if (!drag) return;
-    const d = drag; drag = null; d.entry.pill.classList.remove('dragging');
-    if (!d.moved || !d.cur) return;
-    d.entry.m.label = { x: d.cur.x, y: d.cur.y };
-    LAMBDA.positions.set(view, d.entry.m.flag, d.cur.x, d.cur.y);
-    d.entry.pill.classList.add('moved');
-    commitPositions();
-  };
-  stage.addEventListener('pointerup', endDrag);
-  stage.addEventListener('pointercancel', endDrag);
-  document.getElementById('arrangeReset').addEventListener('click', () => {
-    LAMBDA.positions.clearView(view);
-    MARKERS.forEach(m => { m.label = m.label0; });
-    render(); commitPositions();
-  });
-  document.getElementById('arrangeCopy').addEventListener('click', function () {
-    const p = new URLSearchParams(window.location.search);
-    ['view', 'group', 'set', 'pin', 'arrange'].forEach(k => p.delete(k));
-    const url = window.location.origin + window.location.pathname.replace(/atlas\.html$/, 'index.html') + (p.toString() ? '?' + p.toString() : '');
-    const b = this;
-    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(() => { b.textContent = 'Copied'; setTimeout(() => { b.textContent = 'Copy student link'; }, 1500); })
-      .catch(() => { window.prompt('Copy this link', url); });
-  });
-}
-
 function loadView(view) {
 fetch('data/' + view + '.json')
   .then(function (r) {
@@ -1039,9 +946,7 @@ fetch('data/' + view + '.json')
     // The data file is the single source of truth for coordinates; the atlas
     // and the quiz both read it. `name` is the canonical label.
     MARKERS = data.structures.map(function (s) {
-      var pos = LAMBDA.positions.get(view, s.flag);   // a label this link places by hand
-      return { matter: s.matter, about: s.about, flag: s.flag, text: s.name, target: s.target,
-               label: pos ? { x: pos.x, y: pos.y } : s.label, label0: s.label };
+      return { matter: s.matter, about: s.about, flag: s.flag, text: s.name, target: s.target, label: s.label };
     });
 
     document.title = 'Lambda \u2014 ' + data.label + ' Atlas';
@@ -1051,7 +956,6 @@ fetch('data/' + view + '.json')
       + 'A list of labeled structures follows the image.';
     atlasImg.addEventListener('load', function () {
       render(); updateIW(); syncFloat();
-      if (ARRANGE) { setStudyMode(modeBtns.find(b => b.dataset.mode === 'show'), false, false); paintArrange(); }
       // Arriving from the glossary: reveal mode for this visit (the saved
       // choice is left alone) with the named structure already picked.
       const pin = params.get('pin');
