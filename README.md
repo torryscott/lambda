@@ -120,6 +120,7 @@ tools/straighten.html      Find the rotation that squares up a plate
 scripts/prepare-plates.py  Background-removed masters -> atlas plates and thumbnails
 scripts/extract-coronal-f.py     Recover the Coronal F plate from the atlas PDF
 scripts/check-codes.py     Verify every structure has a code
+scripts/bump-assets.py     Version-stamp codes.js, views.js, print-export.js in every page (run after editing them)
 scripts/serve.py           Local dev server on port 8731
 
 docs/CONVENTIONS.md        Codes, data format, matter types, answer matching

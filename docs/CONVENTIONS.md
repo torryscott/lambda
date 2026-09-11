@@ -205,6 +205,14 @@ postcentral gyrus, thalamus versus hypothalamus.
 
 ---
 
+## Shared scripts and caching
+
+`codes.js`, `views.js`, and `print-export.js` are loaded by every page with a `?v=<hash>`
+query. GitHub Pages caches files for ten minutes, so without it a freshly published page
+can run against a stale copy of a shared script and fail in odd ways. After editing any of
+the three, run `python3 scripts/bump-assets.py`; it rewrites the query on every page from
+the file's hash and is safe to run any time.
+
 ## Saved preferences
 
 Pages remember a few choices in the browser's local storage, all under the `lambda.` prefix:
