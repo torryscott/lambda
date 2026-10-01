@@ -58,7 +58,7 @@
       "flag": "inc_dorsal_central_sulcus",
       "name": "Central Sulcus",
       "matter": "a Groove",
-      "about": "The transverse groove separating the frontal lobe from the parietal lobe, with motor cortex in front of it and somatosensory cortex behind. In veterinary nomenclature the sheep's equivalent is the cruciate sulcus.",
+      "about": "The transverse groove separating the frontal lobe from the parietal lobe, with motor cortex in front of it. In veterinary nomenclature the sheep's equivalent is the cruciate sulcus.",
       "target": {
         "x": 0.7686,
         "y": 0.4409
@@ -78,7 +78,7 @@
       "flag": "inc_dorsal_postcentral_gyrus",
       "name": "Postcentral Gyrus",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The gyrus immediately caudal to the central sulcus. It is the primary somatosensory cortex, where touch, pressure, and proprioceptive information from the body is first processed. The name is a primate convention; in the sheep the somatosensory cortex lies just caudal to the cruciate sulcus rather than on a distinct gyrus.",
+      "about": "The gyrus immediately caudal to the central sulcus. In primates it is the primary somatosensory cortex, where touch, pressure, and proprioceptive information from the body is first processed. The name is a primate convention; in the sheep the somatosensory cortex lies farther to the side, between the coronal, diagonal, and anterior suprasylvian sulci, and serves mostly the face.",
       "target": {
         "x": 0.7556,
         "y": 0.4072
@@ -184,7 +184,7 @@
       "flag": "inc_dorsal_cerebellar_hemisphere",
       "name": "Cerebellar Hemisphere",
       "matter": "Gray Matter",
-      "about": "The lateral lobes of the cerebellum, on either side of the vermis. They coordinate skilled limb movements and contribute to motor planning.",
+      "about": "The lateral parts of the cerebellum, on either side of the vermis. In the sheep they are small relative to the vermis. They coordinate skilled limb movements and contribute to motor planning.",
       "target": {
         "x": 0.28,
         "y": 0.63

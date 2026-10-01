@@ -319,7 +319,7 @@
       "flag": "inc_mid_postcentral_gyrus",
       "name": "Postcentral Gyrus",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The postcentral gyrus is the location of the primary somatosensory cortex. The name is a primate convention: on the sheep brain the somatosensory cortex lies just caudal to the cruciate sulcus, and here it is the medial continuation of that region.",
+      "about": "In primates, the postcentral gyrus is the location of the primary somatosensory cortex. The name is a primate convention: in the sheep the somatosensory cortex lies on the lateral surface and serves mostly the face, so this region is named by position rather than function.",
       "target": {
         "x": 0.1644,
         "y": 0.244
