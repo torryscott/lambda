@@ -58,7 +58,7 @@
       "flag": "inc_dorsal_central_sulcus",
       "name": "Central Sulcus",
       "matter": "a Groove",
-      "about": "The transverse groove separating the frontal lobe from the parietal lobe, with motor cortex in front of it. In veterinary nomenclature the sheep's equivalent is the cruciate sulcus.",
+      "about": "The central sulcus is a major sulcus separating the frontal lobe from the parietal lobe. The name is borrowed from the primate brain; the sheep has no central sulcus in the human sense, and its closest equivalent is the cruciate sulcus.",
       "target": {
         "x": 0.7686,
         "y": 0.4409
@@ -133,7 +133,7 @@
       "flag": "inc_dorsal_occipital_lobe",
       "name": "Occipital Lobe",
       "matter": "a Lobe",
-      "about": "The most caudal lobe of the cerebrum, overlying the cerebellum. It contains the primary visual cortex.",
+      "about": "The most caudal lobe of the cerebrum. It contains the primary visual cortex.",
       "target": {
         "x": 0.3915,
         "y": 0.3415
@@ -148,7 +148,7 @@
       "flag": "inc_dorsal_occipital_pole",
       "name": "Occipital Pole",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The caudal tip of each cerebral hemisphere, where the occipital lobe ends against the rostral edge of the cerebellum.",
+      "about": "The caudal tip of each cerebral hemisphere.",
       "target": {
         "x": 0.3471,
         "y": 0.6683

@@ -82,7 +82,7 @@
       "flag": "inc_vent_optic_tract",
       "name": "Optic Tract",
       "matter": "White Matter",
-      "about": "The band of visual fibers running caudolaterally from the optic chiasm toward the thalamus.",
+      "about": "The bands of visual fibers running back from the optic chiasm toward the lateral geniculate nucleus.",
       "accept": [
         "optic tracts"
       ],
@@ -99,7 +99,7 @@
       "flag": "inc_vent_optic_chiasm",
       "name": "Optic Chiasm",
       "matter": "White Matter",
-      "about": "The X-shaped crossing of the optic nerves on the ventral surface, where fibers from the nasal retina cross to the opposite side.",
+      "about": "The optic chiasm is the point at which fibers from the nasal half of each retina cross to the opposite side of the brain on their way to the lateral geniculate nucleus of the thalamus. Fibers from the temporal half of each retina stay on their own side. In sheep, whose eyes face sideways, most fibers cross.",
       "accept": [
         "optic chiasma",
         "chiasma opticum"
@@ -151,7 +151,7 @@
       "flag": "inc_vent_olfactory_bulb",
       "name": "Olfactory Bulb",
       "matter": "Gray Matter",
-      "about": "The paired swelling at the rostral tip of the brain that receives axons from the olfactory epithelium. It is strikingly large in sheep.",
+      "about": "The paired swelling at the rostral tip of the brain that receives axons from the olfactory epithelium. It is strikingly large in sheep when compared to humans.",
       "accept": [
         "olfactory bulbs",
         "bulbus olfactorius"
@@ -169,7 +169,7 @@
       "flag": "inc_vent_medulla",
       "name": "Medulla",
       "matter": "Gray and White Matter",
-      "about": "The most caudal part of the brainstem, continuous with the spinal cord. It houses centers for breathing, heart rate, and other vital reflexes.",
+      "about": "The caudal-most region of the brainstem, regulating autonomic functions such as breathing, heart rate, and blood pressure.",
       "accept": [
         "medulla oblongata",
         "myelencephalon"
@@ -187,7 +187,7 @@
       "flag": "inc_vent_pons",
       "name": "Pons",
       "matter": "Gray and White Matter",
-      "about": "The bulge on the ventral brainstem between the midbrain and the medulla. Its transverse fibers carry cortical information to the cerebellum.",
+      "about": "The pons is a brainstem structure that relays signals from the cerebrum to the cerebellum. Ascending and descending tracts also pass through it, carrying signals to and from the cortex.",
       "accept": [
         "pons varolii"
       ],
@@ -222,7 +222,7 @@
       "flag": "inc_vent_cerebral_peduncles",
       "name": "Cerebral Peduncles",
       "matter": "White Matter",
-      "about": "The paired columns of descending fibers on the ventral midbrain, carrying motor output from the cerebrum toward the brainstem and cord.",
+      "about": "The paired columns of descending fibers on the ventral midbrain carrying motor output toward the brainstem and cord.",
       "accept": [
         "cerebral peduncle",
         "crus cerebri",
@@ -260,7 +260,7 @@
       "flag": "inc_vent_rhinal_fissure",
       "name": "Rhinal Fissure",
       "matter": "a Groove",
-      "about": "The groove along the ventrolateral surface separating the rhinencephalon from the neocortex.",
+      "about": "The groove along the ventrolateral surface separating the rhinencephalon below from the neocortex above.",
       "accept": [
         "rhinal sulcus",
         "fissura rhinalis"
@@ -278,7 +278,7 @@
       "flag": "inc_vent_rhinencephalon",
       "name": "Rhinencephalon",
       "matter": "Gray Matter",
-      "about": "The olfactory brain: the ventrolateral cortex ventral to the rhinal fissure, prominent in sheep and other macrosmatic animals.",
+      "about": "The \"olfactory brain\". The ventrolateral cortex ventral to the rhinal fissure. Prominent in the sheep brain.",
       "accept": [
         "pyriform lobe",
         "piriform lobe",

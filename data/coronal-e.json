@@ -7,7 +7,7 @@
       "flag": "inc_cor_hippocampus",
       "name": "Hippocampus",
       "matter": "Gray Matter",
-      "about": "The curved cortical structure in the floor of the lateral ventricle, essential to forming new memories.",
+      "about": "Its name means \"sea horse\" in Greek. It is involved in declarative memory formation and spatial memory.",
       "accept": [
         "hippocampi",
         "ammon's horn"
@@ -25,7 +25,7 @@
       "flag": "inc_cor_pineal_body",
       "name": "Pineal Body",
       "matter": "Gray Matter",
-      "about": "The small midline gland on the roof of the diencephalon. It secretes melatonin and tracks the light cycle.",
+      "about": "The small midline gland on the roof of the diencephalon, just rostral to the superior colliculi. It secretes melatonin and tracks the light cycle.",
       "accept": [
         "pineal gland",
         "epiphysis"
@@ -43,7 +43,7 @@
       "flag": "inc_cor_lateral_geniculate",
       "name": "Lateral Geniculate Nucleus",
       "matter": "Gray Matter",
-      "about": "The thalamic relay for vision, receiving the optic tract and projecting to the visual cortex.",
+      "about": "The thalamic relay for vision. Fibers of the optic tract end here, and its output goes on to the primary visual cortex.",
       "accept": [
         "lateral geniculate nucleus",
         "lateral geniculate body",

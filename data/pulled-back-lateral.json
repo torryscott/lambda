@@ -46,7 +46,7 @@
       "flag": "inc_mid_lat_medial_geniculate_nucleus",
       "name": "Medial Geniculate Nucleus",
       "matter": "Gray Matter",
-      "about": "The thalamic relay for hearing, receiving from the inferior colliculus and projecting on to the auditory cortex.",
+      "about": "The thalamic relay for hearing, receiving from the inferior colliculus and projecting to the auditory cortex.",
       "accept": [
         "medial geniculate",
         "medial geniculate body",

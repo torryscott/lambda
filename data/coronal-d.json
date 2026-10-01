@@ -95,7 +95,7 @@
       "flag": "inc_cor_thalamus",
       "name": "Thalamus",
       "matter": "Gray Matter",
-      "about": "The large paired mass of gray matter that relays nearly all sensory information on its way to the cortex.",
+      "about": "The thalamus is a gray matter structure located in the diencephalon. It acts as a sensory and motor relay.",
       "accept": [
         "thalami"
       ],
@@ -130,7 +130,7 @@
       "flag": "inc_cor_hypothalamus",
       "name": "Hypothalamus",
       "matter": "Gray Matter",
-      "about": "The region below the thalamus that governs autonomic function, hormone release, temperature, hunger, and thirst.",
+      "about": "The hypothalamus is ventral to the thalamus and is involved in homeostatic regulation, including temperature balance, fluid balance, and energy balance.",
       "accept": [],
       "target": {
         "x": 0.4894,
@@ -163,7 +163,7 @@
       "flag": "inc_cor_mammillary_bodies",
       "name": "Mammillary Bodies",
       "matter": "Gray Matter",
-      "about": "The paired nuclei on the ventral hypothalamus that receive hippocampal output through the fornix. On the surface of the sheep brain they form a single midline swelling.",
+      "about": "The rounded swelling on the ventral hypothalamus, caudal to the infundibulum. In the sheep it appears as a single midline eminence, though the nuclei inside are paired. It receives hippocampal output through the fornix.",
       "accept": [
         "mammillary body",
         "mamillary bodies"

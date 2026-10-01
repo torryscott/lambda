@@ -7,7 +7,7 @@
       "flag": "inc_lat_frontal_lobe",
       "name": "Frontal Lobe",
       "matter": "a Lobe",
-      "about": "The most rostral lobe of the cerebrum. Seen from the side it forms the rostral third of the hemisphere, ending at the rostral pole.",
+      "about": "The most rostral lobe of the cerebrum, in front of the central sulcus. It houses the motor cortex and, at its rostral tip, the prefrontal areas involved in planning and the regulation of behavior.",
       "accept": [],
       "target": {
         "x": 0.1969,
@@ -22,7 +22,7 @@
       "flag": "inc_lat_parietal_lobe",
       "name": "Parietal Lobe",
       "matter": "a Lobe",
-      "about": "The lobe on the dorsal convexity behind the frontal lobe. It integrates somatosensory information and contributes to spatial awareness.",
+      "about": "The lobe caudal to the central sulcus and rostral to the occipital lobe. It integrates somatosensory information and contributes to spatial awareness.",
       "accept": [],
       "target": {
         "x": 0.454,
@@ -37,7 +37,7 @@
       "flag": "inc_lat_occipital_lobe",
       "name": "Occipital Lobe",
       "matter": "a Lobe",
-      "about": "The caudal lobe of the cerebrum, overlying the cerebellum. It contains the primary visual cortex.",
+      "about": "The most caudal lobe of the cerebrum. It contains the primary visual cortex.",
       "accept": [],
       "target": {
         "x": 0.6585,
@@ -52,7 +52,7 @@
       "flag": "inc_lat_occipital_pole",
       "name": "Occipital Pole",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The caudal tip of each cerebral hemisphere, where the occipital lobe ends against the rostral edge of the cerebellum.",
+      "about": "The caudal tip of each cerebral hemisphere.",
       "accept": [
         "caudal pole"
       ],
@@ -69,7 +69,7 @@
       "flag": "inc_lat_cerebellum",
       "name": "Cerebellum",
       "matter": "Gray and White Matter",
-      "about": "The folded mass caudal and ventral to the occipital lobe. It coordinates posture, balance, and the timing of movement.",
+      "about": "The cerebellum is a hindbrain structure that coordinates voluntary movement, balance, and motor learning.",
       "accept": [],
       "target": {
         "x": 0.781,
@@ -117,7 +117,7 @@
       "flag": "inc_lat_rhinencephalon",
       "name": "Rhinencephalon",
       "matter": "Gray Matter",
-      "about": "The olfactory brain: the ventrolateral cortex ventral to the rhinal fissure, prominent in sheep and other macrosmatic animals.",
+      "about": "The \"olfactory brain\". The ventrolateral cortex ventral to the rhinal fissure. Prominent in the sheep brain.",
       "accept": [
         "pyriform lobe",
         "piriform lobe",
@@ -155,7 +155,7 @@
       "flag": "inc_lat_pons",
       "name": "Pons",
       "matter": "Gray and White Matter",
-      "about": "The bulge on the ventral brainstem between the midbrain and the medulla. Its transverse fibers carry cortical information to the cerebellum.",
+      "about": "The pons is a brainstem structure that relays signals from the cerebrum to the cerebellum. Ascending and descending tracts also pass through it, carrying signals to and from the cortex.",
       "accept": [
         "pons varolii"
       ],
@@ -172,7 +172,7 @@
       "flag": "inc_lat_medulla",
       "name": "Medulla",
       "matter": "Gray and White Matter",
-      "about": "The most caudal part of the brainstem, continuous with the spinal cord. It houses centers for breathing, heart rate, and other vital reflexes.",
+      "about": "The caudal-most region of the brainstem, regulating autonomic functions such as breathing, heart rate, and blood pressure.",
       "accept": [
         "medulla oblongata",
         "myelencephalon"
