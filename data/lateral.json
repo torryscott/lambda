@@ -52,7 +52,7 @@
       "flag": "inc_lat_occipital_pole",
       "name": "Occipital Pole",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The caudal tip of the cerebral hemisphere, where the occipital lobe ends just rostral to the cerebellum.",
+      "about": "The caudal tip of each cerebral hemisphere, where the occipital lobe ends against the rostral edge of the cerebellum.",
       "accept": [
         "caudal pole"
       ],

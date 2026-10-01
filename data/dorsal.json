@@ -39,7 +39,7 @@
       "flag": "inc_dorsal_precentral_gyrus",
       "name": "Precentral Gyrus",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The gyrus immediately rostral to the central sulcus. It is the primary motor cortex, the origin of descending motor commands to the body. The name is a primate convention; in the sheep the motor cortex lies around the cruciate sulcus rather than on a distinct gyrus.",
+      "about": "The gyrus immediately rostral to the central sulcus. It is the primary motor cortex, the origin of descending motor commands to the body. The name is a primate convention; in the sheep the motor cortex lies on the precruciate gyrus, just rostral to the cruciate sulcus.",
       "target": {
         "x": 0.785,
         "y": 0.41
@@ -148,7 +148,7 @@
       "flag": "inc_dorsal_occipital_pole",
       "name": "Occipital Pole",
       "matter": "Gray Matter (Not a Lobe)",
-      "about": "The caudal tip of each cerebral hemisphere, where the occipital lobe ends above the cerebellum.",
+      "about": "The caudal tip of each cerebral hemisphere, where the occipital lobe ends against the rostral edge of the cerebellum.",
       "target": {
         "x": 0.3471,
         "y": 0.6683
@@ -165,7 +165,7 @@
       "flag": "inc_dorsal_vermis",
       "name": "Vermis",
       "matter": "Gray Matter",
-      "about": "The narrow midline ridge of the cerebellum, between the two cerebellar hemispheres. It coordinates posture, balance, and movements of the trunk and limbs.",
+      "about": "The midline ridge of the cerebellum, between the two cerebellar hemispheres. In the sheep it is large relative to the hemispheres, unlike in humans. It coordinates posture, balance, and movements of the trunk and proximal limbs.",
       "target": {
         "x": 0.29,
         "y": 0.5
