@@ -23,8 +23,8 @@
 <script src="codes.js?v=8f49de69"></script>
 <script src="views.js?v=e36b1b27"></script>
 <script src="print-export.js?v=e2df9ec7"></script>
-<script>window.goatcounter = { path: function () { return location.pathname; } };</script>
-<script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<!-- Usage counts: one empty ping per event to Lambda's own counter (worker/README.md). No cookies, no identifiers. -->
+<script src="counts.js?v=0163e276" data-page="print"></script>
 <style>
   :root {
     --ground: #FBFAF7; --panel: #FFFFFF; --ink: #1F1C18; --ink-soft: #4E4841; --muted: #797167;
@@ -701,6 +701,13 @@
   document.querySelectorAll('input[name="style"]').forEach(function (r) { r.addEventListener('change', function () { opts.style = r.value; render(); }); });
   document.getElementById('defs').addEventListener('change', function (e) { opts.defs = e.target.checked; render(); });
   document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+  // Counted on the way into the print dialog, from the button or the browser's own Print.
+  var printedAt = 0;
+  window.addEventListener('beforeprint', function () {
+    if (Date.now() - printedAt < 5000) return;   // some browsers fire it twice for one print
+    printedAt = Date.now();
+    if (window.LAMBDA_COUNT) LAMBDA_COUNT.hit('print-paper');
+  });
   document.querySelector('input[name="paper"][value="' + opts.paper + '"]').checked = true;
   document.querySelectorAll('input[name="paper"]').forEach(function (r) { r.addEventListener('change', function () { opts.paper = r.value; paintSummary(); }); });
 
@@ -731,6 +738,7 @@
     dl.disabled = true; dl.textContent = 'Building PDF…';
     window.LAMBDA_EXPORT.download(job).then(function () {
       dl.disabled = false; dl.textContent = 'Download PDF';
+      if (window.LAMBDA_COUNT) LAMBDA_COUNT.hit('print-pdf');
     }).catch(function (err) {
       dl.disabled = false; dl.textContent = 'Download PDF';
       document.getElementById('optSum').textContent = 'The PDF could not be built (' + err.message + '). The Print button still works.';

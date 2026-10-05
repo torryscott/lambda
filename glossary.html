@@ -119,9 +119,8 @@
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
   footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 0 20px 28px; }
 </style>
-<!-- Usage counting: GoatCounter, no cookies, no personal data. -->
-<script>window.goatcounter = { path: function () { return location.pathname; } };</script>   <!-- count the page, never the query string (instructor links carry a class name) -->
-<script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<!-- Usage counts: one empty ping per event to Lambda's own counter (worker/README.md). No cookies, no identifiers. -->
+<script src="counts.js?v=0163e276" data-page="glossary"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>

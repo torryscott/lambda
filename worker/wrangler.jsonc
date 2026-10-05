@@ -1,0 +1,17 @@
+{
+	// The Lambda usage counter (worker/README.md). The site stays on GitHub
+	// Pages; this Worker only keeps the counts. Deploy from this folder:
+	// npx wrangler deploy
+	"name": "lambda-counts",
+	"main": "index.js",
+	"compatibility_date": "2026-05-01",
+	"workers_dev": true,
+	"preview_urls": false,
+	"d1_databases": [
+		{
+			"binding": "lambda_counts",
+			"database_name": "lambda-counts",
+			"database_id": "eb1046d3-4f1d-4a3b-9bb4-24f23fa788de"
+		}
+	]
+}

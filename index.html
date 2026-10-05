@@ -249,6 +249,8 @@
   footer .fine { margin-top: 26px; font-size: .82rem; color: var(--muted); }
   footer .credit { margin: 26px 0 0; font-size: .86rem; color: var(--ink-2); }
   footer .credit + .fine { margin-top: 4px; }
+  footer .fine a { color: inherit; text-decoration: none; }
+  footer .fine a:hover { text-decoration: underline; }
 
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
@@ -274,9 +276,8 @@
   }
 </style>
 <script src="codes.js?v=8f49de69"></script>
-<!-- Usage counting: GoatCounter, no cookies, no personal data. -->
-<script>window.goatcounter = { path: function () { return location.pathname; } };</script>   <!-- count the page, never the query string (instructor links carry a class name) -->
-<script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<!-- Usage counts: one empty ping per event to Lambda's own counter (worker/README.md). No cookies, no identifiers. -->
+<script src="counts.js?v=0163e276" data-page="home"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -387,31 +388,33 @@
 </script>
 <script>
 (function () {
-  /* Usage line from GoatCounter's public counters. The site-wide total is
-     summed from the per-page counters, which update promptly; the TOTAL
-     counter lags by an hour or more. Hidden if nothing comes back or the
-     count is still zero, so it never shows a broken widget. */
+  /* Usage line from Lambda's own counter (worker/README.md): every page
+     open, plus what GoatCounter counted from September 2026 until the switch.
+     It links to the usage page. Hidden if nothing comes back or the count is
+     still zero, so it never shows a broken widget. */
   var line = document.getElementById('usage');
-  if (!line || !window.fetch) return;
-  var PAGES = ['/lambda/', '/lambda/index.html', '/lambda/atlas.html', '/lambda/quiz.html',
-               '/lambda/glossary.html', '/lambda/accessibility.html', '/lambda/tools/link-builder.html'];
-  var num = function (v) { return parseInt(String(v == null ? '' : v).replace(/\D/g, ''), 10) || 0; };
-  var get = function (path) {
-    return fetch('https://tsdennis.goatcounter.com/counter/' + path + '.json')
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (j) { return j ? num(j.count) : 0; })
-      .catch(function () { return 0; });
-  };
-  Promise.all(PAGES.map(get).concat([get('quiz-run')])).then(function (counts) {   // page paths start with '/', so the URL gets its double slash
-    var runs = counts.pop();
-    var views = counts.reduce(function (a, b) { return a + b; }, 0);
+  var C = window.LAMBDA_COUNT;
+  if (!line || !window.fetch || !C || !C.endpoint) return;
+  fetch(C.endpoint + '/api/counts').then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
+    if (!j) return;
+    var sum = function (o, test) { return Object.keys(o || {}).reduce(function (a, k) { return a + (test(k) ? o[k] : 0); }, 0); };
+    var isPage = function (k) { return k.indexOf('page/') === 0; };
+    var isRun = function (k) { return k.indexOf('quiz-start') === 0; };
+    var views = sum(j.counts, isPage) + sum(j.carried, isPage);
+    var runs = sum(j.counts, isRun) + sum(j.carried, isRun);
     if (views < 1) return;
     var fmt = function (n) { return n.toLocaleString('en-US'); };
     var text = 'Opened ' + fmt(views) + ' times since September 2026';
     if (runs >= 1) text += ' \u00b7 ' + fmt(runs) + (runs === 1 ? ' quiz taken' : ' quizzes taken');
-    line.textContent = text;
+    var a = document.createElement('a');
+    var p = new URLSearchParams(window.location.search);   // keeps the instructor's link, like the nav
+    p.delete('view'); p.delete('group'); p.delete('set');
+    a.href = 'usage.html' + (p.toString() ? '?' + p.toString() : '');
+    a.textContent = text;
+    line.textContent = '';
+    line.appendChild(a);
     line.hidden = false;
-  });
+  }).catch(function () {});
 })();
 </script>
 </body>

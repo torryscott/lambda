@@ -23,3 +23,7 @@ images/clean/*.png
 
 # Local dev server logs
 *.log
+
+# Cloudflare Worker local state (wrangler dev)
+.wrangler/
+.dev.vars

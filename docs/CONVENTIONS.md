@@ -59,7 +59,9 @@ for students. Treat a fix as a breaking change.
 `views.js` lists the twelve views, their display labels, and the three groups: `surface`,
 `midsagittal`, `coronal`. Each group names a representative view for thumbnails. The atlas
 chooser, the quiz chooser, the tab strips, and the glossary filters all read this file, so a
-new view is added there once.
+new view is added there once. The usage counter keeps its own list (`VIEWS` in
+`worker/index.js`, redeployed, and the lists at the top of usage.html's script), so a new view
+goes there too, or its atlas views and quizzes are not counted.
 
 ---
 
@@ -205,11 +207,15 @@ postcentral gyrus, thalamus versus hypothalamus.
 
 ## Shared scripts and caching
 
-`codes.js`, `views.js`, and `print-export.js` are loaded by every page with a `?v=<hash>`
-query. GitHub Pages caches files for ten minutes, so without it a freshly published page
-can run against a stale copy of a shared script and fail in odd ways. After editing any of
-the three, run `python3 scripts/bump-assets.py`; it rewrites the query on every page from
+`codes.js`, `views.js`, `print-export.js`, and `counts.js` are loaded by every page with a
+`?v=<hash>` query. GitHub Pages caches files for ten minutes, so without it a freshly published
+page can run against a stale copy of a shared script and fail in odd ways. After editing any of
+the four, run `python3 scripts/bump-assets.py`; it rewrites the query on every page from
 the file's hash and is safe to run any time.
+
+`counts.js` sends the usage counts (`worker/README.md`). A new page loads it with
+`data-page="<name>"`, and that name, like any new kind of event, must be added to `KINDS` in
+`worker/index.js` and redeployed, or its pings are dropped.
 
 ## Saved preferences
 

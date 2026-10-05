@@ -3,14 +3,14 @@
 
 GitHub Pages caches files for ten minutes. A page that loads a fresh HTML file
 but a cached codes.js or views.js from before a change breaks in ways that look
-random. Every <script src="…codes.js|views.js|print-export.js"> gets ?v=<hash of
+random. Every <script src="…codes.js|views.js|print-export.js|counts.js"> gets ?v=<hash of
 the file>, so a changed script is a new URL. Run this before committing a change
 to any of those files (or all the time; it is idempotent).
 """
 import hashlib, pathlib, re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-ASSETS = ["codes.js", "views.js", "print-export.js"]
+ASSETS = ["codes.js", "views.js", "print-export.js", "counts.js"]
 hashes = {a: hashlib.sha1((ROOT / a).read_bytes()).hexdigest()[:8] for a in ASSETS}
 pat = re.compile(r'(<script src=")((?:\.\./)?)(' + '|'.join(re.escape(a) for a in ASSETS) + r')(?:\?v=[0-9a-f]+)?(")')
 changed = 0

@@ -23,6 +23,7 @@ run it, adapt it, or extend it to their own specimens.
 | **Link builder** (`tools/link-builder.html`) | Instructor page: uncheck the structures you don't teach, name your class, and copy a student link. Every page honors it. |
 | **Capture tool** (`tools/atlas-coord-capture.html`) | Authoring page for placing markers and labels on a new plate. Works with a mouse or a keyboard. |
 | **Accessibility statement** (`accessibility.html`) | What works, known limitations, and how to report a problem. |
+| **Usage** (`usage.html`) | How often the site is used: page opens, atlas views, quizzes started and finished, printouts, and links made, with a chart over time for each. Linked from the home page footer. |
 
 The twelve views fall into three groups, defined once in `views.js`: **Surface views**
 (dorsal, lateral, ventral, posterior, and a retracted lateral view),
@@ -209,9 +210,11 @@ is still to be done.
 
 ## Privacy
 
-The site sets no cookies and collects no personal data. Visits and quiz runs are counted
-with [GoatCounter](https://www.goatcounter.com), an open-source counter that stores no
-identifiers; the totals appear in the home page footer. The feedback form is a Google Form and is anonymous unless you choose to
+The site sets no cookies and collects no personal data. Page opens, atlas views, quiz runs, and
+printouts are counted by the site's own small counter on Cloudflare ([`worker/`](worker/README.md)):
+each count is an empty message saying only what happened, and the database keeps one number per
+day. The totals are on the [usage page](https://torryscott.github.io/lambda/usage.html) and in the
+home page footer. The feedback form is a Google Form and is anonymous unless you choose to
 give an email address.
 
 ## License

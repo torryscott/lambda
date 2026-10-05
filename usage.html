@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lambda — Usage</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Lambda">
+<meta name="theme-color" content="#FBFAF7">
+<meta name="description" content="How often Lambda is used: page opens, atlas views, quizzes started and finished, and printouts, counted without cookies or identifiers.">
+<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lambda">
+<meta property="og:title" content="Lambda — Usage">
+<meta property="og:description" content="How often Lambda is used: page opens, atlas views, quizzes started and finished, and printouts, counted without cookies or identifiers.">
+<meta property="og:image" content="https://torryscott.github.io/lambda/images/social-card.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Lambda, a sheep brain study guide: a midsagittal section of a sheep brain with four structures labeled">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #FBFAF7; --surface: #FFFFFF; --ink: #1F1C18; --ink-2: #4E4841; --muted: #797167;
+    --rule: #E9E5DE; --rule-2: #D9D3C9; --accent: #1e3a5f; --accent-soft: #e8eef5; --tissue: #C08A62;
+    --series: #3a6aa3;                     /* the chart's one series: the navy family, stepped into the chart band */
+    --series-wash: rgba(58, 106, 163, .10);
+    --display: 'Libre Caslon Text', 'Iowan Old Style', Georgia, serif;
+    --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --r-sm: 6px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 16.5px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: var(--r-sm); }
+  .skip { position: absolute; left: -999px; top: 8px; z-index: 100; padding: 8px 12px; background: var(--accent); color: #fff; border-radius: 8px; font-weight: 600; text-decoration: none; }
+  .skip:focus { left: 8px; outline: 3px solid #fff; outline-offset: 2px; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 0 0; }
+  .wordmark { display: inline-flex; align-items: center; gap: .42em; font-family: var(--display); font-size: 1.28rem; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+  .wordmark .mark { width: 1.2em; height: 1.2em; flex: none; color: var(--accent); }
+  .wordmark i { font-style: normal; color: var(--tissue); }
+  .brandrow { display: inline-flex; align-items: center; gap: 14px; min-width: 0; }
+  .classname { font-size: .86rem; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 40vw; padding-left: 14px; border-left: 1.5px solid var(--rule-2); line-height: 1.3; }
+  @media (max-width: 720px) { .classname { max-width: 58vw; font-size: .8rem; } }
+  .topbar nav { display: flex; gap: 22px; align-items: center; }
+  .topbar nav a { font-size: .92rem; color: var(--ink-2); text-decoration: none; padding: 6px 0; border-bottom: 1px solid transparent; }
+  .topbar nav a:hover { color: var(--ink); border-bottom-color: var(--rule-2); }
+
+  main { max-width: 920px; padding: 48px 0 0; }
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .13em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2rem, 1.2rem + 2.4vw, 2.9rem); line-height: 1.08; letter-spacing: -.015em; margin: 0 0 14px; }
+  .lede { font-size: 1.12rem; color: var(--ink-2); margin: 0 0 28px; max-width: 64ch; }
+  h2 { font-family: var(--display); font-weight: 400; font-size: 1.45rem; margin: 40px 0 12px; }
+  p { color: var(--ink-2); margin: 0 0 12px; text-wrap: pretty; }
+  .status { color: var(--muted); }
+  .status.warn { color: #8F5230; }
+
+  /* ---------- headline numbers ---------- */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0 0 8px; }
+  .tile { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px 16px 13px; }
+  .tile .label { font-size: .86rem; color: var(--ink-2); margin: 0 0 4px; }
+  .tile .value { font-size: 1.9rem; font-weight: 600; letter-spacing: -.01em; line-height: 1.15; color: var(--ink); margin: 0 0 4px; }
+  .tile .since { font-family: var(--mono); font-size: .7rem; color: var(--muted); margin: 0; }
+
+  /* ---------- the chart ---------- */
+  .panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 18px 20px 16px; margin: 26px 0 0; scroll-margin-top: 16px; }
+  .panel h2 { margin: 0 0 4px; font-size: 1.3rem; }
+  .panel .total { margin: 0 0 14px; color: var(--ink-2); }
+  .panel .total b { color: var(--ink); font-weight: 600; }
+  .filters { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 0 0 14px; }
+  .seg { display: inline-flex; border: 1px solid var(--rule-2); border-radius: 999px; overflow: hidden; background: var(--ground); }
+  .seg button { font: inherit; font-size: .84rem; font-weight: 500; padding: 5px 13px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--rule-2); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  .seg button:disabled { color: var(--rule-2); cursor: default; }
+  .plot { position: relative; min-height: 210px; outline: none; touch-action: pan-y; }
+  .plot svg { display: block; overflow: visible; }
+  .plot svg text { font-family: var(--mono); font-size: 11.5px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .plot .empty { color: var(--muted); padding: 70px 0; text-align: center; margin: 0; }
+  .tip { position: absolute; transform: translate(-50%, -100%); background: var(--ink); color: #fff; border-radius: 8px; padding: 6px 10px; font-size: .82rem; line-height: 1.35; white-space: nowrap; pointer-events: none; box-shadow: 0 4px 14px rgba(31,28,24,.18); }
+  .tip.below { transform: translate(-50%, 0); }
+  .tip b { display: block; font-size: .95rem; }
+  .note { font-size: .82rem; color: var(--muted); margin: 10px 0 0; }
+  details.asTable { margin: 10px 0 0; }
+  details.asTable summary { cursor: pointer; font-size: .86rem; color: var(--accent); }
+  details.asTable .scroll { max-height: 280px; overflow-y: auto; margin-top: 8px; border-top: 1px solid var(--rule); }
+
+  /* ---------- the tables ---------- */
+  table.counts { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  table.counts caption { text-align: left; }
+  table.counts th, table.counts td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  table.counts thead th { font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; border-bottom-color: var(--rule-2); }
+  table.counts td.n, table.counts th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; width: 1%; }
+  table.counts td.n { color: var(--ink); }
+  table.counts td.n.zero { color: var(--rule-2); }
+  table.counts tr.sum td, table.counts tr.sum th { font-weight: 600; }
+  table.counts tr.sub th { padding-left: 26px; font-weight: 400; }
+  table.counts tr[aria-selected="true"] { background: var(--accent-soft); }
+  .rowbtn { font: inherit; color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 8px; }
+  .rowbtn:hover { color: var(--accent); }
+  .rowbtn svg { width: 14px; height: 14px; color: var(--muted); flex: none; }
+  .rowbtn:hover svg, tr[aria-selected="true"] .rowbtn svg { color: var(--series); }
+  .incl { display: block; font-size: .76rem; color: var(--muted); font-weight: 400; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; }
+  @media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+
+  /* ---------- this browser ---------- */
+  .optout { margin: 40px 0 0; padding: 16px 18px; border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; }
+  .optout p { margin: 0; max-width: 60ch; }
+  .optout button { font: inherit; font-size: .9rem; font-weight: 500; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--rule-2); background: var(--ground); color: var(--ink); cursor: pointer; }
+  .optout button:hover { border-color: var(--accent); }
+
+  footer { margin-top: 56px; border-top: 1px solid var(--rule); padding: 30px 0 44px; color: var(--ink-2); font-size: .9rem; }
+  footer p { margin: 0 0 8px; max-width: 72ch; font-size: .9rem; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+  [hidden] { display: none !important; }
+  @media (max-width: 720px) {
+    .topbar { flex-wrap: wrap; row-gap: 10px; }
+    .brandrow { flex: 1 0 100%; }
+    .wordmark { font-size: 1.18rem; }
+    .topbar nav { gap: 18px; }
+    .topbar nav a { white-space: nowrap; }
+    .container { padding: 0 16px; }
+    main { padding-top: 32px; }
+    .panel { padding: 16px 14px 14px; }
+    table.counts th, table.counts td { padding: 7px 6px; }
+  }
+</style>
+<!-- No data-page: this page reads the counts and is not counted itself. -->
+<script src="counts.js?v=0163e276"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="container">
+
+  <header class="topbar">
+    <div class="brandrow"><a class="wordmark" id="homeLink" href="index.html"><svg class="mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18V5" /><path d="M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4" /><path d="M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5" /><path d="M17.997 5.125a4 4 0 0 1 2.526 5.77" /><path d="M18 18a4 4 0 0 0 2-7.464" /><path d="M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517" /><path d="M6 18a4 4 0 0 1-2-7.464" /><path d="M6.003 5.125a4 4 0 0 0-2.526 5.77" /></g></svg><span>Lambda<i>.</i></span></a><span class="classname" id="className" hidden></span></div>
+    <nav aria-label="Site">
+      <a href="atlas.html" id="navAtlas">Atlas</a>
+      <a href="quiz.html" id="navQuiz">Quiz</a>
+      <a href="glossary.html" id="navGlossary">Glossary</a>
+      <a href="https://github.com/torryscott/lambda">Source</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <p class="eyebrow">Usage</p>
+    <h1>How Lambda is used.</h1>
+    <p class="lede">Page opens, atlas views, quizzes, and printouts, counted by Lambda's own counter. It sets no
+       cookies and keeps no identifiers, only a total for each day. Pick any row below to see it over time.</p>
+    <p class="status" id="status" role="status">Loading the counts…</p>
+
+    <div class="tiles" id="tiles" hidden>
+      <div class="tile"><p class="label">Times opened</p><p class="value" id="tOpened">–</p><p class="since" id="tOpenedSince"></p></div>
+      <div class="tile"><p class="label">Quizzes taken</p><p class="value" id="tRuns">–</p><p class="since" id="tRunsSince"></p></div>
+      <div class="tile"><p class="label">Quizzes finished</p><p class="value" id="tDone">–</p><p class="since" id="tDoneSince"></p></div>
+      <div class="tile"><p class="label">Atlas views</p><p class="value" id="tAtlas">–</p><p class="since" id="tAtlasSince"></p></div>
+      <div class="tile"><p class="label">Visitors a day</p><p class="value" id="tDaily">–</p><p class="since">average, last 7 days</p></div>
+    </div>
+
+    <section class="panel" id="history" aria-labelledby="hTitle" hidden>
+      <h2 id="hTitle">Times opened</h2>
+      <p class="total" id="hTotal"></p>
+      <div class="filters">
+        <div class="seg" role="group" aria-label="Time range">
+          <button type="button" data-range="30">30 days</button><button type="button" data-range="90">90 days</button><button type="button" data-range="365">1 year</button><button type="button" data-range="all">All</button>
+        </div>
+        <div class="seg" role="group" aria-label="Group by">
+          <button type="button" data-bin="day">Day</button><button type="button" data-bin="week">Week</button><button type="button" data-bin="month">Month</button>
+        </div>
+      </div>
+      <div class="plot" id="plot" tabindex="0" role="img" aria-roledescription="chart"></div>
+      <p class="note" id="hNote">Days run midnight to midnight UTC. Use the arrow keys on the chart to step through it.</p>
+      <details class="asTable">
+        <summary>Show as a table</summary>
+        <div class="scroll"><table class="counts"><thead><tr><th scope="col" id="periodHead">Day</th><th scope="col" class="n">Count</th></tr></thead><tbody id="hRows"></tbody></table></div>
+      </details>
+      <p class="sr-only" aria-live="polite" id="live"></p>
+    </section>
+
+    <div id="tables" hidden>
+      <h2>Pages</h2>
+      <table class="counts" id="tPages"><thead><tr><th scope="col">Page</th><th scope="col" class="n">Opened</th></tr></thead><tbody></tbody></table>
+
+      <h2>Atlas</h2>
+      <table class="counts" id="tAtlasViews"><thead><tr><th scope="col">View</th><th scope="col" class="n">Opened</th></tr></thead><tbody></tbody></table>
+
+      <h2>Quizzes</h2>
+      <table class="counts" id="tQuiz"><thead><tr><th scope="col">Quiz</th><th scope="col" class="n">Started</th><th scope="col" class="n">Finished</th></tr></thead><tbody></tbody></table>
+      <p class="note">A quiz counts as started when Begin is pressed and as finished when it reaches the score; retrying the missed questions is not a new quiz.</p>
+      <h2>Quiz modes</h2>
+      <table class="counts" id="tModes"><thead><tr><th scope="col">Mode</th><th scope="col" class="n">Started</th><th scope="col" class="n">Finished</th></tr></thead><tbody></tbody></table>
+
+      <div class="two">
+        <div>
+          <h2>Printing and links</h2>
+          <table class="counts" id="tPrint"><thead><tr><th scope="col">What</th><th scope="col" class="n">Count</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div>
+          <h2>Visitors</h2>
+          <table class="counts" id="tVisitors"><thead><tr><th scope="col">Who</th><th scope="col" class="n">Count</th></tr></thead><tbody></tbody></table>
+          <p class="note">A visitor is one browser on one day: the first page it opens that day counts it once. The date that makes this work stays in the browser.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="optout" id="optout" hidden>
+      <p id="optText"></p>
+      <button type="button" id="optBtn"></button>
+    </div>
+  </main>
+
+  <footer>
+    <p>Each count is one empty message from a page to Lambda's counter on Cloudflare, carrying only what happened, such
+       as "atlas, dorsal view". No cookie, address, or identifier is read or stored; the database holds a number per
+       day and nothing else. Before this counter started in October 2026, a service called GoatCounter counted page
+       visits and quizzes, and its totals are carried into the numbers here. The code is in the
+       <a href="https://github.com/torryscott/lambda/tree/main/worker">repository</a>.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+
+  // The header keeps an instructor's link, as on every page.
+  var p = new URLSearchParams(window.location.search);
+  p.delete('view'); p.delete('group'); p.delete('set');
+  var qs = p.toString() ? '?' + p.toString() : '';
+  $('homeLink').href = 'index.html' + qs;
+  $('navAtlas').href = 'atlas.html' + qs; $('navQuiz').href = 'quiz.html' + qs; $('navGlossary').href = 'glossary.html' + qs;
+  var cls = (p.get('class') || '').trim().slice(0, 60);
+  if (cls) { $('className').textContent = cls; $('className').hidden = false; }
+
+  var C = window.LAMBDA_COUNT || {};
+
+  /* ---------- this browser ---------- */
+  function paintOpt() {
+    var off = C.off && C.off();
+    $('optText').textContent = off
+      ? 'This browser is not counted, so your own visits here leave the numbers alone.'
+      : 'This browser is counted like any other. Turn that off on your own devices so your visits do not add to the numbers.';
+    $('optBtn').textContent = off ? 'Count this browser again' : 'Don’t count this browser';
+    $('optout').hidden = !C.setOff;
+  }
+  $('optBtn').addEventListener('click', function () { C.setOff(!C.off()); paintOpt(); });
+  paintOpt();
+
+  /* ---------- what the rows are ---------- */
+  // The views and their labels, as in views.js; the counter's list is in worker/index.js.
+  var VIEWS = [['dorsal', 'Dorsal'], ['lateral', 'Lateral'], ['ventral', 'Ventral'], ['posterior-internal', 'Posterior'],
+    ['pulled-back-lateral', 'Lateral, retracted'], ['midsagittal', 'Midsagittal'], ['coronal-a', 'Coronal A'],
+    ['coronal-b', 'Coronal B'], ['coronal-c', 'Coronal C'], ['coronal-d', 'Coronal D'], ['coronal-e', 'Coronal E'], ['coronal-f', 'Coronal F']];
+  var PAGES = [['home', 'Home'], ['atlas', 'Atlas'], ['quiz', 'Quiz'], ['glossary', 'Glossary'], ['print', 'Printable atlas'],
+    ['link-builder', 'Link builder'], ['accessibility', 'Accessibility']];
+  var GROUPS = [['everything', 'Everything'], ['surface', 'Surface views'], ['midsagittal', 'Midsagittal'], ['coronal', 'Coronal sections']];
+  var MODES = [['name', 'Name it'], ['describe', 'By definition']];
+  var starts = function (prefix) { return function (k) { return k.indexOf(prefix) === 0; }; };
+  var is = function (kind) { return function (k) { return k === kind; }; };
+  var none = function () { return false; };
+  var mode = function (m, what) { return function (k) { return k.indexOf(what) === 0 && k.slice(-(m.length + 1)) === '/' + m; }; };
+
+  // A row: its label, the kinds it adds up, the GoatCounter totals it carries,
+  // and the words for its count. Quiz rows chart their starts.
+  var ROWS = {};
+  function row(key, label, match, carried, noun) {
+    ROWS[key] = { key: key, label: label, match: match, carried: carried || none, noun: noun };
+    return ROWS[key];
+  }
+  var OPEN = ['open', 'opens'], VIEW = ['view', 'views'], RUN = ['quiz started', 'quizzes started'];
+  row('pages', 'All pages', starts('page/'), starts('page/'), OPEN);
+  PAGES.forEach(function (pg) { row('page/' + pg[0], pg[1], is('page/' + pg[0]), is('page/' + pg[0]), OPEN); });
+  row('atlas', 'All views', starts('atlas/'), null, VIEW);
+  VIEWS.forEach(function (v) { row('atlas/' + v[0], v[1], is('atlas/' + v[0]), null, VIEW); });
+  row('quiz', 'All quizzes', starts('quiz-start/'), starts('quiz-start'), RUN);
+  GROUPS.concat(VIEWS.filter(function (v) { return v[0] !== 'midsagittal'; })).forEach(function (s) {
+    row('quiz/' + s[0], s[1], starts('quiz-start/' + s[0] + '/'), null, RUN);
+  });
+  MODES.forEach(function (m) { row('mode/' + m[0], m[1], mode(m[0], 'quiz-start/'), null, RUN); });
+  row('print-pdf', 'PDFs downloaded', is('print-pdf'), null, ['PDF', 'PDFs']);
+  row('print-paper', 'Printed on paper', is('print-paper'), null, ['print', 'prints']);
+  row('link-copied', 'Class links copied', is('link-copied'), null, ['link', 'links']);
+  row('visit-day', 'Visitors', is('visit-day'), null, ['visitor', 'visitors']);
+
+  /* ---------- numbers ---------- */
+  var counts = null, daily = null, state = { row: 'pages', range: 'all', bin: null };
+  var fmt = function (n) { return Number(n).toLocaleString('en-US'); };
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  var MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var DAY = 86400000;
+  function dayMs(iso) { return Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)); }
+  function isoOf(ms) { return new Date(ms).toISOString().slice(0, 10); }
+  function todayMs() { return dayMs(new Date().toISOString()); }
+  function dShort(ms) { var d = new Date(ms); return MONTHS[d.getUTCMonth()] + ' ' + d.getUTCDate(); }
+  function dLong(ms) { var d = new Date(ms); return MONTHS[d.getUTCMonth()] + ' ' + d.getUTCDate() + ', ' + d.getUTCFullYear(); }
+  function sumOf(obj, match) { return Object.keys(obj || {}).reduce(function (a, k) { return a + (match(k) ? Number(obj[k]) || 0 : 0); }, 0); }
+  function total(r) { return sumOf(counts.counts, r.match) + sumOf(counts.carried, r.carried); }
+  function carriedOf(r) { return sumOf(counts.carried, r.carried); }
+  function finished(r) {   // a quiz row's finishes: the same scope or mode, counted at the score
+    return sumOf(counts.counts, function (k) { return k.indexOf('quiz-finish/') === 0 && r.match('quiz-start/' + k.slice('quiz-finish/'.length)); });
+  }
+
+  function load() {
+    if (!C.endpoint || !window.fetch) { fail('The counts are only read on the published site.'); return; }
+    var get = function (path) { return fetch(C.endpoint + path).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
+    Promise.all([get('/api/counts'), get('/api/daily')]).then(function (res) {
+      counts = res[0]; daily = res[1];
+      $('status').hidden = true;
+      paintTiles(); paintTables(); render();
+      $('tiles').hidden = false; $('history').hidden = false; $('tables').hidden = false;
+    }).catch(function () { fail('The counts could not be loaded right now. Try again in a minute.'); });
+  }
+  function fail(text) { $('status').textContent = text; $('status').className = 'status warn'; }
+
+  function sinceText(carried) {
+    var from = carried && counts.carriedFrom ? counts.carriedFrom : counts.since;
+    return from ? 'since ' + dLong(dayMs(from)) : '';
+  }
+  function paintTiles() {
+    $('tOpened').textContent = fmt(total(ROWS.pages)); $('tOpenedSince').textContent = sinceText(true);
+    $('tRuns').textContent = fmt(total(ROWS.quiz)); $('tRunsSince').textContent = sinceText(true);
+    $('tDone').textContent = fmt(finished(ROWS.quiz)); $('tDoneSince').textContent = sinceText(false);
+    $('tAtlas').textContent = fmt(total(ROWS.atlas)); $('tAtlasSince').textContent = sinceText(false);
+    var s = seriesFor(ROWS['visit-day']), last = s ? s.days.slice(-7) : [];
+    var avg = last.length ? last.reduce(function (a, d) { return a + d.n; }, 0) / last.length : 0;
+    $('tDaily').textContent = avg >= 10 ? fmt(Math.round(avg)) : (Math.round(avg * 10) / 10).toString();
+  }
+
+  /* ---------- tables ---------- */
+  var ICON = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 13.5h12M3.5 11l3-4 2.5 2 3.5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function addRow(tbody, key, opts) {
+    var r = ROWS[key], tr = document.createElement('tr');
+    tr.setAttribute('data-row', key);
+    if (opts.sum) tr.className = 'sum'; else if (opts.sub) tr.className = 'sub';
+    var th = document.createElement('th'); th.scope = 'row';
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'rowbtn';
+    b.setAttribute('aria-controls', 'history');
+    b.innerHTML = ICON;
+    var span = document.createElement('span'); span.textContent = r.label; b.appendChild(span);
+    b.addEventListener('click', function () { choose(key, true); });
+    th.appendChild(b);
+    var c = carriedOf(r);
+    if (c > 0 && counts.since) {
+      var inc = document.createElement('span'); inc.className = 'incl';
+      inc.textContent = 'includes ' + fmt(c) + ' counted before ' + dLong(dayMs(counts.since));
+      th.appendChild(inc);
+    }
+    tr.appendChild(th);
+    (opts.cols || [total(r)]).forEach(function (n) {
+      var td = document.createElement('td'); td.className = 'n' + (n ? '' : ' zero'); td.textContent = fmt(n); tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  }
+  function paintTables() {
+    var b;
+    b = $('tPages').tBodies[0]; b.textContent = '';
+    addRow(b, 'pages', { sum: true });
+    PAGES.forEach(function (pg) { addRow(b, 'page/' + pg[0], { sub: true }); });
+    b = $('tAtlasViews').tBodies[0]; b.textContent = '';
+    addRow(b, 'atlas', { sum: true });
+    VIEWS.forEach(function (v) { addRow(b, 'atlas/' + v[0], { sub: true }); });
+    b = $('tQuiz').tBodies[0]; b.textContent = '';
+    var q = function (key, opts) { var r = ROWS[key]; opts.cols = [total(r), finished(r)]; addRow(b, key, opts); };
+    q('quiz', { sum: true });
+    GROUPS.forEach(function (g) { q('quiz/' + g[0], { sub: true }); });
+    VIEWS.forEach(function (v) { if (v[0] !== 'midsagittal') q('quiz/' + v[0], { sub: true }); });
+    b = $('tModes').tBodies[0]; b.textContent = '';
+    MODES.forEach(function (m) { var r = ROWS['mode/' + m[0]]; addRow(b, 'mode/' + m[0], { cols: [total(r), finished(r)] }); });
+    b = $('tPrint').tBodies[0]; b.textContent = '';
+    ['print-pdf', 'print-paper', 'link-copied'].forEach(function (k) { addRow(b, k, {}); });
+    b = $('tVisitors').tBodies[0]; b.textContent = '';
+    addRow(b, 'visit-day', {});
+    markSelected();
+  }
+  function markSelected() {
+    Array.prototype.forEach.call(document.querySelectorAll('tr[data-row]'), function (tr) {
+      var on = tr.getAttribute('data-row') === state.row;
+      tr.setAttribute('aria-selected', on ? 'true' : 'false');
+      tr.querySelector('.rowbtn').setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  function choose(key, scroll) {
+    state.row = key; state.bin = null;
+    markSelected(); render();
+    if (scroll) {
+      var top = $('history').getBoundingClientRect().top;
+      if (top < 0 || top > window.innerHeight * 0.6) $('history').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  /* ---------- the chart ---------- */
+  // Daily totals for a row, zero-filled from the counter's first day to today.
+  function seriesFor(r) {
+    if (!daily || !daily.since) return null;
+    var byDay = {};
+    Object.keys(daily.hits || {}).forEach(function (k) {
+      if (!r.match(k)) return;
+      daily.hits[k].forEach(function (pt) { byDay[pt[0]] = (byDay[pt[0]] || 0) + (Number(pt[1]) || 0); });
+    });
+    var from = dayMs(daily.since), to = Math.max(todayMs(), from), days = [];
+    Object.keys(byDay).forEach(function (k) { to = Math.max(to, dayMs(k)); });
+    for (var t = from; t <= to; t += DAY) days.push({ t: t, n: byDay[isoOf(t)] || 0 });
+    return { from: from, to: to, days: days };
+  }
+  function windowOf(s) {
+    if (state.range === 'all') return { from: s.from, days: s.days, clipped: false };
+    var from = s.to - (Number(state.range) - 1) * DAY;
+    return { from: Math.max(from, s.from), clipped: from < s.from, days: s.days.filter(function (d) { return d.t >= from; }) };
+  }
+  function binStart(t, bin) {
+    if (bin === 'day') return t;
+    var d = new Date(t);
+    if (bin === 'week') return t - ((d.getUTCDay() + 6) % 7) * DAY;   // weeks start on Monday
+    return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1);
+  }
+  function binned(win, bin) {
+    var out = [], at = {};
+    win.days.forEach(function (d) {
+      var k = binStart(d.t, bin);
+      if (!(k in at)) { at[k] = out.length; out.push({ key: k, from: d.t, to: d.t, n: 0 }); }
+      var b = out[at[k]]; b.to = d.t; b.n += d.n;
+    });
+    return out;
+  }
+  function defaultBin(win) { return win.days.length <= 92 ? 'day' : win.days.length <= 400 ? 'week' : 'month'; }
+  function usable(win, bin) { return bin === 'day' || binned(win, bin).length >= 2; }
+  function binTitle(b, bin, today) {
+    var soFar = b.to === today ? ', so far' : '';
+    if (bin === 'day' || b.from === b.to) return dLong(b.from) + soFar;
+    if (bin === 'month') { var d = new Date(b.from); return MONTHS_LONG[d.getUTCMonth()] + ' ' + d.getUTCFullYear() + soFar; }
+    return dShort(b.from) + ' to ' + dLong(b.to) + soFar;
+  }
+  function niceStep(max) {
+    if (max <= 4) return 1;
+    var rough = max / 4, mag = Math.pow(10, Math.floor(Math.log10(rough))), r = rough / mag;
+    return (r <= 1 ? 1 : r <= 2 ? 2 : r <= 5 ? 5 : 10) * mag;
+  }
+  var noun = function (r, n) { return n === 1 ? r.noun[0] : r.noun[1]; };
+
+  var view = null;
+  function message(text) {
+    view = null;
+    var plot = $('plot'); plot.textContent = '';
+    var pEl = document.createElement('p'); pEl.className = 'empty'; pEl.textContent = text; plot.appendChild(pEl);
+    plot.setAttribute('aria-label', text);
+  }
+  function render() {
+    var r = ROWS[state.row];
+    var k = r.key;
+    $('hTitle').textContent = k === 'pages' ? 'Times opened, all pages' : k.indexOf('page/') === 0 ? 'Times opened: ' + r.label
+      : k === 'atlas' ? 'Atlas views, all views' : k.indexOf('atlas/') === 0 ? 'Atlas views: ' + r.label
+      : k === 'quiz' ? 'Quizzes started' : /^(quiz|mode)\//.test(k) ? 'Quizzes started: ' + r.label : r.label;
+    var s = seriesFor(r), rows = $('hRows'); rows.textContent = '';
+    var segR = document.querySelectorAll('[data-range]'), segB = document.querySelectorAll('[data-bin]');
+    if (!s) {
+      $('hTotal').textContent = '';
+      message('No history yet.');
+      return;
+    }
+    var win = windowOf(s), bin = state.bin && usable(win, state.bin) ? state.bin : defaultBin(win);
+    Array.prototype.forEach.call(segR, function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-range') === state.range ? 'true' : 'false'); });
+    Array.prototype.forEach.call(segB, function (b) {
+      var name = b.getAttribute('data-bin');
+      b.disabled = !usable(win, name);
+      b.setAttribute('aria-pressed', name === bin ? 'true' : 'false');
+    });
+    var bins = binned(win, bin), sum = 0;
+    bins.forEach(function (b) { sum += b.n; });
+    var hTotal = $('hTotal'); hTotal.textContent = '';
+    var big = document.createElement('b'); big.textContent = fmt(sum); hTotal.appendChild(big);
+    var words = state.range === 'all' ? ' since ' + dLong(s.from) : ' in the last ' + (state.range === '365' ? 'year' : state.range + ' days');
+    hTotal.appendChild(document.createTextNode(' ' + noun(r, sum) + words + (win.clipped ? ' (counting by day began ' + dLong(s.from) + ')' : '') + '.'));
+    var c = carriedOf(r);
+    $('hNote').textContent = 'Days run midnight to midnight UTC.' +
+      (c ? ' The ' + fmt(c) + ' counted by GoatCounter before ' + dLong(s.from) + ' are in the tables but not in this chart.' : '') +
+      ' On the chart, the arrow keys step through it.';
+    $('periodHead').textContent = bin === 'day' ? 'Day' : bin === 'week' ? 'Week' : 'Month';
+    var today = todayMs();
+    bins.slice().reverse().forEach(function (b) {
+      var tr = document.createElement('tr'), a = document.createElement('td'), n = document.createElement('td');
+      a.textContent = binTitle(b, bin, today); n.className = 'n'; n.textContent = fmt(b.n);
+      tr.appendChild(a); tr.appendChild(n); rows.appendChild(tr);
+    });
+    draw(r, bins, bin, today);
+  }
+
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function svgEl(tag, attrs, parent) {
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function draw(r, bins, bin, today) {
+    var plot = $('plot'); plot.textContent = '';
+    var W = Math.max(240, Math.round(plot.clientWidth || 600)), H = W < 480 ? 210 : 250;
+    var max = 0; bins.forEach(function (b) { if (b.n > max) max = b.n; });
+    var step = niceStep(max), top = Math.max(step, Math.ceil(max / step) * step), ticks = [];
+    for (var v = 0; v <= top; v += step) ticks.push(v);
+    var widest = Math.max.apply(null, ticks.map(function (t) { return fmt(t).length; }));
+    var M = { l: Math.round(widest * 7.2 + 14), r: 14, t: 14, b: 30 };
+    var pw = W - M.l - M.r, ph = H - M.t - M.b, n = bins.length;
+    var X = function (i) { return n === 1 ? M.l + pw / 2 : M.l + (i * pw) / (n - 1); };
+    var Y = function (val) { return M.t + ph - (val / top) * ph; };
+    var svg = svgEl('svg', { width: W, height: H, viewBox: '0 0 ' + W + ' ' + H, 'aria-hidden': 'true', focusable: 'false' }, plot);
+    ticks.forEach(function (t) {
+      svgEl('line', { x1: M.l, x2: W - M.r, y1: Y(t), y2: Y(t), stroke: t === 0 ? '#D9D3C9' : '#E9E5DE', 'stroke-width': 1 }, svg);
+      svgEl('text', { x: M.l - 8, y: Y(t) + 4, 'text-anchor': 'end' }, svg).textContent = fmt(t);
+    });
+    var K = Math.max(2, Math.floor(pw / 84)), idx = [];
+    if (n <= K) for (var i = 0; i < n; i++) idx.push(i);
+    else for (var j = 0; j < K; j++) { var at = Math.round(j * (n - 1) / (K - 1)); if (idx.indexOf(at) < 0) idx.push(at); }
+    idx.forEach(function (i, k) {
+      var anchor = n > 1 && i === 0 ? 'start' : n > 1 && i === n - 1 ? 'end' : 'middle';
+      var b = bins[i], prev = k ? bins[idx[k - 1]] : null;
+      var showYear = !prev || new Date(prev.key).getUTCFullYear() !== new Date(b.key).getUTCFullYear();
+      var label = bin === 'month' ? MONTHS[new Date(b.key).getUTCMonth()] + (showYear ? ' ' + new Date(b.key).getUTCFullYear() : '') : dShort(b.from);
+      svgEl('text', { x: X(i), y: H - 9, 'text-anchor': anchor }, svg).textContent = label;
+    });
+    if (n > 1) {
+      var pts = bins.map(function (b, i) { return X(i).toFixed(1) + ' ' + Y(b.n).toFixed(1); });
+      var line = 'M' + pts.join(' L');
+      svgEl('path', { d: line + ' L' + X(n - 1).toFixed(1) + ' ' + Y(0) + ' L' + X(0).toFixed(1) + ' ' + Y(0) + ' Z', fill: 'rgba(58, 106, 163, .10)' }, svg);
+      svgEl('path', { d: line, fill: 'none', stroke: '#3a6aa3', 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+    }
+    if (n <= 45) bins.forEach(function (b, i) {
+      svgEl('circle', { cx: X(i), cy: Y(b.n), r: 4, fill: '#3a6aa3', stroke: '#FFFFFF', 'stroke-width': 2 }, svg);
+    });
+    var cross = svgEl('line', { y1: M.t, y2: M.t + ph, stroke: '#B0A99D', 'stroke-width': 1, visibility: 'hidden' }, svg);
+    var dot = svgEl('circle', { r: 5.5, fill: '#3a6aa3', stroke: '#FFFFFF', 'stroke-width': 2, visibility: 'hidden' }, svg);
+    var tip = document.createElement('div'); tip.className = 'tip'; tip.setAttribute('aria-hidden', 'true'); tip.hidden = true;
+    plot.appendChild(tip);
+    plot.setAttribute('aria-label', 'Chart of ' + $('hTitle').textContent.toLowerCase() + ' by ' + bin + '. The table below has the same numbers.');
+    view = { r: r, bins: bins, bin: bin, today: today, X: X, Y: Y, M: M, pw: pw, W: W, cross: cross, dot: dot, tip: tip, active: -1 };
+  }
+  function show(i, announce) {
+    if (!view) return;
+    var b = view.bins[i], x = view.X(i), y = view.Y(b.n);
+    view.active = i;
+    view.cross.setAttribute('x1', x); view.cross.setAttribute('x2', x); view.cross.setAttribute('visibility', 'visible');
+    view.dot.setAttribute('cx', x); view.dot.setAttribute('cy', y); view.dot.setAttribute('visibility', 'visible');
+    var count = fmt(b.n) + ' ' + noun(view.r, b.n), when = binTitle(b, view.bin, view.today);
+    view.tip.textContent = '';
+    var strong = document.createElement('b'); strong.textContent = count;
+    view.tip.appendChild(strong); view.tip.appendChild(document.createTextNode(when));
+    view.tip.hidden = false;
+    var half = view.tip.offsetWidth / 2 + 2;
+    view.tip.style.left = Math.min(Math.max(x, half), view.W - half) + 'px';
+    var below = y - 12 < view.tip.offsetHeight + 2;   // never cover the point it describes
+    view.tip.classList.toggle('below', below);
+    view.tip.style.top = (below ? y + 12 : y - 12) + 'px';
+    if (announce) $('live').textContent = count + ', ' + when;
+  }
+  function hide() {
+    if (!view) return;
+    view.active = -1;
+    view.cross.setAttribute('visibility', 'hidden'); view.dot.setAttribute('visibility', 'hidden'); view.tip.hidden = true;
+  }
+  var plot = $('plot');
+  plot.addEventListener('pointermove', function (e) {
+    if (!view) return;
+    var x = e.clientX - plot.getBoundingClientRect().left, n = view.bins.length;
+    var i = n === 1 ? 0 : Math.round((x - view.M.l) / view.pw * (n - 1));
+    show(Math.min(n - 1, Math.max(0, i)), false);
+  });
+  plot.addEventListener('pointerleave', function () { if (document.activeElement !== plot) hide(); });
+  plot.addEventListener('focus', function () { if (view && view.active < 0) show(view.bins.length - 1, true); });
+  plot.addEventListener('blur', hide);
+  plot.addEventListener('keydown', function (e) {
+    if (!view) return;
+    var last = view.bins.length - 1, i = view.active < 0 ? last : view.active;
+    if (e.key === 'ArrowLeft') i = Math.max(0, i - 1);
+    else if (e.key === 'ArrowRight') i = Math.min(last, i + 1);
+    else if (e.key === 'Home') i = 0;
+    else if (e.key === 'End') i = last;
+    else return;
+    e.preventDefault();
+    show(i, true);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-range]'), function (b) {
+    b.addEventListener('click', function () { state.range = b.getAttribute('data-range'); state.bin = null; render(); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-bin]'), function (b) {
+    b.addEventListener('click', function () { if (!b.disabled) { state.bin = b.getAttribute('data-bin'); render(); } });
+  });
+  var lastW = 0;
+  if (window.ResizeObserver) new ResizeObserver(function () {
+    var w = Math.round(plot.clientWidth);
+    if (w && w !== lastW && view) { lastW = w; render(); } else lastW = w;
+  }).observe(plot);
+
+  load();
+})();
+</script>
+</body>
+</html>

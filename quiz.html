@@ -377,9 +377,8 @@
 </style>
 <script src="codes.js?v=8f49de69"></script>
 <script src="views.js?v=e36b1b27"></script>
-<!-- Usage counting: GoatCounter, no cookies, no personal data. -->
-<script>window.goatcounter = { path: function () { return location.pathname; } };</script>   <!-- count the page, never the query string (instructor links carry a class name) -->
-<script data-goatcounter="https://tsdennis.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<!-- Usage counts: one empty ping per event to Lambda's own counter (worker/README.md). No cookies, no identifiers. -->
+<script src="counts.js?v=0163e276" data-page="quiz"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -880,6 +879,8 @@
   function finish() {
     stopTimer();
     clearOverlays();
+    if (state.countAs && window.LAMBDA_COUNT) LAMBDA_COUNT.hit('quiz-finish/' + state.countAs);
+    state.countAs = null;
     el('trackFill').style.width = '100%';
     el('finalScore').textContent = state.score;
     el('finalTotal').textContent = state.pool.length;
@@ -953,8 +954,11 @@
     run(state.pool.filter(function (s) { return names[s.name]; }));
   });
   el('btnBegin').addEventListener('click', function () {
-    // One anonymous event per run, so the home page can say how many quizzes have been taken.
-    if (window.goatcounter && goatcounter.count) { try { goatcounter.count({ path: 'quiz-run', title: 'Quiz run', event: true }); } catch (e) {} }
+    // One count per run, by what it covers and its mode; finish() counts it
+    // again if it reaches the end. A retry of the missed ones is not a new run.
+    var scope = VIEW || (SET === 'all' ? 'everything' : SET);
+    state.countAs = scope ? scope + '/' + state.mode : null;
+    if (state.countAs && window.LAMBDA_COUNT) LAMBDA_COUNT.hit('quiz-start/' + state.countAs);
     run(poolFor(state.mode));
   });
 
