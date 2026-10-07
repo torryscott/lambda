@@ -131,6 +131,7 @@
   .meter { display: inline-block; width: 64px; height: 6px; border-radius: 3px; background: rgba(58, 106, 163, .16); vertical-align: middle; margin-right: 8px; overflow: hidden; }
   .meter i { display: block; height: 100%; background: var(--series); border-radius: 3px; }
   table.counts td.view { color: var(--muted); white-space: nowrap; }
+  .downloads { font-size: .86rem; color: var(--muted); margin: 14px 0 0; }
   .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; white-space: nowrap; }
   .sortbtn:hover { color: var(--ink); }
   th[aria-sort="ascending"] .sortbtn, th[aria-sort="descending"] .sortbtn { color: var(--accent); }
@@ -176,9 +177,9 @@
   </header>
 
   <main id="main">
-    <p class="eyebrow">Usage</p>
-    <h1>How Lambda is used.</h1>
-    <p class="lede">Page opens, atlas views, quizzes, and printouts, counted by Lambda's own counter. Lambda uses no
+    <p class="eyebrow" id="eyebrow">Usage</p>
+    <h1 id="title">How Lambda is used.</h1>
+    <p class="lede" id="lede">Page opens, atlas views, quizzes, and printouts, counted by Lambda's own counter. Lambda uses no
        cookies, accounts, or ads, and nothing personal is collected: the counter keeps only totals for each day. Pick any
        row below to see it over time.</p>
     <p class="status" id="status" role="status">Loading the counts…</p>
@@ -235,6 +236,8 @@
           <p class="note">A visitor is one browser on one day: the first page it opens that day counts it once. The date that makes this work stays in the browser.</p>
         </div>
       </div>
+      <p class="downloads">Download the data: <button type="button" class="linklike" data-dl="daily">daily counts</button> (CSV, one row
+         per day and measure; a day without a row had none).</p>
     </div>
 
     <div class="optout" id="optout" hidden>
@@ -256,17 +259,23 @@
       </div>
       <div id="pOpen" hidden>
         <p class="note" id="pSince"></p>
+        <div id="classesBlock">
         <h3>Classes</h3>
         <p class="note">A class is an instructor's link: its class name and the structures and views it includes. It appears
-           when the link builder copies it or when someone first opens a page through it. Pick a class to chart its opens.</p>
+           when the link builder copies it or when someone first opens a page through it. Pick a class to chart its opens.
+           Copy results link makes a private link for that class's instructor: it opens this page with that class's counts
+           and quiz results, and nothing else.</p>
         <div class="scroll-x"><table class="counts" id="tClasses"><thead><tr><th scope="col">Class</th><th scope="col" class="n">Structures</th>
           <th scope="col" class="n">Views</th><th scope="col" class="n">Copied</th><th scope="col" class="n">Visitors</th><th scope="col" class="n">Opened</th>
           <th scope="col" class="n">Quizzes</th><th scope="col" class="n">Finished</th></tr></thead><tbody></tbody></table></div>
+        <p class="downloads">Download: <button type="button" class="linklike" data-dl="classes">classes</button> ·
+           <button type="button" class="linklike" data-dl="class-daily">daily counts by class</button> (CSV)</p>
+        </div>
 
         <h3>Quiz results by structure</h3>
         <div class="pfilters">
           <label>Mode <select id="fMode"><option value="">Both modes</option><option value="name">Name it</option><option value="describe">By definition</option></select></label>
-          <label>Who <select id="fClass"></select></label>
+          <label id="fClassLabel">Who <select id="fClass"></select></label>
           <label><input type="checkbox" id="fCombine"> Combine each structure across views</label>
         </div>
         <div class="scroll-x"><table class="counts" id="tStructs"><thead><tr>
@@ -294,11 +303,14 @@
           <dt>% right</dt><dd>Right and Counted together, out of Answers: the way the quiz itself scores a run.</dd>
         </dl>
         <p class="note">Only each answer's result is kept, never what was typed.</p>
+        <p class="downloads">Download: <button type="button" class="linklike" data-dl="results">quiz results</button> (CSV, every
+           structure and mode<span id="dlResultsWho">, for every class and for visitors without a class link</span>; the filters above
+           do not apply).</p>
 
         <h3>Quiz scores</h3>
         <table class="counts" id="tScores"><thead><tr><th scope="col">Percent correct</th><th scope="col" class="n">Name it</th><th scope="col" class="n">By definition</th></tr></thead><tbody></tbody></table>
         <p class="note">Finished quizzes, for the same visitors as the table above.</p>
-        <p class="note"><button type="button" class="linklike" id="pForget">Forget the key on this browser</button></p>
+        <p class="note" id="pForgetRow"><button type="button" class="linklike" id="pForget">Forget the key on this browser</button></p>
       </div>
     </section>
   </main>
@@ -320,7 +332,10 @@
 
   // The header keeps an instructor's link, as on every page.
   var p = new URLSearchParams(window.location.search);
-  p.delete('view'); p.delete('group'); p.delete('set');
+  // A results link (?report=<class>#<token>) shows one class; see loadReport.
+  var REPORT = (p.get('report') || '').toLowerCase(), REPORT_TOKEN = (window.location.hash || '').slice(1);
+  if (!/^[0-9a-f]{8}$/.test(REPORT) || !REPORT_TOKEN) REPORT = '';
+  p.delete('view'); p.delete('group'); p.delete('set'); p.delete('report');
   var qs = p.toString() ? '?' + p.toString() : '';
   $('homeLink').href = 'index.html' + qs;
   $('navAtlas').href = 'atlas.html' + qs; $('navQuiz').href = 'quiz.html' + qs; $('navGlossary').href = 'glossary.html' + qs;
@@ -396,6 +411,7 @@
   }
 
   function load() {
+    if (REPORT) { loadReport(); return; }
     if (!C.endpoint || !window.fetch) { fail('The counts are only read on the published site.'); return; }
     var get = function (path) { return fetch(C.endpoint + path).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
     Promise.all([get('/api/counts'), get('/api/daily')]).then(function (res) {
@@ -795,7 +811,10 @@
       b.addEventListener('click', function () { choose(key, true); });
       th.appendChild(b);
       var sub = document.createElement('span'); sub.className = 'incl';
-      sub.textContent = c.unknown ? 'link details not received' : 'first seen ' + dLong(dayMs(c.first_seen));
+      sub.textContent = (c.unknown ? 'link details not received' : 'first seen ' + dLong(dayMs(c.first_seen))) + ' \u00b7 ';
+      var share = document.createElement('button'); share.type = 'button'; share.className = 'linklike'; share.textContent = 'Copy results link';
+      share.addEventListener('click', function () { copyReportLink(c, share); });
+      sub.appendChild(share);
       th.appendChild(sub);
       tr.appendChild(th);
       [c.structures == null ? 'All' : fmt(c.structures), c.views == null ? 'All' : fmt(c.views), fmt(c.built || 0),
@@ -908,6 +927,157 @@
     });
   }
   ['fMode', 'fClass', 'fCombine'].forEach(function (id) { $(id).addEventListener('change', function () { if (priv) paintResults(); }); });
+
+  /* ---------- one class's report ----------
+     A results link opens this page for one class: GET /api/class-report with
+     the link's token, which opens that class and no other. The same tables,
+     chart and quiz results, from that class's counts alone. */
+  function loadReport() {
+    $('eyebrow').textContent = 'Class report';
+    $('pTitle').textContent = 'Quiz results';
+    $('pLocked').hidden = true; $('classesBlock').hidden = true; $('fClassLabel').hidden = true; $('pForgetRow').hidden = true;
+    if (!C.endpoint || !window.fetch) { fail('Class reports open on the published site.'); return; }
+    fetch(C.endpoint + '/api/class-report?c=' + REPORT, { headers: { Authorization: 'Bearer ' + REPORT_TOKEN }, cache: 'no-store' }).then(function (r) {
+      if (r.status === 401) throw new Error('This results link does not work. Ask Lambda’s author for a new one.');
+      if (!r.ok) throw new Error('The counts could not be loaded right now. Try again in a minute.');
+      return r.json();
+    }).then(function (j) {
+      var hits = {}, totals = {}, scores = {}, c = j['class'] || {};
+      Object.keys(j.hits || {}).forEach(function (k) {
+        var sum = j.hits[k].reduce(function (a, pt) { return a + (Number(pt[1]) || 0); }, 0);
+        if (/^quiz-score\//.test(k)) { scores[k] = sum; return; }
+        var kind = k === 'visit-day-class' ? 'visit-day' : k;   // this class's visitors
+        hits[kind] = j.hits[k]; totals[kind] = sum;
+      });
+      counts = { since: j.since, carriedFrom: null, counts: totals, carried: {} };
+      daily = { since: j.since, hits: hits };
+      var name = c.name || 'Unnamed link';
+      document.title = 'Lambda — ' + name;
+      $('title').textContent = name;
+      $('className').textContent = name; $('className').hidden = false;
+      var covers = (c.structures == null ? 'all structures' : fmt(c.structures) + (c.structures === 1 ? ' structure' : ' structures')) +
+        ' in ' + (c.views == null ? 'all views' : fmt(c.views) + (c.views === 1 ? ' view' : ' views'));
+      $('lede').textContent = 'How this class’s link is used: page opens, atlas views, quizzes, and printouts through it, ' +
+        'counted by Lambda’s own counter' + (j.since ? ' since ' + dLong(dayMs(j.since)) : '') + '. The link covers ' + covers +
+        '. Lambda uses no cookies, accounts, or ads, and nothing personal is collected: the counter keeps only totals for each day. ' +
+        'Pick any row below to see it over time.';
+      ROWS['link-copied'].label = 'Times this link was copied';
+      $('status').hidden = true;
+      paintTiles(); paintTables(); render();
+      $('tiles').hidden = false; $('history').hidden = false; $('tables').hidden = false;
+      priv = { answers: (j.answers || []).map(function (a) { return [REPORT, a[0], a[1], a[2], a[3]]; }),
+               scores: scores, classes: [c], classDaily: {}, classesSince: j.since };
+      priv.classDaily[REPORT] = j.hits || {};
+      return structureNames().then(function () {
+        var sel = $('fClass'); sel.textContent = '';
+        var opt = document.createElement('option'); opt.value = REPORT; opt.textContent = name; sel.appendChild(opt);
+        sel.value = REPORT;
+        $('pSince').textContent = j.since ? 'Quiz results are kept from ' + dLong(dayMs(j.since)) + ' on.' : '';
+        $('dlResultsWho').textContent = ', for this class';
+        $('pOpen').hidden = false;
+        paintResults();
+      });
+    }).catch(function (e) { fail(e.message || 'The counts could not be loaded right now.'); });
+  }
+
+  // The author's private view: a results link for one class, for its instructor.
+  function copyReportLink(c, btn) {
+    var reset = function (text, ms) { btn.textContent = text; setTimeout(function () { btn.textContent = 'Copy results link'; btn.disabled = false; }, ms); };
+    btn.disabled = true;
+    fetch(C.endpoint + '/api/report-link?c=' + c.id, { headers: { Authorization: 'Bearer ' + getKey() }, cache: 'no-store' }).then(function (r) {
+      if (r.status === 503) throw new Error('Results links are not set up yet');
+      if (!r.ok) throw new Error('Could not make the link');
+      return r.json();
+    }).then(function (j) {
+      var url = window.location.origin + window.location.pathname + '?report=' + c.id + '#' + j.token;
+      var show = function () { window.prompt('The results link for ' + classLabel(c) + ':', url); btn.disabled = false; };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function () { reset('Copied', 2000); }, show);
+      else show();
+    }).catch(function (e) { reset(e.message || 'Could not make the link', 3000); });
+  }
+
+  /* ---------- downloads ----------
+     CSV for spreadsheets and statistics software, built in the browser from
+     the numbers this page already has. Text fields are guarded against
+     spreadsheet formulas (a class name is typed by an instructor). */
+  var PAGE_LABEL = {}, VIEW_LABEL = {}, SCOPE_LABEL = {}, MODE_LABEL = {};
+  PAGES.forEach(function (x) { PAGE_LABEL[x[0]] = x[1]; });
+  VIEWS.forEach(function (x) { VIEW_LABEL[x[0]] = x[1]; SCOPE_LABEL[x[0]] = x[1]; });
+  GROUPS.forEach(function (x) { SCOPE_LABEL[x[0]] = x[1]; });
+  MODES.forEach(function (x) { MODE_LABEL[x[0]] = x[1]; });
+  function measure(kind) {
+    var part = kind.split('/');
+    if (part[0] === 'page') return 'Page opened: ' + (PAGE_LABEL[part[1]] || part[1]);
+    if (part[0] === 'atlas') return 'Atlas view: ' + (VIEW_LABEL[part[1]] || part[1]);
+    if (part[0] === 'quiz-start' || part[0] === 'quiz-finish')
+      return (part[0] === 'quiz-start' ? 'Quiz started: ' : 'Quiz finished: ') + (SCOPE_LABEL[part[1]] || part[1]) + ', ' + (MODE_LABEL[part[2]] || part[2]);
+    if (part[0] === 'quiz-score') return 'Quiz score ' + (part[2] === 'under-50' ? 'under 50' : part[2]) + '%: ' + (MODE_LABEL[part[1]] || part[1]);
+    return { 'print-pdf': 'PDF downloaded', 'print-paper': 'Printed on paper', 'link-copied': 'Class link copied',
+             'visit-day': 'Visitor (one per browser per day)', 'visit-day-class': 'Visitor through this class link (one per browser per day)' }[kind] || kind;
+  }
+  function cell(v) {
+    if (v == null) return '';
+    var t = String(v);
+    if (typeof v === 'string' && /^[=+\-@\t\r]/.test(t)) t = "'" + t;
+    return /[",\r\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+  }
+  function toCsv(rows) { return rows.map(function (r) { return r.map(cell).join(','); }).join('\r\n') + '\r\n'; }
+  function slug(t) { return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'class'; }
+  function dailyRows(hits, lead) {   // lead: columns put before each row, for a class
+    var out = [];
+    Object.keys(hits || {}).forEach(function (k) {
+      hits[k].forEach(function (pt) { out.push((lead || []).concat([pt[0], measure(k), k, Number(pt[1]) || 0])); });
+    });
+    return out.sort(function (a, b) { var i = (lead || []).length; return a[i] < b[i] ? -1 : a[i] > b[i] ? 1 : String(a[i + 2]).localeCompare(String(b[i + 2])); });
+  }
+  function rowsFor(which) {
+    if (which === 'daily') return [['date', 'measure', 'kind', 'count']].concat(dailyRows(daily && daily.hits));
+    if (which === 'classes') return [['class_id', 'class_name', 'structures', 'views', 'first_seen', 'times_copied', 'visitors',
+        'page_opens', 'atlas_views', 'quizzes_started', 'quizzes_finished']].concat(allClasses().map(function (c) {
+      return [c.id, c.name || 'Unnamed link', c.structures == null ? 'all' : c.structures, c.views == null ? 'all' : c.views, c.first_seen || '',
+        c.built || 0, classSum(c.id, is('visit-day-class')), classSum(c.id, starts('page/')), classSum(c.id, starts('atlas/')),
+        classSum(c.id, starts('quiz-start/')), classSum(c.id, starts('quiz-finish/'))];
+    }));
+    if (which === 'class-daily') {
+      var out = [['class_id', 'class_name', 'date', 'measure', 'kind', 'count']];
+      allClasses().forEach(function (c) { out = out.concat(dailyRows((priv.classDaily || {})[c.id], [c.id, c.name || 'Unnamed link'])); });
+      return out;
+    }
+    if (which === 'results') {
+      var byKey = {}, list = [];
+      (priv.answers || []).forEach(function (a) {   // [class, mode, code, result, n]
+        var k = a[0] + ' ' + a[1] + ' ' + a[2];
+        var g = byKey[k] || (byKey[k] = list[list.push({ cls: a[0], mode: a[1], code: a[2], n: { right: 0, wrong: 0, skip: 0, timeout: 0, override: 0 } }) - 1]);
+        g.n[a[3]] = (g.n[a[3]] || 0) + a[4];
+      });
+      var names2 = {}; ((priv.classes || [])).forEach(function (c) { names2[c.id] = c.name || 'Unnamed link'; });
+      var head = ['mode', 'structure', 'views', 'code', 'answers', 'right', 'wrong', 'skipped', 'timed_out', 'counted', 'percent_right'];
+      if (!REPORT) head = ['class_id', 'class_name'].concat(head);
+      return [head].concat(list.map(function (g) {
+        var info = names[g.code] || { name: g.code, view: '', order: 99 };
+        var total = RESULT_COLS.reduce(function (s2, r) { return s2 + g.n[r]; }, 0);
+        var row = [MODE_LABEL[g.mode] || g.mode, info.name, info.view, g.code, total, g.n.right, g.n.wrong, g.n.skip, g.n.timeout, g.n.override,
+          total ? Math.round((g.n.right + g.n.override) / total * 1000) / 10 : ''];
+        return REPORT ? row : [g.cls, g.cls ? (names2[g.cls] || 'Unknown link') : 'No class link'].concat(row);
+      }).sort(function (a, b) { return String(a.slice(0, 4)).localeCompare(String(b.slice(0, 4))); }));
+    }
+    return [];
+  }
+  function download(which) {
+    var rows = rowsFor(which);
+    if (rows.length < 2) { window.alert('Nothing to download yet.'); return; }
+    var day = new Date().toISOString().slice(0, 10);
+    var who = REPORT ? slug($('title').textContent) + '-' : '';
+    var name = 'lambda-' + who + { daily: 'daily-counts', classes: 'classes', 'class-daily': 'daily-counts-by-class', results: 'quiz-results' }[which] + '-' + day + '.csv';
+    var blob = new Blob(['﻿' + toCsv(rows)], { type: 'text/csv;charset=utf-8' });   // the byte-order mark lets Excel read UTF-8
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-dl]'), function (b) {
+    b.addEventListener('click', function () { download(b.getAttribute('data-dl')); });
+  });
+  window.LAMBDA_USAGE = { csv: function (which) { return toCsv(rowsFor(which)); } };   // for tests
 
   load();
 })();

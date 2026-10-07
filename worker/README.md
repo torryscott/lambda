@@ -80,6 +80,29 @@ account, tsdennis.goatcounter.com). GoatCounter counted a page once per visitor
 session, this counter counts every open, so the totals climb a little faster
 than before.
 
+## Results links for instructors
+
+An instructor sees their own class through a results link:
+`usage.html?report=<class>#<token>`. The page then shows that class only: the same
+tiles, tables and chart, its quiz results by structure and score ranges, and CSV
+downloads of its numbers. The token is an HMAC of the class id under the
+`REPORT_SECRET` Worker secret (`reportToken` in index.js), so it opens that class
+and no other, and it sits after the `#`, which browsers never send to GitHub.
+
+The author makes one in the Private view: **Copy results link** under a class.
+The link stays good until `REPORT_SECRET` changes; changing it (below, with a new
+random value) withdraws every results link at once, and new ones are made the
+same way. Nobody needs to know the secret itself.
+
+    openssl rand -hex 32 | npx --yes wrangler@4.86.0 secret put REPORT_SECRET
+
+## Downloads
+
+The usage page builds CSV files in the browser from what it shows: daily counts
+(public, or one class's in a class report), and in the Private view the class
+list, daily counts by class, and quiz results by class, mode and structure. Text
+cells that start like a spreadsheet formula get a leading apostrophe.
+
 ## The private view's key
 
 The key is a Worker secret, set once (and again to change it) from this folder:
@@ -109,5 +132,5 @@ scripts/serve.py` for the site, and in this folder
 `npx wrangler d1 execute lambda-counts --local --file schema.sql` once, then
 `npx wrangler dev --local --port 8787 --ip 127.0.0.1`. Pages served from
 localhost send their pings there (counts.js), never to the live counter. For
-the private view locally, put a throwaway `DASHBOARD_KEY=...` line in
-`worker/.dev.vars` (ignored by git).
+the private view and results links locally, put throwaway `DASHBOARD_KEY=...`
+and `REPORT_SECRET=...` lines in `worker/.dev.vars` (ignored by git).

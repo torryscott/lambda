@@ -215,7 +215,8 @@ printouts are counted by the site's own small counter on Cloudflare ([`worker/`]
 each count is a small message saying only what happened, and the database keeps totals for each
 day. Pages opened through an instructor's link say which link, by its class name, and quiz answers
 are counted per structure only as right, wrong, skipped, or timed out, never what was typed; those
-two are visible only to the site's author. The totals are on the [usage page](https://torryscott.github.io/lambda/usage.html) and in the
+two are visible only to the site's author, who can send an instructor a private report for their
+own class. The totals are on the [usage page](https://torryscott.github.io/lambda/usage.html) and in the
 home page footer. The feedback form is a Google Form and is anonymous unless you choose to
 give an email address.
 

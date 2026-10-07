@@ -29,6 +29,15 @@
 //                          structure and score ranges, for the author only:
 //                          it needs "Authorization: Bearer <DASHBOARD_KEY>",
 //                          a Worker secret (README).
+//   GET  /api/report-link?c=<class>
+//                          for the author (same key): the token of that class's
+//                          results link, which the author sends its instructor.
+//   GET  /api/class-report?c=<class>
+//                          one class's counts, day by day, and its quiz results,
+//                          for "Authorization: Bearer <token>". A token is an HMAC
+//                          of the class id under the REPORT_SECRET Worker secret,
+//                          so it opens that class and no other; changing the
+//                          secret withdraws every results link at once.
 //
 // Pings from other sites, crawlers, HTTP libraries and Cloudflare's verified
 // bots are dropped (fromSite, isCountable). Storage is whole-day integers:
@@ -190,6 +199,28 @@ async function authorized(req, env) {
   return crypto.subtle.timingSafeEqual(a, b);
 }
 
+// A results link's token: HMAC-SHA256 of the class id under REPORT_SECRET,
+// as 26 base32 characters (130 bits).
+async function reportToken(env, cls) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey("raw", enc.encode(env.REPORT_SECRET), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const mac = new Uint8Array(await crypto.subtle.sign("HMAC", key, enc.encode("class-report:" + cls)));
+  const B32 = "abcdefghijklmnopqrstuvwxyz234567";
+  let out = "", acc = 0, n = 0;
+  for (const byte of mac) {
+    acc = ((acc << 8) | byte) & 0xffff; n += 8;
+    while (n >= 5 && out.length < 26) { out += B32[(acc >>> (n - 5)) & 31]; n -= 5; }
+  }
+  return out;
+}
+async function tokenFits(req, env, cls) {
+  const given = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
+  if (!env.REPORT_SECRET || !given) return false;
+  const enc = new TextEncoder();
+  const a = enc.encode(given), b = enc.encode(await reportToken(env, cls));
+  return a.byteLength === b.byteLength && crypto.subtle.timingSafeEqual(a, b);
+}
+
 const NO_STORE = { "Cache-Control": "no-store" };
 // The public counts are totals, readable from any page (the usage page is on
 // GitHub Pages, and a local copy of it must work too).
@@ -287,6 +318,39 @@ export default {
           answers: (answers.results || []).map(r => [r.class, r.mode, r.code, r.result, Number(r.n) || 0]),
           scores: Object.fromEntries((scores.results || []).map(r => [r.kind, Number(r.n) || 0])),
         }, { headers: Object.assign({}, cors, NO_STORE) });
+      } catch (e) { return unavailable("counter database unavailable"); }
+    }
+
+    if (url.pathname === "/api/report-link" || url.pathname === "/api/class-report") {
+      const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Authorization",
+                     "Access-Control-Allow-Methods": "GET", "Access-Control-Max-Age": "86400", "Vary": "Origin" };
+      if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+      const json = (body, status) => Response.json(body, { status: status || 200, headers: Object.assign({}, cors, NO_STORE) });
+      const cls = classOf(url);
+      if (!cls) return json({ error: "no class" }, 400);
+      if (!env.REPORT_SECRET) return json({ error: "no report secret set" }, 503);
+      if (url.pathname === "/api/report-link") {
+        if (!(await authorized(req, env))) return json({ error: "wrong key" }, 401);
+        return json({ token: await reportToken(env, cls) });
+      }
+      if (!(await tokenFits(req, env, cls))) return json({ error: "wrong link" }, 401);
+      if (!d) return unavailable("counter database not configured");
+      try {
+        const [info, daily, answers, m] = await Promise.all([
+          d.prepare("SELECT id, name, structures, views, first_seen, built FROM classes WHERE id = ?").bind(cls).first(),
+          d.prepare("SELECT day, kind, n FROM class_hits WHERE class = ? ORDER BY day").bind(cls).all(),
+          d.prepare("SELECT mode, code, result, SUM(n) AS n FROM answers WHERE class = ? GROUP BY mode, code, result").bind(cls).all(),
+          meta(d),
+        ]);
+        const hits = {};
+        for (const r of daily.results || []) (hits[r.kind] = hits[r.kind] || []).push([r.day, Number(r.n) || 0]);
+        return json({
+          updated: new Date().toISOString(),
+          since: m.classes_since || null,
+          class: info || { id: cls, name: "", structures: null, views: null, first_seen: null, built: 0 },
+          hits,                                        // {kind: [[day, n], ...]}, this class only
+          answers: (answers.results || []).map(r => [r.mode, r.code, r.result, Number(r.n) || 0]),
+        });
       } catch (e) { return unavailable("counter database unavailable"); }
     }
 
