@@ -131,6 +131,14 @@
   .meter { display: inline-block; width: 64px; height: 6px; border-radius: 3px; background: rgba(58, 106, 163, .16); vertical-align: middle; margin-right: 8px; overflow: hidden; }
   .meter i { display: block; height: 100%; background: var(--series); border-radius: 3px; }
   table.counts td.view { color: var(--muted); white-space: nowrap; }
+  .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; white-space: nowrap; }
+  .sortbtn:hover { color: var(--ink); }
+  th[aria-sort="ascending"] .sortbtn, th[aria-sort="descending"] .sortbtn { color: var(--accent); }
+  th[aria-sort="ascending"] .sortbtn::after { content: " \2191"; }
+  th[aria-sort="descending"] .sortbtn::after { content: " \2193"; }
+  dl.defs { display: grid; grid-template-columns: max-content 1fr; gap: 5px 16px; font-size: .82rem; color: var(--ink-2); margin: 10px 0 0; max-width: 78ch; }
+  dl.defs dt { font-weight: 600; color: var(--ink); }
+  dl.defs dd { margin: 0; }
 
   footer { margin-top: 56px; border-top: 1px solid var(--rule); padding: 30px 0 44px; color: var(--ink-2); font-size: .9rem; }
   footer p { margin: 0 0 8px; max-width: 72ch; font-size: .9rem; }
@@ -261,13 +269,31 @@
           <label>Who <select id="fClass"></select></label>
           <label><input type="checkbox" id="fCombine"> Combine each structure across views</label>
         </div>
-        <div class="scroll-x"><table class="counts" id="tStructs"><thead><tr><th scope="col">Structure</th><th scope="col">View</th>
-          <th scope="col" class="n">Answers</th><th scope="col" class="n">Right</th><th scope="col" class="n">Wrong</th><th scope="col" class="n">Skipped</th>
-          <th scope="col" class="n">Timed out</th><th scope="col" class="n" title="Answers the student counted with Count mine as correct">Counted</th>
-          <th scope="col" class="n">% right</th></tr></thead><tbody></tbody></table></div>
-        <p class="note">Hardest first. Only the result of each answer is kept, never what was typed, and only for quizzes
-           started with Begin. Counted means the student pressed Count mine as correct, usually for a synonym the quiz did
-           not accept; those count as right, as they do in the quiz.</p>
+        <div class="scroll-x"><table class="counts" id="tStructs"><thead><tr>
+          <th scope="col"><button type="button" class="sortbtn" data-sort="name">Structure</button></th>
+          <th scope="col"><button type="button" class="sortbtn" data-sort="view">View</button></th>
+          <th scope="col" class="n"><button type="button" class="sortbtn" data-sort="total">Answers</button></th>
+          <th scope="col" class="n"><button type="button" class="sortbtn" data-sort="right">Right</button></th>
+          <th scope="col" class="n"><button type="button" class="sortbtn" data-sort="wrong">Wrong</button></th>
+          <th scope="col" class="n"><button type="button" class="sortbtn" data-sort="skip">Skipped</button></th>
+          <th scope="col" class="n"><button type="button" class="sortbtn" data-sort="timeout">Timed out</button></th>
+          <th scope="col" class="n"><button type="button" class="sortbtn" data-sort="override">Counted</button></th>
+          <th scope="col" class="n"><button type="button" class="sortbtn" data-sort="pct">% right</button></th>
+        </tr></thead><tbody></tbody></table></div>
+        <p class="note" id="sortNote"></p>
+        <dl class="defs">
+          <dt>Answers</dt><dd>Times the structure was asked and answered, for the mode and visitors chosen above. A question counts
+            once, when the student moves on to the next one or leaves the quiz. Only quizzes started with Begin count; a retry of
+            the missed questions does not.</dd>
+          <dt>Right</dt><dd>The answer matched the structure's name or one of its accepted synonyms.</dd>
+          <dt>Wrong</dt><dd>An answer was submitted and did not match.</dd>
+          <dt>Skipped</dt><dd>The student pressed Skip, or submitted an empty answer.</dd>
+          <dt>Timed out</dt><dd>The clock ran out before an answer was submitted.</dd>
+          <dt>Counted</dt><dd>The quiz marked the answer not right, and the student pressed Count mine as correct. Usually a
+            synonym or a spelling the quiz does not know, which is worth checking against that structure's accepted names.</dd>
+          <dt>% right</dt><dd>Right and Counted together, out of Answers: the way the quiz itself scores a run.</dd>
+        </dl>
+        <p class="note">Only each answer's result is kept, never what was typed.</p>
 
         <h3>Quiz scores</h3>
         <table class="counts" id="tScores"><thead><tr><th scope="col">Percent correct</th><th scope="col" class="n">Name it</th><th scope="col" class="n">By definition</th></tr></thead><tbody></tbody></table>
@@ -716,7 +742,8 @@
       Object.keys(codes).forEach(function (code) {
         var e = byFlag[codes[code]];
         if (e) names[code] = { name: e.name, view: e.views.length > 1 && e.views.every(function (v) { return v.indexOf('Coronal ') === 0; })
-          ? 'Coronal ' + e.views.map(function (v) { return v.slice(8); }).join(', ') : e.views.join(', ') };
+          ? 'Coronal ' + e.views.map(function (v) { return v.slice(8); }).join(', ') : e.views.join(', '),
+          order: Math.min.apply(null, e.views.map(function (v) { return VIEWS.map(function (x) { return x[1]; }).indexOf(v); })) };
       });
       return names;
     });
@@ -790,23 +817,50 @@
   }
 
   var RESULT_COLS = ['right', 'wrong', 'skip', 'timeout', 'override'];
+  // Hardest first until a heading is picked. Names and views start A to Z and
+  // in the site's order, counts start with the largest, percent right with the lowest.
+  var SORT = { key: 'pct', dir: 1 };
+  Array.prototype.forEach.call(document.querySelectorAll('#tStructs .sortbtn'), function (btn) {
+    btn.addEventListener('click', function () {
+      var k = btn.getAttribute('data-sort');
+      if (SORT.key === k) SORT.dir = -SORT.dir;
+      else { SORT.key = k; SORT.dir = k === 'name' || k === 'view' || k === 'pct' ? 1 : -1; }
+      if (priv) paintResults();
+    });
+  });
   function paintResults() {
     var mode = $('fMode').value, who = $('fClass').value, combine = $('fCombine').checked;
     var groups = {};
     (priv.answers || []).forEach(function (a) {   // [class, mode, code, result, n]
       if (mode && a[1] !== mode) return;
       if (who !== 'all' && a[0] !== who) return;
-      var info = names[a[2]] || { name: a[2], view: '' };
+      var info = names[a[2]] || { name: a[2], view: '', order: 99 };
       var gk = combine ? info.name.toLowerCase() : a[2];
-      var g = groups[gk] || (groups[gk] = { name: info.name, views: {}, n: { right: 0, wrong: 0, skip: 0, timeout: 0, override: 0 } });
+      var g = groups[gk] || (groups[gk] = { name: info.name, views: {}, order: 99, n: { right: 0, wrong: 0, skip: 0, timeout: 0, override: 0 } });
       g.views[info.view] = true;
+      g.order = Math.min(g.order, info.order);
       g.n[a[3]] = (g.n[a[3]] || 0) + a[4];
     });
     var rows = Object.keys(groups).map(function (k) {
       var g = groups[k], total = RESULT_COLS.reduce(function (s2, r) { return s2 + g.n[r]; }, 0);
       return { g: g, total: total, pct: total ? (g.n.right + g.n.override) / total : 0 };
     }).filter(function (x) { return x.total > 0; });
-    rows.sort(function (a, b) { return a.pct - b.pct || b.total - a.total || a.g.name.localeCompare(b.g.name); });
+    var key = SORT.key, value = function (x) {
+      return key === 'name' ? x.g.name.toLowerCase() : key === 'view' ? x.g.order : key === 'total' ? x.total : key === 'pct' ? x.pct : x.g.n[key];
+    };
+    rows.sort(function (a, b) {
+      var va = value(a), vb = value(b);
+      var c = (typeof va === 'string' ? va.localeCompare(vb) : va - vb) * SORT.dir;
+      return c || (key === 'pct' ? b.total - a.total : 0) || a.g.order - b.g.order || a.g.name.localeCompare(b.g.name);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#tStructs .sortbtn'), function (btn) {
+      btn.parentNode.setAttribute('aria-sort', btn.getAttribute('data-sort') === key ? (SORT.dir > 0 ? 'ascending' : 'descending') : 'none');
+    });
+    var label = { name: 'structure name', view: 'view, in the site\u2019s order', total: 'number of answers', right: 'number right',
+      wrong: 'number wrong', skip: 'number skipped', timeout: 'number timed out', override: 'number counted', pct: 'percent right' }[key];
+    $('sortNote').textContent = (key === 'pct' && SORT.dir > 0 ? 'Hardest first, by percent right.' : 'Sorted by ' + label +
+      (SORT.dir > 0 ? (key === 'name' || key === 'view' ? '' : ', lowest first') : (key === 'name' || key === 'view' ? ', reversed' : ', highest first')) + '.') +
+      ' Pick a column heading to sort by it, and again to reverse.';
     var tb = $('tStructs').tBodies[0]; tb.textContent = '';
     if (!rows.length) {
       var tr0 = document.createElement('tr'), td0 = document.createElement('td');
