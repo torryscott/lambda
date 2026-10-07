@@ -378,7 +378,7 @@
 <script src="codes.js?v=8f49de69"></script>
 <script src="views.js?v=e36b1b27"></script>
 <!-- Usage counts: one empty ping per event to Lambda's own counter (worker/README.md). No cookies, no identifiers. -->
-<script src="counts.js?v=0163e276" data-page="quiz"></script>
+<script src="counts.js?v=1fd99e03" data-page="quiz"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -556,7 +556,10 @@
     limit: QUESTION_SECONDS,         // seconds per question; 0 means no limit
     mode: 'name',
     views: [],                       // [{id, data, allowed}] for the views in this run
-    viewsById: {}
+    viewsById: {},
+    countAs: null,                   // '<scope>/<mode>' while a counted run is going (Begin, not a retry)
+    lastResult: null,                // {code, result} of the question on screen, until Next makes it final
+    answersLog: []                   // [[code, result], ...] not yet sent to the counter
   };
   /* The structures of a question's own view that are in play: the candidates
      a Find it tap is measured against, and the keyboard hotspots. */
@@ -811,6 +814,7 @@
     var ok = !timedOut && isCorrect(given, s);
     if (ok) state.score++;
     else state.missed.push({ name: s.name, gave: (given || '').trim(), timedOut: !!timedOut });
+    noteResult(s, ok ? 'right' : timedOut ? 'timeout' : (given || '').trim() ? 'wrong' : 'skip');
 
     // the pulsing target gives way to the reveal
     el('stage').querySelectorAll('.xmark').forEach(function (n) { n.remove(); });
@@ -845,6 +849,7 @@
       ok = dTarget <= FIND_R0 || (nearest === s && dTarget <= FIND_R);
       hit = !ok && nearest && nearest !== s && nd <= FIND_R;
     }
+    noteResult(s, ok ? 'right' : timedOut ? 'timeout' : tapped ? 'wrong' : 'skip');
     if (ok) state.score++;
     else state.missed.push({ name: s.name, find: true, timedOut: !!timedOut,
                              gave: !tapped ? '' : (hit ? 'tapped the ' + nearest.name : 'tapped elsewhere') });
@@ -870,7 +875,28 @@
     else grade(el('answerInput').value, true);
   }
 
+  /* Quiz results for the counter: each question's result becomes final when
+     the student moves on, so a "Count it" override can still change it. Only
+     the structure's code and the result are sent, never what was typed, and
+     only for runs started with Begin. */
+  function noteResult(s, result) {
+    state.lastResult = state.countAs && window.LAMBDA ? { code: LAMBDA.FLAGS[s.flag] || '', result: result } : null;
+  }
+  function keepResult() {
+    if (state.lastResult && state.lastResult.code) state.answersLog.push([state.lastResult.code, state.lastResult.result]);
+    state.lastResult = null;
+  }
+  function sendAnswers() {
+    if (state.answersLog.length && window.LAMBDA_COUNT && LAMBDA_COUNT.answers) LAMBDA_COUNT.answers(state.answersMode, state.answersLog);
+    state.answersLog = [];
+  }
+  // A student who leaves mid-quiz still counts for the questions answered;
+  // leaving makes the one on screen final too.
+  window.addEventListener('pagehide', function () { keepResult(); sendAnswers(); });
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') sendAnswers(); });
+
   function next() {
+    keepResult();
     state.at++;
     if (state.at >= state.pool.length) { finish(); return; }
     renderQuestion();
@@ -879,13 +905,17 @@
   function finish() {
     stopTimer();
     clearOverlays();
-    if (state.countAs && window.LAMBDA_COUNT) LAMBDA_COUNT.hit('quiz-finish/' + state.countAs);
-    state.countAs = null;
     el('trackFill').style.width = '100%';
     el('finalScore').textContent = state.score;
     el('finalTotal').textContent = state.pool.length;
     var pct = state.pool.length ? Math.round(state.score / state.pool.length * 100) : 0;
     el('finalPct').textContent = pct + '% correct';
+    if (state.countAs && window.LAMBDA_COUNT) {
+      LAMBDA_COUNT.hit('quiz-finish/' + state.countAs);
+      LAMBDA_COUNT.hit('quiz-score/' + state.answersMode + '/' + (pct < 50 ? 'under-50' : pct < 70 ? '50-69' : pct < 90 ? '70-89' : '90-100'));
+    }
+    sendAnswers();
+    state.countAs = null;
 
     var wrap = el('missedWrap'), list = el('missedList');
     list.innerHTML = '';
@@ -942,6 +972,7 @@
     // string matching can't know every acceptable synonym — let the student decide
     var last = state.missed.pop();
     if (last) { state.score++; el('qScore').textContent = state.score; }
+    if (state.lastResult) state.lastResult.result = 'override';
     el('btnOverride').hidden = true;
     var v = el('verdict'); v.className = 'verdict right';
     el('verdictBadge').textContent = 'Counted';
@@ -957,7 +988,9 @@
     // One count per run, by what it covers and its mode; finish() counts it
     // again if it reaches the end. A retry of the missed ones is not a new run.
     var scope = VIEW || (SET === 'all' ? 'everything' : SET);
+    sendAnswers();   // anything left from a run that was abandoned
     state.countAs = scope ? scope + '/' + state.mode : null;
+    state.answersMode = state.mode;
     if (state.countAs && window.LAMBDA_COUNT) LAMBDA_COUNT.hit('quiz-start/' + state.countAs);
     run(poolFor(state.mode));
   });

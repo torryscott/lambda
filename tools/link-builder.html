@@ -156,7 +156,7 @@
   }
 </style>
 <!-- Usage counts: one empty ping per event to Lambda's own counter (worker/README.md). No cookies, no identifiers. -->
-<script src="../counts.js?v=0163e276" data-page="link-builder"></script>
+<script src="../counts.js?v=1fd99e03" data-page="link-builder"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -380,7 +380,11 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(finalUrlEl.value); }
   catch { finalUrlEl.select(); document.execCommand('copy'); }
   flashCopied();
-  if (window.LAMBDA_COUNT) LAMBDA_COUNT.hit('link-copied');
+  if (window.LAMBDA_COUNT) {   // the copied link is a class: note what it is (the author's private view lists classes)
+    const made = LAMBDA_COUNT.classOf(finalUrlEl.value);
+    LAMBDA_COUNT.registerClass(made, 'built');
+    LAMBDA_COUNT.hit('link-copied', made);
+  }
 });
 document.getElementById('openBtn').addEventListener('click', () => { window.open(finalUrlEl.value, '_blank'); });
 

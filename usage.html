@@ -117,6 +117,21 @@
   .optout button { font: inherit; font-size: .9rem; font-weight: 500; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--rule-2); background: var(--ground); color: var(--ink); cursor: pointer; }
   .optout button:hover { border-color: var(--accent); }
 
+  /* ---------- the author's private view ---------- */
+  .private { margin: 48px 0 0; padding-top: 6px; border-top: 1px solid var(--rule); }
+  .private h3 { font-family: var(--display); font-weight: 400; font-size: 1.2rem; margin: 30px 0 10px; }
+  .keyform { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 0; }
+  .keyform input { font: inherit; font-size: .95rem; padding: 8px 12px; border: 1px solid var(--rule-2); border-radius: 10px; background: var(--surface); color: var(--ink); min-width: 0; width: 260px; max-width: 100%; }
+  .keyform button { font: inherit; font-size: .9rem; font-weight: 500; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; }
+  .linklike { font: inherit; font-size: inherit; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+  .pfilters { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin: 0 0 12px; font-size: .9rem; color: var(--ink-2); }
+  .pfilters label { display: inline-flex; align-items: center; gap: 6px; }
+  .pfilters select { font: inherit; font-size: .9rem; padding: 5px 8px; border: 1px solid var(--rule-2); border-radius: 8px; background: var(--surface); color: var(--ink); max-width: 260px; }
+  .scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .meter { display: inline-block; width: 64px; height: 6px; border-radius: 3px; background: rgba(58, 106, 163, .16); vertical-align: middle; margin-right: 8px; overflow: hidden; }
+  .meter i { display: block; height: 100%; background: var(--series); border-radius: 3px; }
+  table.counts td.view { color: var(--muted); white-space: nowrap; }
+
   footer { margin-top: 56px; border-top: 1px solid var(--rule); padding: 30px 0 44px; color: var(--ink-2); font-size: .9rem; }
   footer p { margin: 0 0 8px; max-width: 72ch; font-size: .9rem; }
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -134,7 +149,8 @@
   }
 </style>
 <!-- No data-page: this page reads the counts and is not counted itself. -->
-<script src="counts.js?v=0163e276"></script>
+<script src="codes.js?v=8f49de69"></script>
+<script src="counts.js?v=1fd99e03"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -155,7 +171,8 @@
     <p class="eyebrow">Usage</p>
     <h1>How Lambda is used.</h1>
     <p class="lede">Page opens, atlas views, quizzes, and printouts, counted by Lambda's own counter. It sets no
-       cookies and keeps no identifiers, only a total for each day. Pick any row below to see it over time.</p>
+       cookies and keeps nothing that identifies a person, only totals for each day. Pick any row below to see it over
+       time.</p>
     <p class="status" id="status" role="status">Loading the counts…</p>
 
     <div class="tiles" id="tiles" hidden>
@@ -216,12 +233,56 @@
       <p id="optText"></p>
       <button type="button" id="optBtn"></button>
     </div>
+
+    <section class="private" id="private" aria-labelledby="pTitle">
+      <h2 id="pTitle">Private view</h2>
+      <div id="pLocked">
+        <p>Classes and quiz results by structure are kept for the site's author. Enter the key set on the counter to see
+           them here; this browser remembers it.</p>
+        <form class="keyform" id="pForm">
+          <label for="pKey" class="sr-only">Key</label>
+          <input type="password" id="pKey" autocomplete="current-password" placeholder="Key" required>
+          <button type="submit">Open</button>
+        </form>
+        <p class="status" id="pMsg" role="status" hidden></p>
+      </div>
+      <div id="pOpen" hidden>
+        <p class="note" id="pSince"></p>
+        <h3>Classes</h3>
+        <p class="note">A class is an instructor's link: its class name and the structures and views it includes. It appears
+           when the link builder copies it or when someone first opens a page through it. Pick a class to chart its opens.</p>
+        <div class="scroll-x"><table class="counts" id="tClasses"><thead><tr><th scope="col">Class</th><th scope="col" class="n">Structures</th>
+          <th scope="col" class="n">Views</th><th scope="col" class="n">Copied</th><th scope="col" class="n">Visitors</th><th scope="col" class="n">Opened</th>
+          <th scope="col" class="n">Quizzes</th><th scope="col" class="n">Finished</th></tr></thead><tbody></tbody></table></div>
+
+        <h3>Quiz results by structure</h3>
+        <div class="pfilters">
+          <label>Mode <select id="fMode"><option value="">Both modes</option><option value="name">Name it</option><option value="describe">By definition</option></select></label>
+          <label>Who <select id="fClass"></select></label>
+          <label><input type="checkbox" id="fCombine"> Combine each structure across views</label>
+        </div>
+        <div class="scroll-x"><table class="counts" id="tStructs"><thead><tr><th scope="col">Structure</th><th scope="col">View</th>
+          <th scope="col" class="n">Answers</th><th scope="col" class="n">Right</th><th scope="col" class="n">Wrong</th><th scope="col" class="n">Skipped</th>
+          <th scope="col" class="n">Timed out</th><th scope="col" class="n" title="Answers the student counted with Count mine as correct">Counted</th>
+          <th scope="col" class="n">% right</th></tr></thead><tbody></tbody></table></div>
+        <p class="note">Hardest first. Only the result of each answer is kept, never what was typed, and only for quizzes
+           started with Begin. Counted means the student pressed Count mine as correct, usually for a synonym the quiz did
+           not accept; those count as right, as they do in the quiz.</p>
+
+        <h3>Quiz scores</h3>
+        <table class="counts" id="tScores"><thead><tr><th scope="col">Percent correct</th><th scope="col" class="n">Name it</th><th scope="col" class="n">By definition</th></tr></thead><tbody></tbody></table>
+        <p class="note">Finished quizzes, for the same visitors as the table above.</p>
+        <p class="note"><button type="button" class="linklike" id="pForget">Forget the key on this browser</button></p>
+      </div>
+    </section>
   </main>
 
   <footer>
-    <p>Each count is one empty message from a page to Lambda's counter on Cloudflare, carrying only what happened, such
-       as "atlas, dorsal view". No cookie, address, or identifier is read or stored; the database holds a number per
-       day and nothing else. Before this counter started in October 2026, a service called GoatCounter counted page
+    <p>Each count is a small message from a page to Lambda's counter on Cloudflare, saying only what happened, such as
+       "atlas, dorsal view" or "quiz answer, right". A page opened through an instructor's link also says which link, by
+       its class name, which is the same for every student on it. Quiz answers are kept only as right, wrong, skipped, or
+       timed out, never what was typed. No cookie, address, or identifier of a person is read or stored; the database
+       holds totals for each day and the class names typed into the link builder. Before this counter started in October 2026, a service called GoatCounter counted page
        visits and quizzes, and its totals are carried into the numbers here. The code is in the
        <a href="https://github.com/torryscott/lambda/tree/main/worker">repository</a>.</p>
   </footer>
@@ -316,6 +377,7 @@
       $('status').hidden = true;
       paintTiles(); paintTables(); render();
       $('tiles').hidden = false; $('history').hidden = false; $('tables').hidden = false;
+      if (getKey()) openPrivate(getKey());
     }).catch(function () { fail('The counts could not be loaded right now. Try again in a minute.'); });
   }
   function fail(text) { $('status').textContent = text; $('status').className = 'status warn'; }
@@ -400,12 +462,12 @@
   // Daily totals for a row, zero-filled from the counter's first day to today.
   function seriesFor(r) {
     if (!daily || !daily.since) return null;
-    var byDay = {};
-    Object.keys(daily.hits || {}).forEach(function (k) {
+    var byDay = {}, hits = r.daily || daily.hits || {};   // a class row brings its own history
+    Object.keys(hits).forEach(function (k) {
       if (!r.match(k)) return;
-      daily.hits[k].forEach(function (pt) { byDay[pt[0]] = (byDay[pt[0]] || 0) + (Number(pt[1]) || 0); });
+      hits[k].forEach(function (pt) { byDay[pt[0]] = (byDay[pt[0]] || 0) + (Number(pt[1]) || 0); });
     });
-    var from = dayMs(daily.since), to = Math.max(todayMs(), from), days = [];
+    var from = dayMs(r.since || daily.since), to = Math.max(todayMs(), from), days = [];
     Object.keys(byDay).forEach(function (k) { to = Math.max(to, dayMs(k)); });
     for (var t = from; t <= to; t += DAY) days.push({ t: t, n: byDay[isoOf(t)] || 0 });
     return { from: from, to: to, days: days };
@@ -457,7 +519,8 @@
     var k = r.key;
     $('hTitle').textContent = k === 'pages' ? 'Times opened, all pages' : k.indexOf('page/') === 0 ? 'Times opened: ' + r.label
       : k === 'atlas' ? 'Atlas views, all views' : k.indexOf('atlas/') === 0 ? 'Atlas views: ' + r.label
-      : k === 'quiz' ? 'Quizzes started' : /^(quiz|mode)\//.test(k) ? 'Quizzes started: ' + r.label : r.label;
+      : k === 'quiz' ? 'Quizzes started' : /^(quiz|mode)\//.test(k) ? 'Quizzes started: ' + r.label
+      : k.indexOf('class/') === 0 ? 'Times opened through ' + r.label : r.label;
     var s = seriesFor(r), rows = $('hRows'); rows.textContent = '';
     var segR = document.querySelectorAll('[data-range]'), segB = document.querySelectorAll('[data-bin]');
     if (!s) {
@@ -596,6 +659,201 @@
     var w = Math.round(plot.clientWidth);
     if (w && w !== lastW && view) { lastW = w; render(); } else lastW = w;
   }).observe(plot);
+
+  /* ---------- the author's private view ----------
+     Classes and quiz results by structure, from GET /api/private with the
+     key set on the counter (worker/README.md). The key is kept in this
+     browser's storage after it works once. */
+  var KEY = 'lambda.dashkey', priv = null, names = null;
+  function getKey() { try { return window.localStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
+  function setKey(k) { try { if (k) window.localStorage.setItem(KEY, k); else window.localStorage.removeItem(KEY); } catch (e) {} }
+  function pMsg(text, warn) { var m = $('pMsg'); m.textContent = text || ''; m.hidden = !text; m.className = 'status' + (warn ? ' warn' : ''); }
+  function openPrivate(key) {
+    if (!C.endpoint || !window.fetch) { pMsg('The private view works on the published site.', true); return; }
+    pMsg('Opening…');
+    fetch(C.endpoint + '/api/private', { headers: { Authorization: 'Bearer ' + key }, cache: 'no-store' }).then(function (r) {
+      if (r.status === 401) { setKey(''); throw new Error('That key did not work.'); }
+      if (r.status === 503) return r.json().then(function (j) {
+        throw new Error(j && j.error === 'no key set' ? 'The counter has no key yet; worker/README.md says how to set one.' : 'The counter could not be read right now.');
+      });
+      if (!r.ok) throw new Error('The counter could not be read right now.');
+      return r.json();
+    }).then(function (j) {
+      setKey(key); priv = j;
+      return structureNames();
+    }).then(function () {
+      pMsg(''); $('pLocked').hidden = true; $('pOpen').hidden = false;
+      paintPrivate();
+    }).catch(function (e) { pMsg(e.message || 'The counter could not be read right now.', true); });
+  }
+  $('pForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var k = $('pKey').value.trim();
+    if (k) openPrivate(k);
+  });
+  $('pForget').addEventListener('click', function () {
+    setKey(''); priv = null; $('pKey').value = '';
+    $('pOpen').hidden = true; $('pLocked').hidden = false;
+    Object.keys(ROWS).forEach(function (k) { if (k.indexOf('class/') === 0) delete ROWS[k]; });
+    if (state.row.indexOf('class/') === 0) choose('pages', false);
+  });
+
+  // Structure codes (codes.js) to names and views (the data files).
+  function structureNames() {
+    if (names) return Promise.resolve(names);
+    return Promise.all(VIEWS.map(function (v) {
+      return fetch('data/' + v[0] + '.json').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    })).then(function (list) {
+      // A flag, and so a code, can stand for one structure in several coronal sections.
+      var byFlag = {}, codes = (window.LAMBDA && LAMBDA.CODES) || {};
+      list.forEach(function (d, i) {
+        if (d) d.structures.forEach(function (st) {
+          var e = byFlag[st.flag] || (byFlag[st.flag] = { name: st.name, views: [] });
+          if (e.views.indexOf(VIEWS[i][1]) < 0) e.views.push(VIEWS[i][1]);
+        });
+      });
+      names = {};
+      Object.keys(codes).forEach(function (code) {
+        var e = byFlag[codes[code]];
+        if (e) names[code] = { name: e.name, view: e.views.length > 1 && e.views.every(function (v) { return v.indexOf('Coronal ') === 0; })
+          ? 'Coronal ' + e.views.map(function (v) { return v.slice(8); }).join(', ') : e.views.join(', ') };
+      });
+      return names;
+    });
+  }
+
+  function classLabel(c) { return c.name || 'Unnamed link'; }
+  function classSum(id, match) {
+    var hits = (priv.classDaily || {})[id] || {};
+    return Object.keys(hits).reduce(function (a, k) {
+      return a + (match(k) ? hits[k].reduce(function (b, pt) { return b + (Number(pt[1]) || 0); }, 0) : 0);
+    }, 0);
+  }
+  function lastDay(id) {
+    var hits = (priv.classDaily || {})[id] || {}, last = '';
+    Object.keys(hits).forEach(function (k) { hits[k].forEach(function (pt) { if (pt[0] > last) last = pt[0]; }); });
+    return last;
+  }
+  function allClasses() {
+    var list = (priv.classes || []).slice(), seen = {};
+    list.forEach(function (c) { seen[c.id] = true; });
+    // a class whose description never arrived still has its counts
+    Object.keys(priv.classDaily || {}).forEach(function (id) {
+      if (!seen[id]) list.push({ id: id, name: '', structures: null, views: null, first_seen: null, built: 0, unknown: true });
+    });
+    return list.sort(function (a, b) { return (lastDay(b.id) || b.first_seen || '').localeCompare(lastDay(a.id) || a.first_seen || ''); });
+  }
+
+  function paintPrivate() {
+    var since = priv.classesSince ? dLong(dayMs(priv.classesSince)) : null;
+    $('pSince').textContent = since ? 'Classes and quiz results are kept from ' + since + ' on.' : '';
+    var list = allClasses();
+
+    var tb = $('tClasses').tBodies[0]; tb.textContent = '';
+    if (!list.length) {
+      var tr0 = document.createElement('tr'), td0 = document.createElement('td');
+      td0.colSpan = 8; td0.textContent = 'No class links yet.'; td0.className = 'view';
+      tr0.appendChild(td0); tb.appendChild(tr0);
+    }
+    list.forEach(function (c) {
+      var key = 'class/' + c.id;
+      row(key, classLabel(c), starts('page/'), null, OPEN);
+      ROWS[key].daily = (priv.classDaily || {})[c.id] || {};
+      ROWS[key].since = priv.classesSince;
+      var tr = document.createElement('tr'); tr.setAttribute('data-row', key);
+      var th = document.createElement('th'); th.scope = 'row';
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'rowbtn'; b.setAttribute('aria-controls', 'history');
+      b.innerHTML = ICON;
+      var span = document.createElement('span'); span.textContent = classLabel(c); b.appendChild(span);
+      b.addEventListener('click', function () { choose(key, true); });
+      th.appendChild(b);
+      var sub = document.createElement('span'); sub.className = 'incl';
+      sub.textContent = c.unknown ? 'link details not received' : 'first seen ' + dLong(dayMs(c.first_seen));
+      th.appendChild(sub);
+      tr.appendChild(th);
+      [c.structures == null ? 'All' : fmt(c.structures), c.views == null ? 'All' : fmt(c.views), fmt(c.built || 0),
+       fmt(classSum(c.id, is('visit-day-class'))), fmt(classSum(c.id, starts('page/'))),
+       fmt(classSum(c.id, starts('quiz-start/'))), fmt(classSum(c.id, starts('quiz-finish/')))].forEach(function (v) {
+        var td = document.createElement('td'); td.className = 'n' + (v === '0' ? ' zero' : ''); td.textContent = v; tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    markSelected();
+
+    var sel = $('fClass'), keep = sel.value;
+    sel.textContent = '';
+    [['all', 'Everyone'], ['', 'Not through a class link']].concat(list.map(function (c) { return [c.id, classLabel(c)]; })).forEach(function (o) {
+      var opt = document.createElement('option'); opt.value = o[0]; opt.textContent = o[1]; sel.appendChild(opt);
+    });
+    sel.value = keep && Array.prototype.some.call(sel.options, function (o) { return o.value === keep; }) ? keep : 'all';
+    paintResults();
+  }
+
+  var RESULT_COLS = ['right', 'wrong', 'skip', 'timeout', 'override'];
+  function paintResults() {
+    var mode = $('fMode').value, who = $('fClass').value, combine = $('fCombine').checked;
+    var groups = {};
+    (priv.answers || []).forEach(function (a) {   // [class, mode, code, result, n]
+      if (mode && a[1] !== mode) return;
+      if (who !== 'all' && a[0] !== who) return;
+      var info = names[a[2]] || { name: a[2], view: '' };
+      var gk = combine ? info.name.toLowerCase() : a[2];
+      var g = groups[gk] || (groups[gk] = { name: info.name, views: {}, n: { right: 0, wrong: 0, skip: 0, timeout: 0, override: 0 } });
+      g.views[info.view] = true;
+      g.n[a[3]] = (g.n[a[3]] || 0) + a[4];
+    });
+    var rows = Object.keys(groups).map(function (k) {
+      var g = groups[k], total = RESULT_COLS.reduce(function (s2, r) { return s2 + g.n[r]; }, 0);
+      return { g: g, total: total, pct: total ? (g.n.right + g.n.override) / total : 0 };
+    }).filter(function (x) { return x.total > 0; });
+    rows.sort(function (a, b) { return a.pct - b.pct || b.total - a.total || a.g.name.localeCompare(b.g.name); });
+    var tb = $('tStructs').tBodies[0]; tb.textContent = '';
+    if (!rows.length) {
+      var tr0 = document.createElement('tr'), td0 = document.createElement('td');
+      td0.colSpan = 9; td0.className = 'view'; td0.textContent = 'No quiz answers for this choice yet.';
+      tr0.appendChild(td0); tb.appendChild(tr0);
+    }
+    rows.forEach(function (x) {
+      var tr = document.createElement('tr');
+      var th = document.createElement('th'); th.scope = 'row'; th.textContent = x.g.name; tr.appendChild(th);
+      var tv = document.createElement('td'); tv.className = 'view';
+      var vs = Object.keys(x.g.views).filter(Boolean);
+      tv.textContent = combine ? (vs.length === 1 ? vs[0] : vs.length + ' views') : (vs[0] || ''); tr.appendChild(tv);
+      [x.total].concat(RESULT_COLS.map(function (r) { return x.g.n[r]; })).forEach(function (v) {
+        var td = document.createElement('td'); td.className = 'n' + (v ? '' : ' zero'); td.textContent = fmt(v); tr.appendChild(td);
+      });
+      var tp = document.createElement('td'); tp.className = 'n';
+      var m = document.createElement('span'); m.className = 'meter'; m.setAttribute('aria-hidden', 'true');
+      var fill = document.createElement('i'); fill.style.width = Math.round(x.pct * 100) + '%'; m.appendChild(fill);
+      tp.appendChild(m); tp.appendChild(document.createTextNode(Math.round(x.pct * 100) + '%'));
+      tr.appendChild(tp);
+      tb.appendChild(tr);
+    });
+    paintScores(who);
+  }
+
+  // Score ranges: everyone from the totals, a class from its own counts, and
+  // "not through a class link" as everyone less every class.
+  function paintScores(who) {
+    var bands = [['90-100', '90 to 100%'], ['70-89', '70 to 89%'], ['50-69', '50 to 69%'], ['under-50', 'Under 50%']];
+    var count = function (m, b) {
+      var kind = 'quiz-score/' + m + '/' + b;
+      if (who === 'all') return (priv.scores || {})[kind] || 0;
+      if (who) return classSum(who, is(kind));
+      return ((priv.scores || {})[kind] || 0) - allClasses().reduce(function (a, c) { return a + classSum(c.id, is(kind)); }, 0);
+    };
+    var tb = $('tScores').tBodies[0]; tb.textContent = '';
+    bands.forEach(function (b) {
+      var tr = document.createElement('tr');
+      var th = document.createElement('th'); th.scope = 'row'; th.textContent = b[1]; tr.appendChild(th);
+      MODES.forEach(function (m) {
+        var v = Math.max(0, count(m[0], b[0]));
+        var td = document.createElement('td'); td.className = 'n' + (v ? '' : ' zero'); td.textContent = fmt(v); tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+  }
+  ['fMode', 'fClass', 'fCombine'].forEach(function (id) { $(id).addEventListener('change', function () { if (priv) paintResults(); }); });
 
   load();
 })();

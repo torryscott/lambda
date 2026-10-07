@@ -212,8 +212,10 @@ is still to be done.
 
 The site sets no cookies and collects no personal data. Page opens, atlas views, quiz runs, and
 printouts are counted by the site's own small counter on Cloudflare ([`worker/`](worker/README.md)):
-each count is an empty message saying only what happened, and the database keeps one number per
-day. The totals are on the [usage page](https://torryscott.github.io/lambda/usage.html) and in the
+each count is a small message saying only what happened, and the database keeps totals for each
+day. Pages opened through an instructor's link say which link, by its class name, and quiz answers
+are counted per structure only as right, wrong, skipped, or timed out, never what was typed; those
+two are visible only to the site's author. The totals are on the [usage page](https://torryscott.github.io/lambda/usage.html) and in the
 home page footer. The feedback form is a Google Form and is anonymous unless you choose to
 give an email address.
 
