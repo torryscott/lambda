@@ -237,8 +237,9 @@
     margin-top: 32px; border-top: 1px solid var(--rule); padding: 36px 0 44px;
     color: var(--ink-2); font-size: .92rem;
   }
-  footer .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
-  @media (max-width: 1000px) { footer .cols { grid-template-columns: repeat(2, 1fr); } }
+  footer .cols { display: grid; grid-template-columns: repeat(5, 1fr); gap: 26px; }
+  @media (max-width: 1000px) { footer .cols { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 760px) { footer .cols { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { footer .cols { grid-template-columns: 1fr; } }
   footer h2 {
     font-family: var(--mono); font-size: .72rem; letter-spacing: .13em; text-transform: uppercase;
@@ -348,6 +349,11 @@
            structure. <a href="accessibility.html">Read the statement.</a></p>
       </div>
       <div>
+        <h2>Privacy</h2>
+        <p>No cookies, no accounts, no ads. Use of the site is counted only as anonymous totals, and
+           nothing personal is collected. <a href="usage.html" id="privacyLink">See the counts.</a></p>
+      </div>
+      <div>
         <h2>License</h2>
         <p>Free with attribution for teaching, code and photographs alike, under
            CC BY-NC-SA 4.0.
@@ -378,6 +384,7 @@
   ['ctaAtlas', 'navAtlas'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'atlas.html' + qs; });
   (function () { var a = document.getElementById('builderLink'); if (a) a.href = 'tools/link-builder.html' + qs; })();
   (function () { var a = document.getElementById('printLink'); if (a) a.href = 'print.html' + qs; })();
+  (function () { var a = document.getElementById('privacyLink'); if (a) a.href = 'usage.html' + qs; })();
   ['ctaQuiz', 'navQuiz'].forEach(function (id) { var a = document.getElementById(id); if (a) a.href = 'quiz.html' + qs; });
   var g = document.getElementById('navGlossary'); if (g) g.href = 'glossary.html' + qs;
 
