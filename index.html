@@ -400,11 +400,14 @@
     var sum = function (o, test) { return Object.keys(o || {}).reduce(function (a, k) { return a + (test(k) ? o[k] : 0); }, 0); };
     var isPage = function (k) { return k.indexOf('page/') === 0; };
     var isRun = function (k) { return k.indexOf('quiz-start') === 0; };
+    var isView = function (k) { return k.indexOf('atlas/') === 0; };   // one per atlas plate shown, counted since October 2026
     var views = sum(j.counts, isPage) + sum(j.carried, isPage);
     var runs = sum(j.counts, isRun) + sum(j.carried, isRun);
+    var plates = sum(j.counts, isView);
     if (views < 1) return;
     var fmt = function (n) { return n.toLocaleString('en-US'); };
     var text = 'Opened ' + fmt(views) + ' times since September 2026';
+    if (plates >= 1) text += ' \u00b7 ' + fmt(plates) + (plates === 1 ? ' atlas viewed' : ' atlases viewed');
     if (runs >= 1) text += ' \u00b7 ' + fmt(runs) + (runs === 1 ? ' quiz taken' : ' quizzes taken');
     var a = document.createElement('a');
     var p = new URLSearchParams(window.location.search);   // keeps the instructor's link, like the nav
